@@ -37,6 +37,18 @@
     <main>
         @yield('content')
     </main>
+</main>
 
+    <footer class="bg-gray-900 py-8">
+        <div class="container mx-auto px-4 flex flex-col items-center">
+            <img src="{{ asset('images/logo-placeholder.png') }}" alt="Logo" class="h-10 mb-4">
+
+            <p class="text-sm text-gray-400">
+                Copyright ©2025 Penawaran.App All rights Reserved
+            </p>
+        </div>
+    </footer>
+    </body>
+</html>
 </body>
 </html>

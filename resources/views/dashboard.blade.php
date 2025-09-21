@@ -11,9 +11,9 @@
 
     <section class="flex flex-wrap justify-center gap-4 md:gap-6 my-10 py-4 border-y border-gray-200">
         <a href="#" class="px-4 py-2 text-sm font-bold text-black border-b-2 border-black">Semua Penawaran</a>
-        <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Draft</a>
+        <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Histori</a>
         <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Terkirim</a>
-        <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Disetujui</a>
+        <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Harga produk</a>
     </section>
 
     <section class="flex flex-wrap justify-center gap-4 md:gap-6">
@@ -37,7 +37,7 @@
             </div>
             <div class="p-4">
                 <h5 class="font-bold text-sm uppercase truncate">SP Produk</h5>
-                <p class="text-xs text-gray-500 mt-1">18 Sep 2025 - Disetujui</p>
+                <p class="text-xs text-gray-500 mt-1">Detail</p>
             </div>
         </div>
 
@@ -47,7 +47,7 @@
             </div>
             <div class="p-4">
                 <h5 class="font-bold text-sm uppercase truncate">SP Produk + jasa</h5>
-                <p class="text-xs text-gray-500 mt-1">detail</p>
+                <p class="text-xs text-gray-500 mt-1">Detail</p>
             </div>
         </div>
 

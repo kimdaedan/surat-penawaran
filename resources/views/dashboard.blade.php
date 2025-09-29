@@ -13,7 +13,7 @@
         <a href="#" class="px-4 py-2 text-sm font-bold text-black border-b-2 border-black">Semua Penawaran</a>
         <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Histori</a>
         <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Terkirim</a>
-        <a href="#" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Harga produk</a>
+        <a href="/daftar-harga" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-black">Harga produk</a>
     </section>
 
     <section class="flex flex-wrap justify-center gap-4 md:gap-6">

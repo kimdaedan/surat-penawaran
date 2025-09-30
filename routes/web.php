@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OfferController;
 
 // Rute untuk menampilkan Dashboard
 Route::get('/', function () {
@@ -36,3 +37,15 @@ Route::post('/daftar-harga', [ProductController::class, 'store'])->name('harga.s
 Route::delete('/daftar-harga/{product}', [ProductController::class, 'destroy'])->name('harga.destroy');
 Route::get('/daftar-harga/{product}/edit', [ProductController::class, 'edit'])->name('harga.edit');
 Route::put('/daftar-harga/{product}', [ProductController::class, 'update'])->name('harga.update');
+
+// Rute untuk menampilkan form penawaran produk + jasa
+Route::get('/penawaran/buat-kombinasi', [ProductController::class, 'createCombined'])->name('penawaran.create_combined');
+
+// Rute untuk menyimpan data form penawaran produk + jasa
+Route::post('/penawaran/simpan-kombinasi', [ProductController::class, 'storeCombined'])->name('penawaran.store_combined');
+
+// Rute untuk menampilkan halaman histori penawaran
+Route::get('/histori-penawaran', [OfferController::class, 'index'])->name('histori.index');
+
+// Rute untuk menampilkan detail satu penawaran
+Route::get('/penawaran/{offer}', [OfferController::class, 'show'])->name('histori.show');

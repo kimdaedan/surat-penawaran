@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product; // <-- 1. Import Model Product
 use Illuminate\Http\Request;
+use App\Models\Offer; // <-- INI YANG BENAR
 
 class ProductController extends Controller
 {
@@ -74,5 +75,53 @@ class ProductController extends Controller
         ]);
 
         return redirect()->route('harga.index')->with('success', 'Data berhasil diperbarui!');
+    }
+
+    // Jangan lupa tambahkan 'use App\Models\Product;' di atas jika belum ada
+    public function createCombined()
+    {
+        // 1. Ambil semua data produk dari database
+        $products = Product::all();
+
+        // 2. Kirim data tersebut ke view
+        return view('penawaran.create_combined', ['products' => $products]);
+    }
+
+    public function storeCombined(Request $request)
+    {
+        $request->validate(['nama_klien' => 'required|string|max:255']);
+
+        // Hitung total di backend
+        $totalProduk = 0;
+        if ($request->has('produk')) {
+            foreach ($request->produk as $item) {
+                $volume = $item['volume'] ?? 0;
+                $harga = $item['harga'] ?? 0;
+                $totalProduk += $volume * $harga;
+            }
+        }
+        $hargaJasa = $request->jasa_harga ?? 0;
+        $totalKeseluruhan = $totalProduk + $hargaJasa;
+
+        // Simpan data utama ke tabel 'offers'
+        $offer = Offer::create([
+            'nama_klien' => $request->nama_klien,
+            'jasa_nama' => $request->jasa_nama,
+            'jasa_harga' => $hargaJasa,
+            'total_keseluruhan' => $totalKeseluruhan,
+        ]);
+
+        // Simpan setiap baris produk ke tabel 'offer_items'
+        if ($request->has('produk')) {
+            foreach ($request->produk as $itemData) {
+                $offer->items()->create([
+                    'nama_produk_area' => $itemData['nama'],
+                    'volume' => $itemData['volume'] ?? 0,
+                    'harga_per_m2' => $itemData['harga'] ?? 0,
+                ]);
+            }
+        }
+
+        return redirect('/')->with('success', 'Surat Penawaran berhasil dibuat!');
     }
 }

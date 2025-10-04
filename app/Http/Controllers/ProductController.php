@@ -91,37 +91,62 @@ class ProductController extends Controller
     {
         $request->validate(['nama_klien' => 'required|string|max:255']);
 
-        // Hitung total di backend
+        // Hitung total di backend untuk keamanan
         $totalProduk = 0;
         if ($request->has('produk')) {
             foreach ($request->produk as $item) {
-                $volume = $item['volume'] ?? 0;
-                $harga = $item['harga'] ?? 0;
-                $totalProduk += $volume * $harga;
+                $totalProduk += ($item['volume'] ?? 0) * ($item['harga'] ?? 0);
             }
         }
-        $hargaJasa = $request->jasa_harga ?? 0;
-        $totalKeseluruhan = $totalProduk + $hargaJasa;
+        $totalJasa = 0;
+        if ($request->has('jasa')) {
+            foreach ($request->jasa as $item) {
+                $totalJasa += $item['harga'] ?? 0;
+            }
+        }
 
         // Simpan data utama ke tabel 'offers'
         $offer = Offer::create([
             'nama_klien' => $request->nama_klien,
-            'jasa_nama' => $request->jasa_nama,
-            'jasa_harga' => $hargaJasa,
-            'total_keseluruhan' => $totalKeseluruhan,
+            'total_keseluruhan' => $totalProduk + $totalJasa,
         ]);
 
         // Simpan setiap baris produk ke tabel 'offer_items'
         if ($request->has('produk')) {
             foreach ($request->produk as $itemData) {
-                $offer->items()->create([
-                    'nama_produk_area' => $itemData['nama'],
-                    'volume' => $itemData['volume'] ?? 0,
-                    'harga_per_m2' => $itemData['harga'] ?? 0,
-                ]);
+                // Cek jika nama produk diisi, baru simpan
+                if (!empty($itemData['nama'])) {
+                    $offer->items()->create([
+                        'nama_produk' => $itemData['nama'],
+                        'area_dinding' => $itemData['area'],
+                        'volume' => $itemData['volume'] ?? 0,
+                        'harga_per_m2' => $itemData['harga'] ?? 0,
+                    ]);
+                }
+            }
+        }
+
+        // Simpan setiap baris jasa ke tabel 'offer_jasa'
+        if ($request->has('jasa')) {
+            foreach ($request->jasa as $jasaData) {
+                // Cek jika nama jasa diisi, baru simpan
+                if (!empty($jasaData['nama'])) {
+                    $offer->jasaItems()->create([
+                        'nama_jasa' => $jasaData['nama'],
+                        'harga_jasa' => $jasaData['harga'] ?? 0,
+                    ]);
+                }
             }
         }
 
         return redirect('/')->with('success', 'Surat Penawaran berhasil dibuat!');
+    }
+
+    public function show(Offer $offer)
+    {
+        // Memuat relasi 'items' (produk) DAN 'jasaItems' (pengerjaan tambahan)
+        $offer->load(['items', 'jasaItems']);
+
+        return view('histori.show', ['offer' => $offer]);
     }
 }

@@ -19,12 +19,15 @@ class OfferController extends Controller
         return view('histori.index', ['offers' => $offers]);
     }
 
-    public function show(Offer $offer)
-    {
-        // Laravel akan otomatis mencari data 'Offer' berdasarkan ID di URL.
-        // Kita juga memuat data 'items' yang berelasi dengannya.
-        $offer->load('items');
+    /**
+ * Menampilkan halaman detail untuk satu penawaran.
+ */
+public function show(Offer $offer)
+{
+    // Baris ini sangat penting.
+    // Ia memberitahu Laravel untuk memuat semua 'items' yang terhubung dengan '$offer' ini.
+    $offer->load('items');
 
-        return view('histori.show', ['offer' => $offer]);
-    }
+    return view('histori.show', ['offer' => $offer]);
+}
 }

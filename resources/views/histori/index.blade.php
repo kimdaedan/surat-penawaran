@@ -42,7 +42,12 @@
                         <td class="px-6 py-4">
                             <div class="flex justify-center items-center gap-4">
                                 <a href="{{ route('histori.show', $offer->id) }}" class="font-medium text-gray-600 hover:underline">Lihat</a>
-                                <a href="#" class="font-medium text-blue-600 hover:underline">Edit</a>
+                                <a href="{{ route('histori.edit', $offer->id) }}" class="font-medium text-blue-600 hover:underline">Edit</a>
+                                <form action="{{ route('histori.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penawaran ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="font-medium text-red-600 hover:underline">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

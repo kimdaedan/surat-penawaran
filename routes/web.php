@@ -49,3 +49,12 @@ Route::get('/histori-penawaran', [OfferController::class, 'index'])->name('histo
 
 // Rute untuk menampilkan detail satu penawaran
 Route::get('/penawaran/{offer}', [OfferController::class, 'show'])->name('histori.show');
+
+//untuk menghapus histori
+Route::delete('/penawaran/{offer}', [OfferController::class, 'destroy'])->name('histori.destroy');
+
+// Rute untuk menampilkan halaman form edit
+Route::get('/penawaran/{offer}/edit', [OfferController::class, 'edit'])->name('histori.edit');
+
+// Rute untuk memproses update data
+Route::put('/penawaran/{offer}', [OfferController::class, 'update'])->name('histori.update');

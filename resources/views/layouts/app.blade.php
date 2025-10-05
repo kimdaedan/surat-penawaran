@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initia       l-scale=1.0">
     <title>Aplikasi Surat Penawaran</title>
@@ -11,9 +13,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-gray-50">
 
     <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -37,7 +42,7 @@
     <main>
         @yield('content')
     </main>
-</main>
+    </main>
 
     <footer class="bg-gray-900 py-8">
         <div class="container mx-auto px-4 flex flex-col items-center">
@@ -48,7 +53,10 @@
             </p>
         </div>
     </footer>
-    </body>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+</body>
+
 </html>
 </body>
+
 </html>

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\InvoiceController;
 
 // Rute untuk menampilkan Dashboard
 Route::get('/', function () {
@@ -58,3 +59,6 @@ Route::get('/penawaran/{offer}/edit', [OfferController::class, 'edit'])->name('h
 
 // Rute untuk memproses update data
 Route::put('/penawaran/{offer}', [OfferController::class, 'update'])->name('histori.update');
+
+// Rute untuk menampilkan form pembuatan invoice
+Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');

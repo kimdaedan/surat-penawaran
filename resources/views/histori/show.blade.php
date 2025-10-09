@@ -40,7 +40,12 @@
         <section class="mt-8">
             <p class="text-gray-600">Kepada Yth,</p>
             <h3 class="text-md font-bold text-gray-800">{{ $offer->nama_klien }}</h3>
-            <p class="text-gray-700">Dengan Hormat,</p>
+
+            @if($offer->client_details)
+            <p class="text-sm text-gray-700">{{ $offer->client_details }}</p>
+            @endif
+
+            <p class="text-gray-700 mt-2">Dengan Hormat,</p>
         </section>
 
         <section class="mt-4 space-y-4 text-sm text-gray-700 leading-relaxed">

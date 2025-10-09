@@ -11,6 +11,7 @@ class Offer extends Model
 
     protected $fillable = [
         'nama_klien',
+        'client_details',
         'produk_nama',
         'area_dinding',
         'volume',

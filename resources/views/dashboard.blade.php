@@ -31,29 +31,31 @@
             </div>
         </div>
 
-        <div class="w-full sm:w-[48%] md:w-[31%] lg:w-[15.5%] bg-white cursor-pointer group transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
-            <div>
-                <img src="{{ asset('images/sp-produk.png') }}" alt="Preview Surat Produk" class="w-full h-48 object-cover">
+        <a href="{{ route('invoice.create') }}" class="w-full sm:w-[48%] md:w-[31%] lg:w-[15.5%] block">
+            <div class="bg-white cursor-pointer group transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <img src="{{ asset('images/sp-produk.png') }}" alt="Preview Surat Invoice" class="w-full h-48 object-cover">
+                </div>
+                <div class="p-4">
+                    <h5 class="font-bold text-sm uppercase truncate">SURAT INVOICE</h5>
+                    <p class="text-xs text-gray-500 mt-1">Detail</p>
+                </div>
             </div>
-            <div class="p-4">
-                <h5 class="font-bold text-sm uppercase truncate">SP Produk</h5>
-                <p class="text-xs text-gray-500 mt-1">Detail</p>
-            </div>
-        </div>
+        </a>
 
         <a href="{{ route('penawaran.create_combined') }}" class="w-full sm:w-[48%] md:w-[31%] lg:w-[15.5%] block">
-    <div class="bg-white cursor-pointer group transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
-        <div class="h-48 bg-gray-200 flex items-center justify-center">
-             <img src="{{ asset('images/sp-pengecatan.jpg') }}" alt="Preview Surat Produk" class="w-full h-48 object-cover">
+            <div class="bg-white cursor-pointer group transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg">
+                <div class="h-48 bg-gray-200 flex items-center justify-center">
+                    <img src="{{ asset('images/sp-pengecatan.jpg') }}" alt="Preview Surat Produk" class="w-full h-48 object-cover">
+                </div>
             </div>
-        </div>
-        <div class="p-4">
-            <h5 class="font-bold text-sm uppercase truncate">PRODUK + JASA</h5>
-            <p class="text-xs text-gray-500 mt-1">Detail</p>
-        </div>
-    </div>
+            <div class="p-4">
+                <h5 class="font-bold text-sm uppercase truncate">PRODUK + JASA</h5>
+                <p class="text-xs text-gray-500 mt-1">Detail</p>
+            </div>
+</div>
 </a>
 
-    </section>
+</section>
 </div>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product; // <-- 1. Import Model Product
 use Illuminate\Http\Request;
 use App\Models\Offer; // <-- INI YANG BENAR
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -78,20 +79,29 @@ class ProductController extends Controller
     }
 
     // Jangan lupa tambahkan 'use App\Models\Product;' di atas jika belum ada
-    public function createCombined()
+    public function createCombined(Request $request) // Tambahkan Request $request
     {
-        // 1. Ambil semua data produk dari database
+        // 1. Buat token unik ("tiket sekali pakai")
+        $token = Str::uuid()->toString();
+
+        // 2. Simpan token ini di session
+        $request->session()->put('form_token', $token);
+
+        // 3. Ambil data produk seperti biasa
         $products = Product::all();
 
-        // 2. Kirim data tersebut ke view
+        // 4. Kirim data ke view (jangan lupa kirim token juga, meskipun kita akan ambil dari session)
         return view('penawaran.create_combined', ['products' => $products]);
     }
 
     public function storeCombined(Request $request)
     {
-        $request->validate(['nama_klien' => 'required|string|max:255']);
+        $request->validate([
+            'nama_klien' => 'required|string|max:255',
+            // Tambahkan validasi lain jika perlu
+        ]);
 
-        // Hitung total di backend untuk keamanan
+        // Hitung total di backend (logika ini sudah benar)
         $totalProduk = 0;
         if ($request->has('produk')) {
             foreach ($request->produk as $item) {
@@ -105,18 +115,23 @@ class ProductController extends Controller
             }
         }
 
-        // Simpan data utama ke tabel 'offers'
+        // =================================================================
+        // BAGIAN PENTING 1: Simpan DATA UTAMA ke tabel 'offers'
+        // =================================================================
         $offer = Offer::create([
             'nama_klien' => $request->nama_klien,
+            'client_details' => $request->client_details, // <-- client_details HANYA DISIMPAN DI SINI
             'total_keseluruhan' => $totalProduk + $totalJasa,
         ]);
 
-        // Simpan setiap baris produk ke tabel 'offer_items'
+        // =================================================================
+        // BAGIAN PENTING 2: Simpan DATA RINCIAN PRODUK ke 'offer_items'
+        // =================================================================
         if ($request->has('produk')) {
             foreach ($request->produk as $itemData) {
-                // Cek jika nama produk diisi, baru simpan
                 if (!empty($itemData['nama'])) {
                     $offer->items()->create([
+                        // PASTIKAN TIDAK ADA 'client_details' DI DALAM ARRAY INI
                         'nama_produk' => $itemData['nama'],
                         'area_dinding' => $itemData['area'],
                         'volume' => $itemData['volume'] ?? 0,
@@ -129,7 +144,6 @@ class ProductController extends Controller
         // Simpan setiap baris jasa ke tabel 'offer_jasa'
         if ($request->has('jasa')) {
             foreach ($request->jasa as $jasaData) {
-                // Cek jika nama jasa diisi, baru simpan
                 if (!empty($jasaData['nama'])) {
                     $offer->jasaItems()->create([
                         'nama_jasa' => $jasaData['nama'],
@@ -138,6 +152,9 @@ class ProductController extends Controller
                 }
             }
         }
+
+        // (Logika simpan data jasa Anda)
+        // ...
 
         return redirect('/')->with('success', 'Surat Penawaran berhasil dibuat!');
     }

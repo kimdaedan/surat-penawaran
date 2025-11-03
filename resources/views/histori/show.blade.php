@@ -17,7 +17,7 @@
         <header class="border-b-2 border-gray-300 pb-4">
             <div class="flex justify-between items-center">
                 <div class="w-1/4">
-                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="w-24">
+                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="w-33">
                 </div>
                 <div class="w-1/2 text-center">
                     <h1 class="text-xl font-bold text-gray-800">PT. TASNIEM GERAI INSPIRASI</h1>
@@ -27,7 +27,7 @@
                     <p class="text-xs text-gray-500">E-mail : tgi_team040210@yahoo.com Website : www.jotun.com/ap</p>
                 </div>
                 <div class="w-1/4 flex justify-end">
-                    <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="w-28">
+                    <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="w-40">
                 </div>
             </div>
         </header>
@@ -128,7 +128,7 @@
             <div class="text-center">
                 <p>Hormat kami,</p>
                 <div class="h-28 w-48 relative">
-                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo & Tanda Tangan" class="h-28 opacity-20 mx-auto">
+                    <img src="{{ asset('images/ttd.png') }}" alt="Logo & Tanda Tangan" class="h-28 opacity-100 mx-auto">
                 </div>
                 <p class="font-bold text-gray-800">SAMSU RIZAL</p>
                 <p class="text-gray-600">General Manager</p>

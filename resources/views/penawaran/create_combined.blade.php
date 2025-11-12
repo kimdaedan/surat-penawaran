@@ -8,67 +8,80 @@
 
         <form id="offer-form" action="{{ route('penawaran.store_combined') }}" method="POST">
             @csrf
-            <form id="offer-form" action="{{ route('penawaran.store_combined') }}" method="POST">
-                @csrf
-                <input type="hidden" name="form_token" value="{{ session('form_token') }}">
+            <input type="hidden" name="form_token" value="{{ session('form_token') }}">
 
-                <fieldset class="border-t pt-6">
-                    <legend class="text-lg font-semibold text-gray-700 px-2">1. Informasi Klien</legend>
-                    <div class="grid grid-cols-1 gap-6 mt-4">
-                        <div>
-                            <label for="nama_klien" class="block text-sm font-medium text-gray-600">Nama Klien/Perusahaan</label>
-                            <input type="text" name="nama_klien" id="nama_klien" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" required>
-                        </div>
-                        <div>
-                            <label for="client_details" class="block text-sm font-medium text-gray-600">Detail Pengerjaan (optional)</label>
-                            <input type="text" name="client_details" id="client_details" placeholder="Contoh: Restoran The Recipes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                        </div>
+            <fieldset class="border-t pt-6">
+                <legend class="text-lg font-semibold text-gray-700 px-2">1. Informasi Klien</legend>
+                <div class="grid grid-cols-1 gap-6 mt-4">
+                    <div>
+                        <label for="nama_klien" class="block text-sm font-medium text-gray-600">Nama Klien/Perusahaan</label>
+                        <input type="text" name="nama_klien" id="nama_klien" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" required>
                     </div>
-                </fieldset>
-
-                <fieldset class="border-t pt-6 mt-8">
-                    <legend class="text-lg font-semibold text-gray-700 px-2">2. Detail Produk</legend>
-                    <div id="product-rows-container" class="space-y-4 mt-4">
+                    <div>
+                        <label for="client_details" class="block text-sm font-medium text-gray-600">Detail Pengerjaan (optional)</label>
+                        <input type="text" name="client_details" id="client_details" placeholder="Contoh: Restoran The Recipes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
-                    <div class="mt-4">
-                        <button type="button" id="add-product-row-btn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"> + Tambah Produk </button>
-                    </div>
-                </fieldset>
-
-                <fieldset class="border-t pt-6 mt-8">
-                    <legend class="text-lg font-semibold text-gray-700 px-2">3. Tambahan Pengerjaan (optional)</legend>
-                    <div id="jasa-rows-container" class="space-y-4 mt-4">
-                    </div>
-                    <div class="mt-4">
-                        <button type="button" id="add-jasa-row-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600"> + Tambah Pengerjaan </button>
-                    </div>
-                </fieldset>
-
-                <div class="mt-8 pt-6 border-t">
-                    <div class="flex justify-end items-center"><span class="text-lg mr-4">Total Estimasi Harga:</span><span id="total_keseluruhan" class="text-2xl font-bold">Rp 0</span></div>
                 </div>
-                <div class="mt-8"><button type="submit" class="w-full bg-gray-800 text-white font-bold py-3 px-6 rounded"> Buat Surat Penawaran </button></div>
-            </form>
+            </fieldset>
 
-            <template id="product-row-template">
-                <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
-                    <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Nama Produk</label><select class="product-select mt-1 block w-full rounded-md">
-                            <option value="">-- Pilih --</option>@foreach ($products as $product)<option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>@endforeach
-                        </select></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area</label><input type="text" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md"></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Volume M²</label><input type="number" step="0.01" value="1" class="volume-input mt-1 block w-full rounded-md"></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Harga/M²</label><input type="number" class="harga-input mt-1 block w-full bg-gray-100" readonly></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Total</label><input type="text" class="total-output mt-1 block w-full bg-gray-100" readonly></div>
-                    <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
+            <fieldset class="border-t pt-6 mt-8">
+                <legend class="text-lg font-semibold text-gray-700 px-2">2. Detail Produk</legend>
+
+                <div class="mb-6 p-4 bg-gray-100 rounded-lg border">
+                    <label for="produk-all-select" class="block text-sm font-medium text-gray-700 font-semibold">
+                        Pilih Produk untuk Semua Baris (Produk All)
+                    </label>
+                    <select id="produk-all-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="">-- Pilih Produk --</option>
+                        @foreach ($products as $product)
+                            <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Memilih produk di sini akan mengubah semua "Nama Produk" dan "Harga/M²" di baris bawah.
+                    </p>
                 </div>
-            </template>
-            <template id="jasa-row-template">
-                <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
-                    <div class="md:col-span-8"><label class="block text-sm font-medium text-gray-600">Nama Pengerjaan</label><input type="text" class="mt-1 block w-full rounded-md"></div>
-                    <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Harga (Rp)</label><input type="number" class="jasa-harga-input mt-1 block w-full rounded-md"></div>
-                    <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-jasa-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
+                <div id="product-rows-container" class="space-y-4 mt-4">
+                    </div>
+                <div class="mt-4">
+                    <button type="button" id="add-product-row-btn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"> + Tambah Produk </button>
                 </div>
-            </template>
+            </fieldset>
+
+            <fieldset class="border-t pt-6 mt-8">
+                <legend class="text-lg font-semibold text-gray-700 px-2">3. Tambahan Pengerjaan (optional)</legend>
+                <div id="jasa-rows-container" class="space-y-4 mt-4">
+                    </div>
+                <div class="mt-4">
+                    <button type="button" id="add-jasa-row-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600"> + Tambah Pengerjaan </button>
+                </div>
+            </fieldset>
+
+            <div class="mt-8 pt-6 border-t">
+                <div class="flex justify-end items-center"><span class="text-lg mr-4">Total Estimasi Harga:</span><span id="total_keseluruhan" class="text-2xl font-bold">Rp 0</span></div>
+            </div>
+            <div class="mt-8"><button type="submit" class="w-full bg-gray-800 text-white font-bold py-3 px-6 rounded"> Buat Surat Penawaran </button></div>
+        </form>
+
+        <template id="product-row-template">
+            <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
+                <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Nama Produk</label><select class="product-select mt-1 block w-full rounded-md">
+                        <option value="">-- Pilih --</option>@foreach ($products as $product)<option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>@endforeach
+                    </select></div>
+                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area</label><input type="text" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md"></div>
+                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Volume M²</label><input type="number" step="0.01" value="1" class="volume-input mt-1 block w-full rounded-md"></div>
+                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Harga/M²</label><input type="number" class="harga-input mt-1 block w-full bg-gray-100" readonly></div>
+                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Total</label><input type="text" class="total-output mt-1 block w-full bg-gray-100" readonly></div>
+                <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
+            </div>
+        </template>
+        <template id="jasa-row-template">
+            <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
+                <div class="md:col-span-8"><label class="block text-sm font-medium text-gray-600">Nama Pengerjaan</label><input type="text" class="mt-1 block w-full rounded-md"></div>
+                <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Harga (Rp)</label><input type="number" class="jasa-harga-input mt-1 block w-full rounded-md"></div>
+                <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-jasa-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
+            </div>
+        </template>
     </div>
 </div>
 
@@ -90,6 +103,44 @@
                 direction: "asc"
             }
         };
+
+        // ======================================================
+        //     KODE BARU DIMULAI (LOGIKA "PRODUK ALL")
+        // ======================================================
+        const produkAllSelect = document.getElementById('produk-all-select');
+        // Inisialisasi Tom Select pada dropdown master
+        const produkAllTomSelect = new TomSelect(produkAllSelect, tomSelectSettings);
+
+        produkAllSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            if (!selectedValue) return; // Jangan lakukan apa-apa jika pilihannya kosong
+
+            const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
+            const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
+
+            // Loop ke semua baris produk yang ada
+            document.querySelectorAll('.product-row').forEach(row => {
+                const rowSelect = row.querySelector('.product-select');
+                const rowHargaInput = row.querySelector('.harga-input');
+
+                // Set harga di input
+                rowHargaInput.value = masterHarga;
+
+                // Set nilai di dropdown Tom Select baris tersebut
+                if (rowSelect.tomselect) {
+                    // Set nilai secara "silent" agar tidak memicu event 'change'
+                    rowSelect.tomselect.setValue(selectedValue, 'silent');
+                } else {
+                    rowSelect.value = selectedValue; // Fallback
+                }
+            });
+
+            // Hitung ulang total di akhir
+            calculateAllTotals();
+        });
+        // ======================================================
+        //               KODE BARU SELESAI
+        // ======================================================
 
         // --- Product Logic ---
         const productContainer = document.getElementById('product-rows-container');
@@ -173,7 +224,6 @@
         }
 
         // --- Initial Setup ---
-        // Tambahkan satu baris produk dan jasa secara default saat halaman dimuat
         addProductRowBtn.click();
         addJasaRowBtn.click();
 

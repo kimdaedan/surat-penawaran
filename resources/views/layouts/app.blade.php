@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +15,17 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 
     <style>
-        body { font-family: 'Montserrat', sans-serif; }
-        .ts-control { border-radius: 0.375rem; border-color: #d1d5db; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .ts-control {
+            border-radius: 0.375rem;
+            border-color: #d1d5db;
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 flex flex-col min-h-screen">
 
     <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -26,7 +34,8 @@
                 <a href="{{ url('/') }}" class="font-bold text-lg tracking-wider">PENAWARAN.APP</a>
                 <ul class="hidden lg:flex items-center gap-6">
                     <li><a href="{{ url('/') }}" class="text-xs uppercase font-medium text-gray-500 hover:text-black">Dashboard</a></li>
-                    <li><a href="{{ route('histori.index') }}" class="text-xs uppercase font-medium text-gray-500 hover:text-black">Arsip</a></li>
+                    <li><a href="{{ route('histori.index') }}" class="text-xs uppercase font-medium text-gray-500 hover:text-black">Histori Penawaran</a></li>
+                    <li><a href="{{ route('invoice.histori') }}" class="text-xs uppercase font-medium text-gray-500 hover:text-black">Histori Invoice</a></li>
                 </ul>
             </div>
             <div class="flex items-center gap-6">
@@ -54,4 +63,5 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
+
 </html>

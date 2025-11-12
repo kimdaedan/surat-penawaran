@@ -62,3 +62,20 @@ Route::put('/penawaran/{offer}', [OfferController::class, 'update'])->name('hist
 
 // Rute untuk menampilkan form pembuatan invoice
 Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');
+
+// Rute untuk menampilkan form invoice yang mengambil data dari Penawaran
+Route::get('/invoice/create-from-offer/{offer}', [InvoiceController::class, 'createFromOffer'])->name('invoice.create_from_offer');
+
+// Rute untuk menampilkan halaman histori invoice
+Route::get('/invoice/histori', [InvoiceController::class, 'index'])->name('invoice.histori');
+
+// Rute untuk menyimpan data invoice yang dibuat dari penawaran
+Route::post('/invoice/store-from-offer', [InvoiceController::class, 'storeFromOffer'])->name('invoice.store_from_offer');
+
+//     TAMBAHKAN RUTE BARU DI SINI
+// ==================================
+Route::delete('/invoice/{invoice}', [InvoiceController::class, 'destroy'])->name('invoice.destroy');
+
+Route::get('invoice/show/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
+Route::get('invoice/edit/{invoice}', [InvoiceController::class, 'edit'])->name('invoice.edit');
+Route::put('invoice/update/{invoice}', [InvoiceController::class, 'update'])->name('invoice.update');

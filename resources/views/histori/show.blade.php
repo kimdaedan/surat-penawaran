@@ -66,21 +66,21 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-800 text-white">
                         <tr>
-                            <th class="p-3 font-semibold uppercase">Deskripsi Pekerjaan</th>
+                            <th class="p-3 font-semibold uppercase">Area Pekerjaan</th>
                             <th class="p-3 font-semibold uppercase">Produk</th>
-                            <th class="p-3 font-semibold uppercase text-center">Volume</th>
+                            <th class="p-3 font-semibold uppercase text-right">Volume</th>
                             <th class="p-3 font-semibold uppercase text-right">Harga Satuan</th>
                             <th class="p-3 font-semibold uppercase text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($offer->items as $item)
-                        <tr class="border-b border-gray-200">
-                            <td class="p-3 font-medium text-gray-800">{{ $item->area_dinding }}</td>
-                            <td class="p-3 text-gray-600 text-xs">{{ $item->nama_produk }}</td>
-                            <td class="p-3 text-center">{{ $item->volume }} M²</td>
-                            <td class="p-3 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
-                            <td class="p-3 text-right">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
+                        <tr class="border-b border-gray-500">
+                            <td class="p-3 text-sm text-gray-700">{{ $item->area_dinding }}</td>
+                            <td class="p-3 text-sm text-gray-700">{{ $item->nama_produk }}</td>
+                            <td class="p-3 text-sm text-gray-700 text-right">{{ $item->volume }} M²</td>
+                            <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
+                            <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
                         </tr>
                         @endforeach
 

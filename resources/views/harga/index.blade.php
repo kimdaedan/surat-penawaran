@@ -18,13 +18,13 @@
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Nama Produk / Jasa
+                            Merk Produk
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Nama Produk
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Hasil Akhir
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Deskripsi / Performa
                         </th>
                         <th scope="col" class="px-6 py-3 text-right">
                             Harga
@@ -41,10 +41,10 @@
                             {{ $product->nama_produk }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ $product->hasil_akhir }}
+                            {{ $product->performa }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ $product->performa }}
+                            {{ $product->hasil_akhir }}
                         </td>
                         <td class="px-6 py-4 font-semibold text-right">
                             Rp {{ number_format($product->harga, 0, ',', '.') }} /m²

@@ -25,12 +25,35 @@
 
             <fieldset class="border-t pt-6 mt-8">
                 <legend class="text-lg font-semibold text-gray-700 px-2">2. Detail Produk</legend>
+
+                <!-- ====================================================== -->
+                <!-- 			BLOK "PRODUK ALL" DITAMBAHKAN DI SINI 		  -->
+                <!-- ====================================================== -->
+                <div class="mb-6 p-4 bg-gray-100 rounded-lg border mt-4">
+                    <label for="produk-all-select" class="block text-sm font-medium text-gray-700 font-semibold">
+                        Pilih Produk untuk Semua Baris (Produk All)
+                    </label>
+                    <select id="produk-all-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="">-- Pilih Produk --</option>
+                        {{-- Pastikan $all_products tersedia dari controller Anda --}}
+                        @foreach ($all_products as $product)
+                            <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Memilih produk di sini akan mengubah semua "Nama Produk" dan "Harga/M²" di baris bawah.
+                    </p>
+                </div>
+                <!-- ====================================================== -->
+                <!-- 				 AKHIR BLOK "PRODUK ALL" 				  -->
+                <!-- ====================================================== -->
+
                 <div id="product-rows-container" class="space-y-4 mt-4">
                     {{-- Loop untuk menampilkan item produk yang sudah ada --}}
                     @forelse($offer->items as $index => $item)
                     <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
                         <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Nama Produk</label><select name="produk[{{$index}}][nama]" class="product-select mt-1 block w-full rounded-md"><option value="">-- Pilih --</option>@foreach ($all_products as $product)<option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}" @if($product->nama_produk == $item->nama_produk) selected @endif>{{ $product->nama_produk }}</option>@endforeach</select></div>
-                        <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area Dinding</label><input type="text" name="produk[{{$index}}][area]" value="{{ $item->area_dinding }}" class="mt-1 block w-full rounded-md"></div>
+                        <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area</label><input type="text" name="produk[{{$index}}][area]" value="{{ $item->area_dinding }}" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Volume M²</label><input type="number" step="0.01" name="produk[{{$index}}][volume]" value="{{ $item->volume }}" class="volume-input mt-1 block w-full rounded-md"></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Harga/M²</label><input type="number" name="produk[{{$index}}][harga]" value="{{ $item->harga_per_m2 }}" class="harga-input mt-1 block w-full bg-gray-100" readonly></div>
                         <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Total</label><input type="text" class="total-output mt-1 block w-full bg-gray-100" readonly></div>
@@ -66,7 +89,7 @@
         <template id="product-row-template">
             <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
                 <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Nama Produk</label><select class="product-select mt-1 block w-full rounded-md"><option value="">-- Pilih --</option>@foreach ($all_products as $product)<option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>@endforeach</select></div>
-                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area Dinding</label><input type="text" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md"></div>
+                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area</label><input type="text" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md"></div>
                 <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Volume M²</label><input type="number" step="0.01" value="1" class="volume-input mt-1 block w-full rounded-md"></div>
                 <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Harga/M²</label><input type="number" class="harga-input mt-1 block w-full bg-gray-100" readonly></div>
                 <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Total</label><input type="text" class="total-output mt-1 block w-full bg-gray-100" readonly></div>
@@ -94,6 +117,44 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Logika Tom Select (Dropdown Searchable) ---
     const tomSelectSettings = { create: false, sortField: { field: "text", direction: "asc" } };
 
+    // ======================================================
+    // 		  LOGIKA "PRODUK ALL" DITAMBAHKAN DI SINI (JS)
+    // ======================================================
+    const produkAllSelect = document.getElementById('produk-all-select');
+    // Inisialisasi Tom Select pada dropdown master
+    const produkAllTomSelect = new TomSelect(produkAllSelect, tomSelectSettings);
+
+    produkAllSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+        if (!selectedValue) return; // Jangan lakukan apa-apa jika pilihannya kosong
+
+        const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
+        const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
+
+        // Loop ke semua baris produk yang ada
+        document.querySelectorAll('.product-row').forEach(row => {
+            const rowSelect = row.querySelector('.product-select');
+            const rowHargaInput = row.querySelector('.harga-input');
+
+            // Set harga di input
+            rowHargaInput.value = masterHarga;
+
+            // Set nilai di dropdown Tom Select baris tersebut
+            if (rowSelect.tomselect) {
+                // Set nilai secara "silent" agar tidak memicu event 'change'
+                rowSelect.tomselect.setValue(selectedValue, 'silent');
+            } else {
+                rowSelect.value = selectedValue; // Fallback
+            }
+        });
+
+        // Hitung ulang total di akhir
+        calculateAllTotals();
+    });
+    // ======================================================
+    // 		        AKHIR LOGIKA "PRODUK ALL"
+    // ======================================================
+
     // --- Logika untuk Baris Produk ---
     const productContainer = document.getElementById('product-rows-container');
     const addProductRowBtn = document.getElementById('add-product-row-btn');
@@ -102,7 +163,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const productSelect = row.querySelector('.product-select');
         const hargaInput = row.querySelector('.harga-input');
         const volumeInput = row.querySelector('.volume-input');
-        new TomSelect(productSelect, tomSelectSettings);
+
+        // Hanya inisialisasi TomSelect jika belum ada
+        if (!productSelect.tomselect) {
+            new TomSelect(productSelect, tomSelectSettings);
+        }
+
         productSelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             hargaInput.value = selectedOption ? selectedOption.getAttribute('data-harga') : '';
@@ -118,7 +184,9 @@ document.addEventListener('DOMContentLoaded', function () {
     addProductRowBtn.addEventListener('click', () => {
         const newRow = productTemplate.cloneNode(true);
         newRow.querySelector('.product-select').name = `produk[${productRowIndex}][nama]`;
+        // Ganti placeholder "Dinding Luar" dengan "Area" agar konsisten
         newRow.querySelector('input[placeholder="Dinding Luar"]').name = `produk[${productRowIndex}][area]`;
+        newRow.querySelector('input[placeholder="Dinding Luar"]').placeholder = `Area`;
         newRow.querySelector('.volume-input').name = `produk[${productRowIndex}][volume]`;
         newRow.querySelector('.harga-input').name = `produk[${productRowIndex}][harga]`;
         productContainer.appendChild(newRow);
@@ -161,9 +229,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Inisialisasi Saat Halaman Dimuat ---
+    // Pastikan event listener ditambahkan ke baris yang sudah ada
     document.querySelectorAll('.product-row').forEach(row => addProductEventListeners(row));
     document.querySelectorAll('.jasa-row').forEach(row => addJasaEventListeners(row));
-    calculateAllTotals();
+    calculateAllTotals(); // Hitung total awal saat halaman dimuat
+
+    // Anti double-submit
+    const offerForm = document.getElementById('offer-form');
+    if (offerForm) {
+        offerForm.addEventListener('submit', function() {
+            const submitButton = offerForm.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Menyimpan...';
+            }
+        });
+    }
 });
 </script>
 @endsection

@@ -6,19 +6,19 @@
 
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">
-                Histori Penawaran
+                Histori Invoice
             </h1>
-            <a href="{{ route('penawaran.create_combined') }}" class="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
-                + Buat Penawaran Baru
+            <a href="{{ route('invoice.create') }}" class="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
+                + Buat Invoice Baru
             </a>
         </div>
 
         <!-- Form Pencarian -->
-        <form action="{{ route('histori.index') }}" method="GET" class="mb-4">
+        <form action="{{ route('invoice.histori') }}" method="GET" class="mb-4">
             <div class="flex">
                 <input type="text"
                        name="search"
-                       placeholder="Cari berdasarkan nama klien..."
+                       placeholder="Cari berdasarkan nama klien atau No. Invoice..."
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800"
                        value="{{ $search ?? '' }}">
                 <button type="submit" class="ml-2 bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
@@ -40,24 +40,21 @@
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
                         <th scope="col" class="px-6 py-3 rounded-tl-lg">Tanggal</th>
+                        <th scope="col" class="px-6 py-3">No. Invoice</th>
                         <th scope="col" class="px-6 py-3">Nama Klien</th>
-                        <th scope="col" class="px-6 py-3">Detail Penawaran</th>
-                        <th scope="col" class="px-6 py-3 text-right">Total Harga</th>
+                        <th scope="col" class="px-6 py-3 text-right">Total Tagihan</th>
                         <th scope="col" class="px-6 py-3 text-center rounded-tr-lg">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($offers as $offer)
+                    @forelse ($invoices as $invoice)
                     <tr class="bg-white hover:bg-gray-50 @if(!$loop->last) border-b @endif">
-
-                        <td class="px-6 py-4 @if($loop->last) rounded-bl-lg @endif">{{ $offer->created_at->format('d M Y') }}</td>
-
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ $offer->nama_klien }}</th>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $offer->client_details }}</td>
-                        <td class="px-6 py-4 text-right whitespace-nowrap">Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}</td>
-
+                        <td class="px-6 py-4 @if($loop->last) rounded-bl-lg @endif">{{ $invoice->created_at->format('d M Y') }}</td>
+                        <td class="px-6 py-4 font-medium">{{ $invoice->no_invoice }}</td>
+                        <td class="px-6 py-4">{{ $invoice->nama_klien }}</td>
+                        <td class="px-6 py-4 text-right whitespace-nowrap">Rp {{ number_format($invoice->grand_total, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 text-center @if($loop->last) rounded-br-lg @endif">
-                            <!-- Komponen Dropdown Alpine.js -->
+                            <!-- Dropdown Actions -->
                             <div x-data="{ open: false }" class="relative inline-block text-left">
                                 <button @click="open = !open" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
                                     Actions
@@ -65,23 +62,25 @@
                                 </button>
                                 <div x-show="open" @click.away="open = false" x-transition class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                                     <div class="py-1" role="menu">
-                                        <a href="{{ route('histori.show', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat</a>
-                                        <a href="{{ route('histori.edit', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
+
+                                        <!-- === LINK DIPERBARUI === -->
+                                        <a href="{{ route('invoice.show', $invoice->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat Invoice</a>
+
+                                        <!-- === LINK EDIT SAYA TAMBAHKAN JUGA === -->
+                                        <a href="{{ route('invoice.edit', $invoice->id) }}"class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
 
                                         <!-- ================================== -->
-                                        <!--       PERBARUI TOMBOL INI        -->
+                                        <!--    TOMBOL DELETE BARU DI SINI    -->
                                         <!-- ================================== -->
-                                        <a href="{{ route('invoice.create_from_offer', $offer->id) }}" class="text-green-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
-                                            Buat Invoice
-                                        </a>
-
-                                        <form action="{{ route('histori.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penawaran ini?');">
+                                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus invoice ini?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="w-full text-left text-red-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
                                                 Delete
                                             </button>
                                         </form>
+                                        <!-- ================================== -->
+
                                     </div>
                                 </div>
                             </div>
@@ -89,17 +88,29 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 rounded-b-lg">Belum ada histori penawaran.</td>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 rounded-b-lg">
+                            Belum ada data invoice.
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="mt-6">
-            {{ $offers->appends(['search' => $search])->links() }}
+        <!-- Pagination -->
+         <div class="mt-6">
+            {{ $invoices->appends(['search' => $search ?? ''])->links() }}
         </div>
 
     </div>
 </div>
+
+<!-- Script untuk print -->
+@push('scripts')
+<script>
+    function printInvoice() {
+        window.print();
+    }
+</script>
+@endpush
 @endsection

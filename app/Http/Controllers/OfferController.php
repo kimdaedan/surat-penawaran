@@ -12,13 +12,27 @@ class OfferController extends Controller
     /**
      * Menampilkan halaman histori dari semua penawaran yang telah dibuat.
      */
-    public function index()
+  public function index(Request $request)
     {
-        // 1. Ambil semua data dari tabel 'offers', urutkan dari yang terbaru
-        $offers = Offer::latest()->get();
+        // 1. Ambil kata kunci pencarian dari URL (jika ada)
+        $search = $request->input('search');
 
-        // 2. Kirim data tersebut ke view 'histori.index'
-        return view('histori.index', ['offers' => $offers]);
+        // 2. Mulai query ke database
+        $query = Offer::query();
+
+        // 3. Jika ada kata kunci pencarian, filter datanya
+        if ($search) {
+            $query->where('nama_klien', 'like', '%' . $search . '%');
+        }
+
+        // 4. Ambil data dengan pagination (15 data per halaman), urutkan dari yang terbaru
+        $offers = $query->latest()->paginate(15);
+
+        // 5. Kirim data ke view, beserta kata kunci pencariannya
+        return view('histori.index', [
+            'offers' => $offers,
+            'search' => $search // Ini agar kata kunci tetap ada di kotak search
+        ]);
     }
 
     /**

@@ -15,12 +15,12 @@
                     <input type="text" name="nama_produk" id="nama_produk" value="{{ $product->nama_produk }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
                 </div>
                 <div>
-                    <label for="hasil_akhir" class="block text-sm font-medium text-gray-700">Hasil Akhir</label>
-                    <input type="text" name="hasil_akhir" id="hasil_akhir" value="{{ $product->hasil_akhir }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
+                    <label for="performa" class="block text-sm font-medium text-gray-700">Nama Brand</label>
+                    <input type="text" name="performa" id="performa" value="{{ $product->performa }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
                 </div>
                 <div>
-                    <label for="performa" class="block text-sm font-medium text-gray-700">Performa / Fitur</label>
-                    <input type="text" name="performa" id="performa" value="{{ $product->performa }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
+                    <label for="hasil_akhir" class="block text-sm font-medium text-gray-700">Hasil Akhir</label>
+                    <input type="text" name="hasil_akhir" id="hasil_akhir" value="{{ $product->hasil_akhir }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
                 </div>
                 <div>
                     <label for="harga" class="block text-sm font-medium text-gray-700">Harga (Rp)</label>

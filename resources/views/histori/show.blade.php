@@ -3,15 +3,23 @@
 @section('content')
 <div class="container mx-auto my-12 px-4">
 
-    <div class="max-w-4xl mx-auto mb-4 flex justify-end gap-2 print:hidden">
-        <a href="{{ route('histori.index') }}" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded hover:bg-gray-300">
+    <!-- Tombol Aksi -->
+    <div class="max-w-4xl mx-auto mb-4 flex justify-between gap-2 print:hidden">
+        <a href="{{ route('histori.index') }}" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded hover:bg-gray-300 transition-colors">
             &larr; Kembali
         </a>
-        <button onclick="window.print()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
-            🖨️ Print / Simpan PDF
-        </button>
+        <div class="flex gap-2">
+            <button onclick="window.print()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+                🖨️ Print
+            </button>
+            {{-- Tombol Download PDF sudah dihapus --}}
+            <a href="{{ route('invoice.create_from_offer', $offer->id) }}" class="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition-colors">
+                Buat Invoice &rarr;
+            </a>
+        </div>
     </div>
 
+    <!-- Konten Surat -->
     <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 shadow-lg rounded-lg" id="surat-penawaran">
 
         <header class="border-b-2 border-gray-300 pb-4">
@@ -40,11 +48,9 @@
         <section class="mt-8">
             <p class="text-gray-600">Kepada Yth,</p>
             <h3 class="text-md font-bold text-gray-800">{{ $offer->nama_klien }}</h3>
-
             @if($offer->client_details)
             <p class="text-sm text-gray-700">{{ $offer->client_details }}</p>
             @endif
-
             <p class="text-gray-700 mt-2">Dengan Hormat,</p>
         </section>
 
@@ -61,6 +67,7 @@
             <p>Dengan ini kami sampaikan penawaran Upah Jasa pengecatan :</p>
         </section>
 
+        <!-- Tabel Item -->
         <section class="mt-8">
             <div class="w-full overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -95,17 +102,22 @@
                         </tr>
                         @endforeach
                     </tbody>
-                    <tfoot>
-                        <tr class="font-bold text-gray-800">
-                            <td colspan="4" class="p-3 text-right text-xl uppercase">Grand Total</td>
-                            <td class="p-3 text-right text-xl bg-gray-100 whitespace-nowrap">
-                                Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
         </section>
+
+        <!-- GRAND TOTAL DIPINDAH KE LUAR TABEL -->
+        <section class="mt-4 flex justify-end" id="grand-total-block">
+            <div class="w-full md:w-6/12">
+                <div class="flex justify-between items-center bg-gray-800 text-white p-4 rounded-lg">
+                    <span class="text-xl font-bold uppercase">Grand Total</span>
+                    <span class="text-xl font-bold whitespace-nowrap">
+                        Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}
+                    </span>
+                </div>
+            </div>
+        </section>
+
 
         <section class="mt-10 text-sm text-gray-700 leading-relaxed">
             <h4 class="font-semibold text-gray-800">Teknis pengerjaan:</h4>
@@ -138,6 +150,7 @@
     </div>
 </div>
 
+<!-- CSS DAN SCRIPT -->
 <style>
     @media print {
         .print\:hidden {
@@ -163,6 +176,21 @@
             margin: 0;
             padding: 0.5in;
         }
+
+        #grand-total-block {
+            page-break-inside: avoid !important;
+        }
+
+        /* PERBAIKAN WARNA PRINT ADA DI SINI */
+        #grand-total-block div,
+        #grand-total-block span {
+            color: #000 !important;
+            background-color: transparent !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
     }
 </style>
+
+{{-- SCRIPT UNTUK html2pdf.js SUDAH DIHAPUS --}}
 @endsection

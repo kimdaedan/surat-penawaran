@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto my-12 px-4">
+{{--
+  Saya menambahkan 'flex-grow' di sini.
+  Ini akan "mendorong" div ini agar mengisi ruang kosong,
+  yang akan memaksa footer ke bagian bawah halaman.
+  Ini mengasumsikan layout 'app.blade.php' Anda menggunakan flex-col.
+--}}
+<div class="container mx-auto my-12 px-4 flex-grow">
     <div class="max-w-7xl mx-auto">
 
         <div class="flex justify-between items-center mb-6">
@@ -18,7 +24,7 @@
             <div class="flex">
                 <input type="text"
                        name="search"
-                       placeholder="Cari berdasarkan nama klien..."
+                       placeholder="Cari berdasarkan nama klien atau No. Surat (ID)..."
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800"
                        value="{{ $search ?? '' }}">
                 <button type="submit" class="ml-2 bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
@@ -40,6 +46,8 @@
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
                         <th scope="col" class="px-6 py-3 rounded-tl-lg">Tanggal</th>
+                        <!-- === KOLOM BARU === -->
+                        <th scope="col" class="px-6 py-3">No. Surat</th>
                         <th scope="col" class="px-6 py-3">Nama Klien</th>
                         <th scope="col" class="px-6 py-3">Detail Penawaran</th>
                         <th scope="col" class="px-6 py-3 text-right">Total Harga</th>
@@ -51,6 +59,11 @@
                     <tr class="bg-white hover:bg-gray-50 @if(!$loop->last) border-b @endif">
 
                         <td class="px-6 py-4 @if($loop->last) rounded-bl-lg @endif">{{ $offer->created_at->format('d M Y') }}</td>
+
+                        <!-- === DATA BARU === -->
+                        <td class="px-6 py-4 font-medium">
+                            SP-{{ $offer->created_at->format('Y') }}/{{ str_pad($offer->id, 4, '0', STR_PAD_LEFT) }}
+                        </td>
 
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ $offer->nama_klien }}</th>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $offer->client_details }}</td>
@@ -67,14 +80,9 @@
                                     <div class="py-1" role="menu">
                                         <a href="{{ route('histori.show', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat</a>
                                         <a href="{{ route('histori.edit', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
-
-                                        <!-- ================================== -->
-                                        <!--       PERBARUI TOMBOL INI        -->
-                                        <!-- ================================== -->
                                         <a href="{{ route('invoice.create_from_offer', $offer->id) }}" class="text-green-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
                                             Buat Invoice
                                         </a>
-
                                         <form action="{{ route('histori.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penawaran ini?');">
                                             @csrf
                                             @method('DELETE')
@@ -83,14 +91,16 @@
                                             </button>
                                         </form>
                                     </div>
-                                </div>
+                                 </div>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 rounded-b-lg">Belum ada histori penawaran.</td>
+                        <!-- === COLSPAN DIPERBARUI === -->
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500 rounded-b-lg">Belum ada histori penawaran.</td>
                     </tr>
+                    {{-- === ERROR KETIK DIPERBAIKI === --}}
                     @endforelse
                 </tbody>
             </table>
@@ -102,4 +112,5 @@
 
     </div>
 </div>
+{{-- === @endforelse TAMBAHAN DIHAPUS DARI SINI === --}}
 @endsection

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-
 use App\Models\Offer; // <-- Import model Offer
 use Illuminate\Http\Request;
 
@@ -12,7 +11,7 @@ class OfferController extends Controller
     /**
      * Menampilkan halaman histori dari semua penawaran yang telah dibuat.
      */
-  public function index(Request $request)
+ public function index(Request $request)
     {
         // 1. Ambil kata kunci pencarian dari URL (jika ada)
         $search = $request->input('search');
@@ -22,16 +21,22 @@ class OfferController extends Controller
 
         // 3. Jika ada kata kunci pencarian, filter datanya
         if ($search) {
-            $query->where('nama_klien', 'like', '%' . $search . '%');
+            // === LOGIKA PENCARIAN DIPERBARUI ===
+            // (Mencari berdasarkan nama Klien ATAU ID)
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_klien', 'like', '%' . $search . '%')
+                  ->orWhere('id', $search); // <-- Mencari berdasarkan ID untuk No. Surat
+            });
         }
 
         // 4. Ambil data dengan pagination (15 data per halaman), urutkan dari yang terbaru
         $offers = $query->latest()->paginate(15);
 
         // 5. Kirim data ke view, beserta kata kunci pencariannya
+        // === PATH VIEW DIPERBAIKI (sesuai error Anda) ===
         return view('histori.index', [
             'offers' => $offers,
-            'search' => $search // Ini agar kata kunci tetap ada di kotak search
+            'search' => $search
         ]);
     }
 
@@ -40,10 +45,10 @@ class OfferController extends Controller
      */
     public function show(Offer $offer)
     {
-        // Baris ini sangat penting.
-        // Ia memberitahu Laravel untuk memuat semua 'items' yang terhubung dengan '$offer' ini.
-        $offer->load('items');
+        // Memuat semua relasi
+        $offer->load(['items', 'jasaItems']);
 
+        // === PATH VIEW DIPERBAIKI (sesuai error Anda) ===
         return view('histori.show', ['offer' => $offer]);
     }
 
@@ -57,11 +62,15 @@ class OfferController extends Controller
         return redirect()->route('histori.index')->with('success', 'Data penawaran berhasil dihapus!');
     }
 
+    /**
+     * Menampilkan form edit.
+     */
     public function edit(Offer $offer)
     {
         $offer->load(['items', 'jasaItems']); // Muat data relasi
         $all_products = Product::all(); // Ambil semua produk untuk dropdown
 
+        // === PATH VIEW DIPERBAIKI (sesuai error Anda) ===
         return view('histori.edit', [
             'offer' => $offer,
             'all_products' => $all_products
@@ -73,7 +82,17 @@ class OfferController extends Controller
      */
     public function update(Request $request, Offer $offer)
     {
-        $request->validate(['nama_klien' => 'required|string|max:255']);
+        // Validasi
+        $request->validate([
+            'nama_klien' => 'required|string|max:255',
+            'client_details' => 'nullable|string', // <-- Menambahkan validasi
+            'produk.*.nama' => 'nullable|string',
+            'produk.*.area' => 'nullable|string',
+            'produk.*.volume' => 'nullable|numeric',
+            'produk.*.harga' => 'nullable|numeric',
+            'jasa.*.nama' => 'nullable|string',
+            'jasa.*.harga' => 'nullable|numeric',
+        ]);
 
         // --- Hitung ulang total ---
         $totalProduk = 0;
@@ -93,6 +112,7 @@ class OfferController extends Controller
         // --- Update data utama ---
         $offer->update([
             'nama_klien' => $request->nama_klien,
+            'client_details' => $request->client_details, // <-- Menambahkan update
             'total_keseluruhan' => $totalProduk + $totalJasa,
         ]);
 

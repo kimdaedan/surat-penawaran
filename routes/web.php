@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\InvoiceController;
 
+
 // Rute untuk menampilkan Dashboard
 Route::get('/', function () {
     // Di masa depan, Anda akan mengambil data penawaran dari database di sini

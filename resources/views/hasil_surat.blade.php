@@ -74,6 +74,8 @@
                     <thead class="bg-gray-800 text-white">
                         <tr>
                             <th class="p-3 font-semibold uppercase">Area Pekerjaan</th>
+                            {{-- KOLOM BARU --}}
+                            <th class="p-3 font-semibold uppercase">Nama Brand</th>
                             <th class="p-3 font-semibold uppercase">Produk</th>
                             <th class="p-3 font-semibold uppercase text-right">Volume</th>
                             <th class="p-3 font-semibold uppercase text-right">Harga Satuan</th>
@@ -84,6 +86,16 @@
                         @foreach($offer->items as $item)
                         <tr class="border-b border-gray-500">
                             <td class="p-3 text-sm text-gray-700">{{ $item->area_dinding }}</td>
+
+                            {{-- DATA KOLOM BARU --}}
+                            <td class="p-3 text-sm text-gray-700">
+                                @php
+                                    // Mencari data produk asli untuk mendapatkan brand (performa)
+                                    $productData = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
+                                @endphp
+                                {{ $productData->performa ?? '-' }}
+                            </td>
+
                             <td class="p-3 text-sm text-gray-700">{{ $item->nama_produk }}</td>
                             <td class="p-3 text-sm text-gray-700 text-right">{{ $item->volume }} M²</td>
                             <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
@@ -93,7 +105,8 @@
 
                         @foreach($offer->jasaItems as $jasa)
                         <tr class="border-b border-gray-200">
-                            <td class="p-3 font-medium text-gray-800" colspan="2">
+                            {{-- COLSPAN DIUBAH DARI 2 MENJADI 3 UNTUK MENYESUAIKAN KOLOM BARU --}}
+                            <td class="p-3 font-medium text-gray-800" colspan="3">
                                 {{ $jasa->nama_jasa }}
                             </td>
                             <td class="p-3 text-center">1 Lot</td>

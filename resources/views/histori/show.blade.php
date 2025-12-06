@@ -73,32 +73,43 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-800 text-white">
                         <tr>
-                            <th class="p-3 font-semibold uppercase">Area Pekerjaan</th>
-                            <th class="p-3 font-semibold uppercase">Produk</th>
-                            <th class="p-3 font-semibold uppercase text-right">Volume</th>
-                            <th class="p-3 font-semibold uppercase text-right">Harga Satuan</th>
-                            <th class="p-3 font-semibold uppercase text-right">Total</th>
+                            {{-- Header menggunakan p-2 agar tetap jelas, tapi sedikit lebih kecil --}}
+                            <th class="p-2 font-semibold uppercase text-sm">Area Pekerjaan</th>
+                            <th class="p-2 font-semibold uppercase text-sm">Nama Brand</th>
+                            <th class="p-2 font-semibold uppercase text-sm">Produk</th>
+                            <th class="p-2 font-semibold uppercase text-sm text-right">Volume</th>
+                            <th class="p-2 font-semibold uppercase text-sm text-right">Harga Satuan</th>
+                            <th class="p-2 font-semibold uppercase text-sm text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($offer->items as $item)
                         <tr class="border-b border-gray-500">
-                            <td class="p-3 text-sm text-gray-700">{{ $item->area_dinding }}</td>
-                            <td class="p-3 text-sm text-gray-700">{{ $item->nama_produk }}</td>
-                            <td class="p-3 text-sm text-gray-700 text-right">{{ $item->volume }} M²</td>
-                            <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
-                            <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
+                            {{-- PADDING DIPERKECIL: Menggunakan p-1 untuk membuat baris lebih sempit --}}
+                            <td class="p-1 text-sm text-gray-700">{{ $item->area_dinding }}</td>
+
+                            <td class="p-1 text-sm text-gray-700">
+                                @php
+                                    $productData = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
+                                @endphp
+                                {{ $productData->performa ?? '-' }}
+                            </td>
+
+                            <td class="p-1 text-sm text-gray-700">{{ $item->nama_produk }}</td>
+                            <td class="p-1 text-sm text-gray-700 text-right">{{ $item->volume }} M²</td>
+                            <td class="p-1 text-sm text-gray-700 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
+                            <td class="p-1 text-sm text-gray-700 text-right">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
                         </tr>
                         @endforeach
 
                         @foreach($offer->jasaItems as $jasa)
                         <tr class="border-b border-gray-200">
-                            <td class="p-3 font-medium text-gray-800" colspan="2">
+                            <td class="p-1 font-medium text-gray-800" colspan="3">
                                 {{ $jasa->nama_jasa }}
                             </td>
-                            <td class="p-3 text-center">1 Lot</td>
-                            <td class="p-3 text-right">Rp {{ number_format($jasa->harga_jasa, 0, ',', '.') }}</td>
-                            <td class="p-3 text-right">Rp {{ number_format($jasa->harga_jasa, 0, ',', '.') }}</td>
+                            <td class="p-1 text-center">1 Lot</td>
+                            <td class="p-1 text-right">Rp {{ number_format($jasa->harga_jasa, 0, ',', '.') }}</td>
+                            <td class="p-1 text-right">Rp {{ number_format($jasa->harga_jasa, 0, ',', '.') }}</td>
                         </tr>
                         @endforeach
                     </tbody>

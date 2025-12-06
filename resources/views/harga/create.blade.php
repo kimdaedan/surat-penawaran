@@ -15,6 +15,10 @@
                     <input type="text" name="nama_produk" id="nama_produk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
                 </div>
                 <div>
+                    <label for="performa" class="block text-sm font-medium text-gray-700">Nama Brand</label>
+                    <input type="text" name="performa" id="performa" placeholder="Contoh: Mudah di Lap, 15 Tahun" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
+                </div>
+                <div>
                     <label for="hasil_akhir" class="block text-sm font-medium text-gray-700">Hasil Akhir</label>
                     <select name="hasil_akhir" id="hasil_akhir" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>\
                         <option value=""></option>
@@ -22,10 +26,6 @@
                         <option value="Matt/Doff">Matt/Doff</option>
                         <option value="SemiGloss/SemiKilap">SemiGloss/SemiKilap</option>
                     </select>
-                </div>
-                <div>
-                    <label for="performa" class="block text-sm font-medium text-gray-700">Deskripsi / Peforma</label>
-                    <input type="text" name="performa" id="performa" placeholder="Contoh: Mudah di Lap, 15 Tahun" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800" required>
                 </div>
                 <div>
                     <label for="harga" class="block text-sm font-medium text-gray-700">Harga (Rp)</label>

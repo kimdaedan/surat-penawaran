@@ -12,7 +12,6 @@
             <button onclick="window.print()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition-colors">
                 🖨️ Print
             </button>
-            {{-- Tombol Download PDF sudah dihapus --}}
             <a href="{{ route('invoice.create_from_offer', $offer->id) }}" class="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition-colors">
                 Buat Invoice &rarr;
             </a>
@@ -73,43 +72,72 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-800 text-white">
                         <tr>
-                            {{-- Header menggunakan p-2 agar tetap jelas, tapi sedikit lebih kecil --}}
-                            <th class="p-2 font-semibold uppercase text-sm">Area Pekerjaan</th>
-                            <th class="p-2 font-semibold uppercase text-sm">Nama Brand</th>
-                            <th class="p-2 font-semibold uppercase text-sm">Produk</th>
-                            <th class="p-2 font-semibold uppercase text-sm text-right">Volume</th>
-                            <th class="p-2 font-semibold uppercase text-sm text-right">Harga Satuan</th>
-                            <th class="p-2 font-semibold uppercase text-sm text-right">Total</th>
+                            <th class="py-2 px-1 font-semibold uppercase text-xs w-[25%] align-middle">Area Pekerjaan</th>
+                            <th class="py-2 px-1 font-semibold uppercase text-xs w-[10%] align-middle">Nama Brand</th>
+                            <th class="py-2 px-1 font-semibold uppercase text-xs w-[15%] align-middle">Produk</th>
+                            <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[10%] align-middle">Volume/M²</th>
+                            <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Harga Satuan</th>
+                            <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($offer->items as $item)
                         <tr class="border-b border-gray-500">
-                            {{-- PADDING DIPERKECIL: Menggunakan p-1 untuk membuat baris lebih sempit --}}
-                            <td class="p-1 text-sm text-gray-700">{{ $item->area_dinding }}</td>
+                            {{--
+                                PERUBAHAN:
+                                - align-middle: Agar teks lurus vertikal di tengah.
+                                - justify-end + gap-2: Agar Rp menempel ke kanan dekat angka.
+                            --}}
+                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->area_dinding }}</td>
 
-                            <td class="p-1 text-sm text-gray-700">
+                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">
                                 @php
                                     $productData = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
                                 @endphp
                                 {{ $productData->performa ?? '-' }}
                             </td>
 
-                            <td class="p-1 text-sm text-gray-700">{{ $item->nama_produk }}</td>
-                            <td class="p-1 text-sm text-gray-700 text-right">{{ $item->volume }} M²</td>
-                            <td class="p-1 text-sm text-gray-700 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
-                            <td class="p-1 text-sm text-gray-700 text-right">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
+                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->nama_produk }}</td>
+                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
+
+                            {{-- HARGA SATUAN: justify-end agar rata kanan, gap-1 agar Rp dekat --}}
+                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
+                                <div class="flex justify-end gap-1 w-full">
+                                    <span>Rp</span>
+                                    <span>{{ number_format($item->harga_per_m2, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
+
+                            {{-- TOTAL: Sama, justify-end dan gap-1 --}}
+                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
+                                <div class="flex justify-end gap-1 w-full">
+                                    <span>Rp</span>
+                                    <span>{{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
                         </tr>
                         @endforeach
 
                         @foreach($offer->jasaItems as $jasa)
                         <tr class="border-b border-gray-200">
-                            <td class="p-1 font-medium text-gray-800" colspan="3">
+                            <td class="py-0.5 px-1 font-medium text-gray-800 text-xs leading-none align-middle" colspan="3">
                                 {{ $jasa->nama_jasa }}
                             </td>
-                            <td class="p-1 text-center">1 Lot</td>
-                            <td class="p-1 text-right">Rp {{ number_format($jasa->harga_jasa, 0, ',', '.') }}</td>
-                            <td class="p-1 text-right">Rp {{ number_format($jasa->harga_jasa, 0, ',', '.') }}</td>
+                            <td class="py-0.5 px-1 text-center text-xs leading-none align-middle">1 Lot</td>
+
+                            <td class="py-0.5 px-1 text-xs leading-none whitespace-nowrap align-middle">
+                                <div class="flex justify-end gap-1 w-full">
+                                    <span>Rp</span>
+                                    <span>{{ number_format($jasa->harga_jasa, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
+
+                            <td class="py-0.5 px-1 text-xs leading-none whitespace-nowrap font-medium align-middle">
+                                <div class="flex justify-end gap-1 w-full">
+                                    <span>Rp</span>
+                                    <span>{{ number_format($jasa->harga_jasa, 0, ',', '.') }}</span>
+                                </div>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -117,25 +145,26 @@
             </div>
         </section>
 
-        <!-- GRAND TOTAL DIPINDAH KE LUAR TABEL -->
+        <!-- GRAND TOTAL -->
         <section class="mt-4 flex justify-end" id="grand-total-block">
             <div class="w-full md:w-6/12">
-                <div class="flex justify-between items-center bg-gray-800 text-white p-4 rounded-lg">
-                    <span class="text-xl font-bold uppercase">Grand Total</span>
-                    <span class="text-xl font-bold whitespace-nowrap">
-                        Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}
+                <div class="flex justify-between items-center bg-gray-800 text-white p-3 rounded-lg">
+                    <span class="text-lg font-bold uppercase">Grand Total</span>
+                    {{-- Gap diperkecil (gap-2) agar Rp lebih dekat ke angka --}}
+                    <span class="text-xl font-bold whitespace-nowrap flex gap-2">
+                        <span>Rp</span>
+                        <span>{{ number_format($offer->total_keseluruhan, 0, ',', '.') }}</span>
                     </span>
                 </div>
             </div>
         </section>
 
 
-        <section class="mt-10 text-sm text-gray-700 leading-relaxed">
+        <section class="mt-8 text-sm text-gray-700 leading-relaxed">
             <h4 class="font-semibold text-gray-800">Teknis pengerjaan:</h4>
             <ul class="list-disc list-inside ml-4 mt-2">
                 <li>Semua peralatan pekerjaan akan disiapkan oleh pihak PT. Tasniem Gerai Inspirasi</li>
-                <li>Meliputi : Cat, rol, kuas, dempul, scaffolding dll.</li>
-                <li>Perbaikan sebagian dinding yang rusak.</li>
+                <li>Meliputi : Cat, rol, kuas, dempul, plamir, scaffolding dll.</li>
                 <li>Air dan Listrik serta gudang penyimpanan disediakan oleh pemberi kerja yaitu pihak {{ $offer->nama_klien }}</li>
                 <li>Pengukuran final luas area akan dihitung bersama dan dijadikan patokan untuk nilai pekerjaan yang disepakati nantinya.</li>
                 <li>Aplikasi Sealer ( cat dasar ) dilakukan pada area dinding yang akan di Cat.</li>
@@ -144,11 +173,11 @@
             </ul>
         </section>
 
-        <section class="mt-8 text-sm text-gray-700">
+        <section class="mt-6 text-sm text-gray-700">
             <p>Demikianlah surat penawaran ini kami sampaikan, semoga dapat disetujui.</p>
         </section>
 
-        <section class="mt-12 flex justify-end">
+        <section class="mt-10 flex justify-end">
             <div class="text-center">
                 <p>Hormat kami,</p>
                 <div class="h-28 w-48 relative">
@@ -165,18 +194,9 @@
 <!-- CSS DAN SCRIPT -->
 <style>
     @media print {
-        .print\:hidden {
-            display: none;
-        }
-
-        body * {
-            visibility: hidden;
-        }
-
-        #surat-penawaran,
-        #surat-penawaran * {
-            visibility: visible;
-        }
+        .print\:hidden { display: none; }
+        body * { visibility: hidden; }
+        #surat-penawaran, #surat-penawaran * { visibility: visible; }
 
         #surat-penawaran {
             position: absolute;
@@ -193,7 +213,7 @@
             page-break-inside: avoid !important;
         }
 
-        /* PERBAIKAN WARNA PRINT ADA DI SINI */
+        /* WARNA HITAM UNTUK PRINT */
         #grand-total-block div,
         #grand-total-block span {
             color: #000 !important;
@@ -203,6 +223,4 @@
         }
     }
 </style>
-
-{{-- SCRIPT UNTUK html2pdf.js SUDAH DIHAPUS --}}
 @endsection

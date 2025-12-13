@@ -23,6 +23,10 @@
                         <th scope="col" class="px-6 py-3">
                             Nama Brand
                         </th>
+                        {{-- KOLOM BARU KRITERIA --}}
+                        <th scope="col" class="px-6 py-3">
+                            Kriteria
+                        </th>
                         <th scope="col" class="px-6 py-3">
                             Hasil Akhir
                         </th>
@@ -43,6 +47,10 @@
                         <td class="px-6 py-4">
                             {{ $product->performa }}
                         </td>
+                        {{-- DATA KRITERIA --}}
+                        <td class="px-6 py-4">
+                            {{ $product->kriteria ?? '-' }}
+                        </td>
                         <td class="px-6 py-4">
                             {{ $product->hasil_akhir }}
                         </td>
@@ -62,7 +70,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                        {{-- Colspan disesuaikan menjadi 6 karena ada kolom baru --}}
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
                             Belum ada data.
                         </td>
                     </tr>

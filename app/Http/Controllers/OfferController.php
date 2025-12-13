@@ -11,7 +11,7 @@ class OfferController extends Controller
     /**
      * Menampilkan halaman histori dari semua penawaran yang telah dibuat.
      */
- public function index(Request $request)
+    public function index(Request $request)
     {
         // 1. Ambil kata kunci pencarian dari URL (jika ada)
         $search = $request->input('search');
@@ -21,7 +21,6 @@ class OfferController extends Controller
 
         // 3. Jika ada kata kunci pencarian, filter datanya
         if ($search) {
-            // === LOGIKA PENCARIAN DIPERBARUI ===
             // (Mencari berdasarkan nama Klien ATAU ID)
             $query->where(function ($q) use ($search) {
                 $q->where('nama_klien', 'like', '%' . $search . '%')
@@ -32,8 +31,7 @@ class OfferController extends Controller
         // 4. Ambil data dengan pagination (15 data per halaman), urutkan dari yang terbaru
         $offers = $query->latest()->paginate(15);
 
-        // 5. Kirim data ke view, beserta kata kunci pencariannya
-        // === PATH VIEW DIPERBAIKI (sesuai error Anda) ===
+        // 5. Kirim data ke view
         return view('histori.index', [
             'offers' => $offers,
             'search' => $search
@@ -48,7 +46,6 @@ class OfferController extends Controller
         // Memuat semua relasi
         $offer->load(['items', 'jasaItems']);
 
-        // === PATH VIEW DIPERBAIKI (sesuai error Anda) ===
         return view('histori.show', ['offer' => $offer]);
     }
 
@@ -70,7 +67,6 @@ class OfferController extends Controller
         $offer->load(['items', 'jasaItems']); // Muat data relasi
         $all_products = Product::all(); // Ambil semua produk untuk dropdown
 
-        // === PATH VIEW DIPERBAIKI (sesuai error Anda) ===
         return view('histori.edit', [
             'offer' => $offer,
             'all_products' => $all_products
@@ -85,7 +81,7 @@ class OfferController extends Controller
         // Validasi
         $request->validate([
             'nama_klien' => 'required|string|max:255',
-            'client_details' => 'nullable|string', // <-- Menambahkan validasi
+            'client_details' => 'nullable|string',
             'produk.*.nama' => 'nullable|string',
             'produk.*.area' => 'nullable|string',
             'produk.*.volume' => 'nullable|numeric',
@@ -112,8 +108,12 @@ class OfferController extends Controller
         // --- Update data utama ---
         $offer->update([
             'nama_klien' => $request->nama_klien,
-            'client_details' => $request->client_details, // <-- Menambahkan update
+            'client_details' => $request->client_details,
             'total_keseluruhan' => $totalProduk + $totalJasa,
+            // === UPDATE OPSI TAMBAHAN ===
+            // Menggunakan $request->has(...) untuk mengecek apakah checkbox dicentang
+            'pisah_kriteria_total' => $request->has('pisah_kriteria_total'),
+            'hilangkan_grand_total' => $request->has('hilangkan_grand_total'),
         ]);
 
         // --- Hapus item lama dan buat ulang (cara termudah) ---

@@ -26,16 +26,13 @@
             <fieldset class="border-t pt-6 mt-8">
                 <legend class="text-lg font-semibold text-gray-700 px-2">2. Detail Produk</legend>
 
-                <!-- ====================================================== -->
-                <!-- 			BLOK "PRODUK ALL" DITAMBAHKAN DI SINI 		  -->
-                <!-- ====================================================== -->
+                <!-- BLOK "PRODUK ALL" -->
                 <div class="mb-6 p-4 bg-gray-100 rounded-lg border mt-4">
                     <label for="produk-all-select" class="block text-sm font-medium text-gray-700 font-semibold">
                         Pilih Produk untuk Semua Baris (Produk All)
                     </label>
                     <select id="produk-all-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <option value="">-- Pilih Produk --</option>
-                        {{-- Pastikan $all_products tersedia dari controller Anda --}}
                         @foreach ($all_products as $product)
                             <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
                         @endforeach
@@ -44,9 +41,7 @@
                         Memilih produk di sini akan mengubah semua "Nama Produk" dan "Harga/M²" di baris bawah.
                     </p>
                 </div>
-                <!-- ====================================================== -->
-                <!-- 				 AKHIR BLOK "PRODUK ALL" 				  -->
-                <!-- ====================================================== -->
+                <!-- AKHIR BLOK "PRODUK ALL" -->
 
                 <div id="product-rows-container" class="space-y-4 mt-4">
                     {{-- Loop untuk menampilkan item produk yang sudah ada --}}
@@ -60,7 +55,6 @@
                         <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
                     </div>
                     @empty
-                    {{-- Kosongkan jika tidak ada item, biarkan tombol Tambah yang bekerja --}}
                     @endforelse
                 </div>
                 <div class="mt-4"><button type="button" id="add-product-row-btn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded"> + Tambah Produk </button></div>
@@ -76,11 +70,45 @@
                         <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-jasa-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
                     </div>
                     @empty
-                    {{-- Kosongkan jika tidak ada item --}}
                     @endforelse
                 </div>
                  <div class="mt-4"><button type="button" id="add-jasa-row-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded"> + Tambah Pengerjaan </button></div>
             </fieldset>
+
+            <!-- ====================================================== -->
+            <!-- 4. OPSI TAMBAHAN (MENU BARU) -->
+            <!-- ====================================================== -->
+            <fieldset class="border-t pt-6 mt-8">
+                <legend class="text-lg font-semibold text-gray-700 px-2">4. Opsi Tambahan</legend>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Opsi Pisahkan Kriteria Total -->
+                    <div class="flex items-start p-3 bg-gray-50 rounded-md border border-gray-200">
+                        <div class="flex items-center h-5">
+                            {{-- Checkbox dicek berdasarkan data $offer --}}
+                            <input id="pisah_kriteria_total" name="pisah_kriteria_total" type="checkbox" value="1" class="focus:ring-gray-800 h-4 w-4 text-gray-800 border-gray-300 rounded" {{ $offer->pisah_kriteria_total ? 'checked' : '' }}>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="pisah_kriteria_total" class="font-medium text-gray-700 cursor-pointer">Pisahkan Kriteria Total</label>
+                            <p class="text-gray-500 text-xs mt-1">Total harga akan dikelompokkan berdasarkan kriteria (Interior/Exterior) di hasil surat.</p>
+                        </div>
+                    </div>
+
+                    <!-- Opsi Hilangkan Grand Total -->
+                    <div class="flex items-start p-3 bg-gray-50 rounded-md border border-gray-200">
+                        <div class="flex items-center h-5">
+                            {{-- Checkbox dicek berdasarkan data $offer --}}
+                            <input id="hilangkan_grand_total" name="hilangkan_grand_total" type="checkbox" value="1" class="focus:ring-gray-800 h-4 w-4 text-gray-800 border-gray-300 rounded" {{ $offer->hilangkan_grand_total ? 'checked' : '' }}>
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="hilangkan_grand_total" class="font-medium text-gray-700 cursor-pointer">Hilangkan Grand Total</label>
+                            <p class="text-gray-500 text-xs mt-1">Menyembunyikan baris Grand Total di bagian bawah surat penawaran.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </fieldset>
+            <!-- ====================================================== -->
 
             <div class="mt-8 pt-6 border-t"><div class="flex justify-end items-center"><span class="text-lg mr-4">Total Estimasi Harga:</span><span id="total_keseluruhan" class="text-2xl font-bold"></span></div></div>
             <div class="mt-8"><button type="submit" class="w-full bg-gray-800 text-white font-bold py-3 px-6 rounded"> Update Surat Penawaran </button></div>
@@ -117,43 +145,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Logika Tom Select (Dropdown Searchable) ---
     const tomSelectSettings = { create: false, sortField: { field: "text", direction: "asc" } };
 
-    // ======================================================
-    // 		  LOGIKA "PRODUK ALL" DITAMBAHKAN DI SINI (JS)
-    // ======================================================
+    // --- LOGIKA "PRODUK ALL" ---
     const produkAllSelect = document.getElementById('produk-all-select');
-    // Inisialisasi Tom Select pada dropdown master
     const produkAllTomSelect = new TomSelect(produkAllSelect, tomSelectSettings);
 
     produkAllSelect.addEventListener('change', function() {
         const selectedValue = this.value;
-        if (!selectedValue) return; // Jangan lakukan apa-apa jika pilihannya kosong
+        if (!selectedValue) return;
 
         const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
         const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
 
-        // Loop ke semua baris produk yang ada
         document.querySelectorAll('.product-row').forEach(row => {
             const rowSelect = row.querySelector('.product-select');
             const rowHargaInput = row.querySelector('.harga-input');
 
-            // Set harga di input
             rowHargaInput.value = masterHarga;
 
-            // Set nilai di dropdown Tom Select baris tersebut
             if (rowSelect.tomselect) {
-                // Set nilai secara "silent" agar tidak memicu event 'change'
                 rowSelect.tomselect.setValue(selectedValue, 'silent');
             } else {
-                rowSelect.value = selectedValue; // Fallback
+                rowSelect.value = selectedValue;
             }
         });
-
-        // Hitung ulang total di akhir
         calculateAllTotals();
     });
-    // ======================================================
-    // 		        AKHIR LOGIKA "PRODUK ALL"
-    // ======================================================
 
     // --- Logika untuk Baris Produk ---
     const productContainer = document.getElementById('product-rows-container');
@@ -164,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const hargaInput = row.querySelector('.harga-input');
         const volumeInput = row.querySelector('.volume-input');
 
-        // Hanya inisialisasi TomSelect jika belum ada
         if (!productSelect.tomselect) {
             new TomSelect(productSelect, tomSelectSettings);
         }
@@ -184,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
     addProductRowBtn.addEventListener('click', () => {
         const newRow = productTemplate.cloneNode(true);
         newRow.querySelector('.product-select').name = `produk[${productRowIndex}][nama]`;
-        // Ganti placeholder "Dinding Luar" dengan "Area" agar konsisten
         newRow.querySelector('input[placeholder="Dinding Luar"]').name = `produk[${productRowIndex}][area]`;
         newRow.querySelector('input[placeholder="Dinding Luar"]').placeholder = `Area`;
         newRow.querySelector('.volume-input').name = `produk[${productRowIndex}][volume]`;
@@ -229,10 +243,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Inisialisasi Saat Halaman Dimuat ---
-    // Pastikan event listener ditambahkan ke baris yang sudah ada
     document.querySelectorAll('.product-row').forEach(row => addProductEventListeners(row));
     document.querySelectorAll('.jasa-row').forEach(row => addJasaEventListeners(row));
-    calculateAllTotals(); // Hitung total awal saat halaman dimuat
+    calculateAllTotals();
 
     // Anti double-submit
     const offerForm = document.getElementById('offer-form');

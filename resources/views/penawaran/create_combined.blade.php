@@ -57,6 +57,39 @@
                 </div>
             </fieldset>
 
+            <!-- ====================================================== -->
+            <!-- 4. OPSI TAMBAHAN (MENU BARU) -->
+            <!-- ====================================================== -->
+            <fieldset class="border-t pt-6 mt-8">
+                <legend class="text-lg font-semibold text-gray-700 px-2">4. Opsi Tambahan</legend>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Opsi Pisahkan Kriteria Total -->
+                    <div class="flex items-start p-3 bg-gray-50 rounded-md border border-gray-200">
+                        <div class="flex items-center h-5">
+                            <input id="pisah_kriteria_total" name="pisah_kriteria_total" type="checkbox" value="1" class="focus:ring-gray-800 h-4 w-4 text-gray-800 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="pisah_kriteria_total" class="font-medium text-gray-700 cursor-pointer">Pisahkan Kriteria Total</label>
+                            <p class="text-gray-500 text-xs mt-1">Total harga akan dikelompokkan berdasarkan kriteria (Interior/Exterior) di hasil surat.</p>
+                        </div>
+                    </div>
+
+                    <!-- Opsi Hilangkan Grand Total -->
+                    <div class="flex items-start p-3 bg-gray-50 rounded-md border border-gray-200">
+                        <div class="flex items-center h-5">
+                            <input id="hilangkan_grand_total" name="hilangkan_grand_total" type="checkbox" value="1" class="focus:ring-gray-800 h-4 w-4 text-gray-800 border-gray-300 rounded">
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="hilangkan_grand_total" class="font-medium text-gray-700 cursor-pointer">Hilangkan Grand Total</label>
+                            <p class="text-gray-500 text-xs mt-1">Menyembunyikan baris Grand Total di bagian bawah surat penawaran.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </fieldset>
+            <!-- ====================================================== -->
+
             <div class="mt-8 pt-6 border-t">
                 <div class="flex justify-end items-center"><span class="text-lg mr-4">Total Estimasi Harga:</span><span id="total_keseluruhan" class="text-2xl font-bold">Rp 0</span></div>
             </div>

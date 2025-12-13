@@ -18,6 +18,8 @@ class Offer extends Model
         'harga_per_m2',
         'jasa_nama',
         'jasa_harga',
+        'pisah_kriteria_total',
+        'hilangkan_grand_total',
         'total_keseluruhan',
     ];
 

@@ -17,6 +17,7 @@ class Product extends Model
     protected $fillable = [
         'nama_produk',
         'hasil_akhir',
+        'kriteria', // <-- Tanda koma ditambahkan di sini
         'performa',
         'harga',
     ];

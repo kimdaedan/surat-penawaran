@@ -2,69 +2,69 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // <-- 1. Import Model Product
+use App\Models\Product; // <-- Import Model Product
 use Illuminate\Http\Request;
-use App\Models\Offer; // <-- INI YANG BENAR
+use App\Models\Offer; // <-- Import Model Offer
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    // 2. Buat method index
+    // 1. Menampilkan daftar harga
     public function index()
     {
-        // Ambil semua data dari tabel products
         $products = Product::latest()->get();
-
-        // Kirim data products ke view harga.index
         return view('harga.index', ['products' => $products]);
     }
 
+    // 2. Form tambah harga baru
     public function create()
     {
         return view('harga.create');
     }
 
-    // Method untuk menyimpan data baru ke database
+    // 3. Menyimpan data harga baru (TERMASUK KRITERIA)
     public function store(Request $request)
     {
-        // 1. Validasi data (opsional tapi sangat direkomendasikan)
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'hasil_akhir' => 'required|string|max:255',
             'performa' => 'required|string|max:255',
+            'kriteria' => 'required|string|in:Exterior,Interior', // <-- Validasi Kriteria
             'harga' => 'required|integer',
         ]);
 
-        // 2. Simpan data ke database menggunakan Model Product
         Product::create([
             'nama_produk' => $request->nama_produk,
             'hasil_akhir' => $request->hasil_akhir,
             'performa' => $request->performa,
+            'kriteria' => $request->kriteria, // <-- Simpan Kriteria
             'harga' => $request->harga,
         ]);
 
-        // 3. Alihkan kembali ke halaman daftar harga dengan pesan sukses
         return redirect()->route('harga.index')->with('success', 'Data berhasil ditambahkan!');
     }
 
+    // 4. Menghapus data harga
     public function destroy(Product $product)
     {
         $product->delete();
-
         return redirect()->route('harga.index')->with('success', 'Data berhasil dihapus!');
     }
 
+    // 5. Form edit harga
     public function edit(Product $product)
     {
         return view('harga.edit', ['product' => $product]);
     }
 
+    // 6. Update data harga (TERMASUK KRITERIA)
     public function update(Request $request, Product $product)
     {
         $request->validate([
             'nama_produk' => 'required|string|max:255',
             'hasil_akhir' => 'required|string|max:255',
             'performa' => 'required|string|max:255',
+            'kriteria' => 'required|string|in:Exterior,Interior', // <-- Validasi Kriteria
             'harga' => 'required|integer',
         ]);
 
@@ -72,25 +72,22 @@ class ProductController extends Controller
             'nama_produk' => $request->nama_produk,
             'hasil_akhir' => $request->hasil_akhir,
             'performa' => $request->performa,
+            'kriteria' => $request->kriteria, // <-- Update Kriteria
             'harga' => $request->harga,
         ]);
 
         return redirect()->route('harga.index')->with('success', 'Data berhasil diperbarui!');
     }
 
-    // Jangan lupa tambahkan 'use App\Models\Product;' di atas jika belum ada
-    public function createCombined(Request $request) // Tambahkan Request $request
+    // =========================================================================
+    // BAGIAN LOGIKA PENAWARAN (OFFER)
+    // =========================================================================
+
+    public function createCombined(Request $request)
     {
-        // 1. Buat token unik ("tiket sekali pakai")
         $token = Str::uuid()->toString();
-
-        // 2. Simpan token ini di session
         $request->session()->put('form_token', $token);
-
-        // 3. Ambil data produk seperti biasa
         $products = Product::all();
-
-        // 4. Kirim data ke view (jangan lupa kirim token juga, meskipun kita akan ambil dari session)
         return view('penawaran.create_combined', ['products' => $products]);
     }
 
@@ -98,10 +95,9 @@ class ProductController extends Controller
     {
         $request->validate([
             'nama_klien' => 'required|string|max:255',
-            // Tambahkan validasi lain jika perlu
         ]);
 
-        // Hitung total di backend (logika ini sudah benar)
+        // Hitung total di backend
         $totalProduk = 0;
         if ($request->has('produk')) {
             foreach ($request->produk as $item) {
@@ -115,23 +111,18 @@ class ProductController extends Controller
             }
         }
 
-        // =================================================================
-        // BAGIAN PENTING 1: Simpan DATA UTAMA ke tabel 'offers'
-        // =================================================================
+        // Simpan Offer Utama
         $offer = Offer::create([
             'nama_klien' => $request->nama_klien,
-            'client_details' => $request->client_details, // <-- client_details HANYA DISIMPAN DI SINI
+            'client_details' => $request->client_details,
             'total_keseluruhan' => $totalProduk + $totalJasa,
         ]);
 
-        // =================================================================
-        // BAGIAN PENTING 2: Simpan DATA RINCIAN PRODUK ke 'offer_items'
-        // =================================================================
+        // Simpan Item Produk
         if ($request->has('produk')) {
             foreach ($request->produk as $itemData) {
                 if (!empty($itemData['nama'])) {
                     $offer->items()->create([
-                        // PASTIKAN TIDAK ADA 'client_details' DI DALAM ARRAY INI
                         'nama_produk' => $itemData['nama'],
                         'area_dinding' => $itemData['area'],
                         'volume' => $itemData['volume'] ?? 0,
@@ -141,7 +132,7 @@ class ProductController extends Controller
             }
         }
 
-        // Simpan setiap baris jasa ke tabel 'offer_jasa'
+        // Simpan Item Jasa
         if ($request->has('jasa')) {
             foreach ($request->jasa as $jasaData) {
                 if (!empty($jasaData['nama'])) {
@@ -153,17 +144,12 @@ class ProductController extends Controller
             }
         }
 
-        // (Logika simpan data jasa Anda)
-        // ...
-
         return redirect('/')->with('success', 'Surat Penawaran berhasil dibuat!');
     }
 
     public function show(Offer $offer)
     {
-        // Memuat relasi 'items' (produk) DAN 'jasaItems' (pengerjaan tambahan)
         $offer->load(['items', 'jasaItems']);
-
         return view('histori.show', ['offer' => $offer]);
     }
 }

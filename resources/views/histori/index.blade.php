@@ -1,12 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-{{--
-  Saya menambahkan 'flex-grow' di sini.
-  Ini akan "mendorong" div ini agar mengisi ruang kosong,
-  yang akan memaksa footer ke bagian bawah halaman.
-  Ini mengasumsikan layout 'app.blade.php' Anda menggunakan flex-col.
---}}
 <div class="container mx-auto my-12 px-4 flex-grow">
     <div class="max-w-7xl mx-auto">
 
@@ -33,10 +27,15 @@
             </div>
         </form>
 
-        <!-- Pesan Sukses -->
+        <!-- Pesan Sukses / Error -->
         @if (session('success'))
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
                 <p>{{ session('success') }}</p>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                <p>{{ session('error') }}</p>
             </div>
         @endif
 
@@ -46,7 +45,6 @@
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
                         <th scope="col" class="px-6 py-3 rounded-tl-lg">Tanggal</th>
-                        <!-- === KOLOM BARU === -->
                         <th scope="col" class="px-6 py-3">No. Surat</th>
                         <th scope="col" class="px-6 py-3">Nama Klien</th>
                         <th scope="col" class="px-6 py-3">Detail Penawaran</th>
@@ -60,7 +58,6 @@
 
                         <td class="px-6 py-4 @if($loop->last) rounded-bl-lg @endif">{{ $offer->created_at->format('d M Y') }}</td>
 
-                        <!-- === DATA BARU === -->
                         <td class="px-6 py-4 font-medium">
                             SP-{{ $offer->created_at->format('Y') }}/{{ str_pad($offer->id, 4, '0', STR_PAD_LEFT) }}
                         </td>
@@ -80,9 +77,19 @@
                                     <div class="py-1" role="menu">
                                         <a href="{{ route('histori.show', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat</a>
                                         <a href="{{ route('histori.edit', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
+
                                         <a href="{{ route('invoice.create_from_offer', $offer->id) }}" class="text-green-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
                                             Buat Invoice
                                         </a>
+
+                                        <!-- ================================== -->
+                                        <!--        MENU BAST (DIAKTIFKAN)      -->
+                                        <!-- ================================== -->
+                                        <a href="{{ route('bast.create', $offer->id) }}" class="text-blue-600 block px-4 py-2 text-sm hover:bg-gray-100 font-medium" role="menuitem">
+                                            Buat BAST
+                                        </a>
+                                        <!-- ================================== -->
+
                                         <form action="{{ route('histori.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penawaran ini?');">
                                             @csrf
                                             @method('DELETE')
@@ -97,10 +104,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <!-- === COLSPAN DIPERBARUI === -->
                         <td colspan="6" class="px-6 py-4 text-center text-gray-500 rounded-b-lg">Belum ada histori penawaran.</td>
                     </tr>
-                    {{-- === ERROR KETIK DIPERBAIKI === --}}
                     @endforelse
                 </tbody>
             </table>
@@ -112,5 +117,4 @@
 
     </div>
 </div>
-{{-- === @endforelse TAMBAHAN DIHAPUS DARI SINI === --}}
 @endsection

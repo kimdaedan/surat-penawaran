@@ -35,7 +35,12 @@
             Histori BAST
         </a>
 
-        {{-- Menu 5: Hasil Rekapan (Placeholder) --}}
+        {{-- Menu 5: Histori SKP (Placeholder) --}}
+        <a href="{{ route('skp.index') }}" class="px-5 py-2.5 rounded-full text-sm font-medium bg-white text-gray-600 border border-gray-200 shadow-sm hover:bg-gray-50 hover:text-gray-900 hover:shadow-md transition duration-300">
+            Histori SKP
+        </a>
+
+        {{-- Menu 6: Hasil Rekapan (Placeholder) --}}
         <a href="#" class="px-5 py-2.5 rounded-full text-sm font-medium bg-white text-gray-400 border border-gray-100 cursor-not-allowed" title="Fitur belum tersedia">
             Hasil Rekapan
         </a>

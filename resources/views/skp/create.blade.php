@@ -1,0 +1,258 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container mx-auto my-12 px-4">
+    <div class="max-w-5xl mx-auto bg-white p-8 md:p-12 shadow-lg rounded-lg">
+
+        <div class="flex justify-between items-center mb-8 print:hidden">
+            <h1 class="text-2xl font-bold text-gray-800">Buat Surat Perintah Kerja (SKP)</h1>
+            <a href="{{ route('histori.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
+                &larr; Batal
+            </a>
+        </div>
+
+        <form action="{{ route('skp.store', $offer->id) }}" method="POST">
+            @csrf
+
+            <!-- JUDUL -->
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold underline uppercase tracking-wide">SURAT PERINTAH KERJA</h2>
+            </div>
+
+            <!-- PREAMBULE -->
+            <div class="bg-gray-50 p-4 rounded border mb-6 text-sm text-gray-700 leading-relaxed">
+                <p>
+                    Berdasarkan Surat Penawaran Kerja (Ref ID): <strong>SP-{{ $offer->id }}</strong>
+                    tertanggal <strong>{{ $offer->created_at->format('d F Y') }}</strong>,
+                    tentang Pekerjaan:
+                </p>
+                <input type="text" name="judul_pekerjaan" class="w-full mt-2 border-b border-gray-400 bg-transparent focus:outline-none font-semibold" placeholder="Contoh: Renovasi dan pengecatan dinding Kantor..." required>
+                <p class="mt-4">
+                    Maka pada hari ini, tanggal
+                    <input type="date" name="tanggal_surat" value="{{ date('Y-m-d') }}" class="border rounded px-2 py-1 bg-white">,
+                    kami yang bertanda tangan di bawah ini :
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- PIHAK I (KLIEN/PEMBERI) -->
+                <div class="border p-4 rounded bg-blue-50 border-blue-200">
+                    <h3 class="font-bold text-blue-800 mb-4 border-b border-blue-300 pb-2">PIHAK I (Pemberi Pekerjaan)</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Nama</label>
+                            <input type="text" name="pihak_satu_nama" value="{{ old('pihak_satu_nama', $offer->nama_klien) }}" class="w-full border rounded px-2 py-1 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Perusahaan (Opsional)</label>
+                           <input type="text" name="pihak_satu_jabatan" placeholder="Opsional (PT Abadi Nan Jaya)" class="w-full border rounded px-2 py-1 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan</label>
+                            <input type="text" name="pihak_satu_jabatan" placeholder="Opsional (Mis: Manager)" class="w-full border rounded px-2 py-1 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Alamat</label>
+                            <textarea name="pihak_satu_alamat" id="alamat_pihak_satu" rows="2" class="w-full border rounded px-2 py-1 focus:border-blue-500">{{ old('pihak_satu_alamat', $offer->client_details) }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIHAK II (KITA/PENERIMA) -->
+                <div class="border p-4 rounded bg-green-50 border-green-200">
+                    <h3 class="font-bold text-green-800 mb-4 border-b border-green-300 pb-2">PIHAK II (Penerima Pekerjaan)</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Nama</label>
+                            <input type="text" name="pihak_dua_nama" value="{{ $pihakDua['nama'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Perusahaan</label>
+                            <input type="text" name="pihak_dua_perusahaan" value="{{ $pihakDua['perusahaan'] }}" class="w-full border rounded px-2 py-1 bg-gray-100" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan</label>
+                            <input type="text" name="pihak_dua_jabatan" value="{{ $pihakDua['jabatan'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Alamat</label>
+                            <textarea name="pihak_dua_alamat" rows="2" class="w-full border rounded px-2 py-1 bg-gray-100" readonly>{{ $pihakDua['alamat'] }}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="mt-6 text-sm text-gray-600 text-center">bahwa Pihak I dengan ini memberikan perintah kepada Pihak II untuk melaksanakan ;</p>
+
+            <!-- DETAIL PELAKSANAAN -->
+            <fieldset class="border-t pt-6 mt-4">
+                <legend class="text-lg font-semibold text-gray-700 px-2">Detail Pelaksanaan</legend>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700">Nomor Surat SPK (Baru)</label>
+                        <input type="text" name="no_surat" value="{{ $noSurat }}" class="w-full border rounded px-3 py-2 mt-1 bg-gray-100" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700">Lokasi Pekerjaan</label>
+                        <input type="text" name="lokasi_pekerjaan" id="lokasi_pekerjaan" placeholder="Alamat Lokasi Proyek" class="w-full border rounded px-3 py-2 mt-1 bg-gray-5 focus:bg-white transition" required>
+                        <p class="text-xs text-gray-500 mt-1">Otomatis diisi dari Alamat Pihak I (bisa diedit manual)</p>
+                    </div>
+
+                    <div class="md:col-span-2 bg-gray-50 p-4 rounded border grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700">Durasi (Hari Kalender)</label>
+                            <input type="number" id="durasi_angka" class="w-full border rounded px-3 py-2 mt-1" placeholder="Contoh: 60" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700">Dari Tanggal</label>
+                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="w-full border rounded px-3 py-2 mt-1" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700">Sampai Tanggal</label>
+                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="w-full border rounded px-3 py-2 mt-1 bg-gray-200 cursor-not-allowed" readonly>
+                            <p class="text-xs text-blue-600 mt-1 font-semibold" id="info_selesai">Otomatis dihitung...</p>
+                        </div>
+                        <input type="hidden" name="durasi_hari" id="durasi_hari_text">
+                    </div>
+                </div>
+
+                <div class="mt-4 bg-yellow-50 p-4 rounded border border-yellow-200">
+                    <p class="font-bold text-gray-800">Total Nilai Pekerjaan (Otomatis dari Penawaran):</p>
+                    <p class="text-2xl font-bold text-blue-600">Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}</p>
+                </div>
+            </fieldset>
+
+            <!-- SISTEM PEMBAYARAN -->
+            <fieldset class="border-t pt-6 mt-8">
+                <legend class="text-lg font-semibold text-gray-700 px-2">Sistem Pembayaran</legend>
+                <p class="text-sm text-gray-500 mb-4">Tambahkan baris untuk setiap tahap pembayaran.</p>
+
+                <div class="bg-gray-50 p-4 rounded border">
+                    <table class="w-full text-left" id="payment-table">
+                        <thead>
+                            <tr>
+                                <th class="pb-2 text-sm text-gray-600 w-5/12">Keterangan Progres</th>
+                                <th class="pb-2 text-sm text-gray-600 w-4/12">Tanggal</th>
+                                <th class="pb-2 text-sm text-gray-600 w-2/12">Persentase (%)</th>
+                                <th class="pb-2 w-1/12"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="payment-rows">
+                            <!-- Baris 1 -->
+                            <tr>
+                                <td class="pr-2 pb-2">
+                                    <input type="text" name="termin_keterangan[]" placeholder="Contoh: DP / Progres I" class="w-full border rounded px-3 py-2 focus:border-blue-500" required>
+                                </td>
+                                <td class="pr-2 pb-2">
+                                    {{-- Menggunakan type="date" agar bisa ambil dari kalender --}}
+                                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500" required>
+                                </td>
+                                <td class="pr-2 pb-2 relative">
+                                    <input type="number" name="termin_jumlah[]" placeholder="30" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right" required>
+                                    <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
+                                </td>
+                                <td class="pb-2 text-center">
+                                    <button type="button" class="text-gray-400 cursor-not-allowed" disabled>x</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <button type="button" id="add-payment-btn" class="mt-2 text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 font-bold flex items-center gap-1">
+                        <span>+</span> Tambah Tahap Pembayaran
+                    </button>
+                </div>
+            </fieldset>
+
+            <div class="mt-12 text-center">
+                <button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-10 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:-translate-y-1">
+                    Simpan & Buat SKP
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- 1. OTOMATISASI LOKASI PEKERJAAN ---
+        const alamatSumber = document.getElementById('alamat_pihak_satu');
+        const lokasiTujuan = document.getElementById('lokasi_pekerjaan');
+
+        if (!lokasiTujuan.value) lokasiTujuan.value = alamatSumber.value;
+        alamatSumber.addEventListener('input', function() {
+            lokasiTujuan.value = this.value;
+        });
+
+
+        // --- 2. OTOMATISASI TANGGAL & DURASI ---
+        const durasiInput = document.getElementById('durasi_angka');
+        const mulaiInput = document.getElementById('tanggal_mulai');
+        const selesaiInput = document.getElementById('tanggal_selesai');
+        const durasiTextHidden = document.getElementById('durasi_hari_text');
+        const infoSelesai = document.getElementById('info_selesai');
+
+        function hitungSelesai() {
+            const hari = parseInt(durasiInput.value);
+            const mulaiStr = mulaiInput.value;
+
+            if (!isNaN(hari) && mulaiStr) {
+                const mulai = new Date(mulaiStr);
+                const selesai = new Date(mulai);
+                selesai.setDate(mulai.getDate() + hari);
+
+                const yyyy = selesai.getFullYear();
+                const mm = String(selesai.getMonth() + 1).padStart(2, '0');
+                const dd = String(selesai.getDate()).padStart(2, '0');
+
+                selesaiInput.value = `${yyyy}-${mm}-${dd}`;
+                durasiTextHidden.value = `${hari} hari kalender`;
+
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                infoSelesai.innerText = `Selesai pada: ${selesai.toLocaleDateString('id-ID', options)}`;
+            }
+        }
+
+        durasiInput.addEventListener('input', hitungSelesai);
+        mulaiInput.addEventListener('change', hitungSelesai);
+
+
+        // --- 3. TABEL PEMBAYARAN DINAMIS (DIPISAH + DATE PICKER) ---
+        const tableBody = document.getElementById('payment-rows');
+        const addBtn = document.getElementById('add-payment-btn');
+
+        addBtn.addEventListener('click', function() {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="pr-2 pb-2">
+                    <input type="text" name="termin_keterangan[]" placeholder="Keterangan progres..." class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                </td>
+                <td class="pr-2 pb-2">
+                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                </td>
+                <td class="pr-2 pb-2 relative">
+                    <input type="number" name="termin_jumlah[]" placeholder="%" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
+                    <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
+                </td>
+                <td class="pb-2 text-center">
+                    <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        });
+
+        tableBody.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-row')) {
+                if (tableBody.rows.length > 1) {
+                    e.target.closest('tr').remove();
+                } else {
+                    alert('Minimal satu tahap pembayaran harus ada.');
+                }
+            }
+        });
+    });
+</script>
+@endsection

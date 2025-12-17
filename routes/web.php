@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\BastController;
+use App\Http\Controllers\SkpController;
 
 // Rute untuk menampilkan Dashboard
 Route::get('/', function () {
@@ -66,3 +67,18 @@ Route::delete('/bast/{bast}', [BastController::class, 'destroy'])->name('bast.de
 Route::get('/penawaran/{offer}/bast/create', [BastController::class, 'create'])->name('bast.create');
 // Simpan BAST Baru
 Route::post('/penawaran/{offer}/bast', [BastController::class, 'store'])->name('bast.store');
+
+
+// === RUTE SKP (SURAT PERINTAH KERJA) ===
+// Histori SKP
+Route::get('/histori-skp', [SkpController::class, 'index'])->name('skp.index');
+
+// Detail & Cetak SKP
+Route::get('/skp/{skp}', [SkpController::class, 'show'])->name('skp.show');
+
+// Hapus SKP
+Route::delete('/skp/{skp}', [SkpController::class, 'destroy'])->name('skp.destroy');
+
+// Buat SKP Baru (Dari ID Penawaran)
+Route::get('/penawaran/{offer}/skp/create', [SkpController::class, 'create'])->name('skp.create');
+Route::post('/penawaran/{offer}/skp', [SkpController::class, 'store'])->name('skp.store');

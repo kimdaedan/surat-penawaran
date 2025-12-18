@@ -18,10 +18,10 @@
         <form action="{{ route('skp.index') }}" method="GET" class="mb-4">
             <div class="flex">
                 <input type="text"
-                       name="search"
-                       placeholder="Cari berdasarkan No. Surat, Nama Klien, atau Pekerjaan..."
-                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800"
-                       value="{{ $search ?? '' }}">
+                    name="search"
+                    placeholder="Cari berdasarkan No. Surat, Nama Klien, atau Pekerjaan..."
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800"
+                    value="{{ $search ?? '' }}">
                 <button type="submit" class="ml-2 bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
                     Cari
                 </button>
@@ -30,9 +30,9 @@
 
         <!-- Pesan Sukses -->
         @if (session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-                <p>{{ session('success') }}</p>
-            </div>
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+            <p>{{ session('success') }}</p>
+        </div>
         @endif
 
         <!-- Tabel Histori -->
@@ -61,17 +61,28 @@
                         <td class="px-6 py-4 text-right">Rp {{ number_format($skp->nilai_pekerjaan, 0, ',', '.') }}</td>
 
                         <td class="px-6 py-4 text-center">
-                            <!-- Dropdown Action -->
                             <div x-data="{ open: false }" class="relative inline-block text-left">
                                 <button @click="open = !open" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
                                     Options
-                                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
                                 </button>
+
                                 <div x-show="open" @click.away="open = false" x-transition class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50" style="display: none;">
                                     <div class="py-1" role="menu">
+                                        {{-- Tombol Lihat / Cetak --}}
                                         <a href="{{ route('skp.show', $skp->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
                                             Lihat / Cetak
                                         </a>
+
+                                        {{-- FITUR EDIT BARU --}}
+                                        <a href="{{ route('skp.edit', $skp->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
+                                            Edit
+                                        </a>
+                                        {{-- END FITUR EDIT --}}
+
+                                        {{-- Tombol Hapus --}}
                                         <form action="{{ route('skp.destroy', $skp->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus SKP ini?');">
                                             @csrf
                                             @method('DELETE')

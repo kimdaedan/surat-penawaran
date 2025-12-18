@@ -13,7 +13,6 @@
             </a>
         </div>
 
-        <!-- Form Pencarian -->
         <form action="{{ route('histori.index') }}" method="GET" class="mb-4">
             <div class="flex">
                 <input type="text"
@@ -27,18 +26,13 @@
             </div>
         </form>
 
-        <!-- Pesan Sukses -->
         @if (session('success'))
         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
             <p>{{ session('success') }}</p>
         </div>
         @endif
 
-        {{--
-           PERBAIKAN TAMPILAN DROPDOWN:
-           1. overflow-visible: Agar dropdown bisa 'keluar' dari kotak tabel.
-           2. pb-32: Memberikan ruang ekstra di bawah tabel agar dropdown baris terakhir tidak terpotong.
-        --}}
+        {{-- Tabel Histori --}}
         <div class="bg-white shadow-md rounded-lg overflow-visible pb-32">
             <table class="w-full text-sm text-left text-gray-700">
                 <thead class="text-xs text-white uppercase bg-gray-800">
@@ -78,25 +72,46 @@
 
                                 {{-- Menu Dropdown Items --}}
                                 <div x-show="open"
-                                    @click.away="open = false"
-                                    x-transition
-                                    class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
-                                    style="display: none;">
+                                     @click.away="open = false"
+                                     x-transition
+                                     class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                                     style="display: none;">
 
                                     <div class="py-1" role="menu">
-                                        <a href="{{ route('histori.show', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat</a>
-                                        <a href="{{ route('histori.edit', $offer->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
+                                        {{-- Standard Actions --}}
+                                        {{-- Route: /penawaran/{offer} --}}
+                                        <a href="{{ route('histori.show', ['offer' => $offer->id]) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat</a>
 
-                                        <a href="{{ route('invoice.create_from_offer', $offer->id) }}" class="text-green-700 block px-4 py-2 text-sm hover:bg-gray-100 font-medium" role="menuitem">
+                                        {{-- Route: /penawaran/{offer}/edit --}}
+                                        <a href="{{ route('histori.edit', ['offer' => $offer->id]) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
+
+                                        <div class="border-t border-gray-100 my-1"></div>
+
+                                        {{-- Action Invoice --}}
+                                        {{-- Route: /invoice/create-from-offer/{offer} --}}
+                                        <a href="{{ route('invoice.create_from_offer', ['offer' => $offer->id]) }}" class="text-green-700 block px-4 py-2 text-sm hover:bg-gray-100 font-medium" role="menuitem">
                                             Buat Invoice
                                         </a>
 
-                                        <a href="{{ route('skp.create', $offer->id) }}" class="text-indigo-600 block px-4 py-2 text-sm hover:bg-gray-100 font-medium" role="menuitem">
-                                            Buat SKP
+                                        {{-- Action SPK --}}
+                                        {{-- Route: /penawaran/{offer}/skp/create --}}
+                                        {{-- Kita GUNAKAN ['offer' => id] karena route mewajibkan parameter {offer} --}}
+                                        <a href="{{ route('skp.create', ['offer' => $offer->id]) }}" class="text-indigo-600 block px-4 py-2 text-sm hover:bg-gray-100 font-medium" role="menuitem">
+                                            Buat SPK
                                         </a>
-                                        {{-- ================================== --}}
 
-                                        <form action="{{ route('histori.destroy', $offer->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penawaran ini?');">
+                                        {{-- Action BAST --}}
+                                        {{-- Route: /penawaran/{offer}/bast/create --}}
+                                        {{-- Kita GUNAKAN ['offer' => id] karena route mewajibkan parameter {offer} --}}
+                                        <a href="{{ route('bast.create', ['offer' => $offer->id]) }}" class="text-teal-600 block px-4 py-2 text-sm hover:bg-gray-100 font-medium" role="menuitem">
+                                            Buat BAST
+                                        </a>
+
+                                        <div class="border-t border-gray-100 my-1"></div>
+
+                                        {{-- Delete Action --}}
+                                        {{-- Route: /penawaran/{offer} --}}
+                                        <form action="{{ route('histori.destroy', ['offer' => $offer->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penawaran ini?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="w-full text-left text-red-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">

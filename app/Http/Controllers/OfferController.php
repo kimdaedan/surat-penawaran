@@ -24,7 +24,7 @@ class OfferController extends Controller
             // (Mencari berdasarkan nama Klien ATAU ID)
             $query->where(function ($q) use ($search) {
                 $q->where('nama_klien', 'like', '%' . $search . '%')
-                  ->orWhere('id', $search); // <-- Mencari berdasarkan ID untuk No. Surat
+                    ->orWhere('id', $search); // <-- Mencari berdasarkan ID untuk No. Surat
             });
         }
 
@@ -78,7 +78,7 @@ class OfferController extends Controller
      */
     public function update(Request $request, Offer $offer)
     {
-        // Validasi
+        // 1. Validasi Input
         $request->validate([
             'nama_klien' => 'required|string|max:255',
             'client_details' => 'nullable|string',
@@ -90,7 +90,7 @@ class OfferController extends Controller
             'jasa.*.harga' => 'nullable|numeric',
         ]);
 
-        // --- Hitung ulang total ---
+        // 2. Hitung Ulang Total (Berdasarkan input form)
         $totalProduk = 0;
         if ($request->has('produk')) {
             foreach ($request->produk as $item) {
@@ -105,26 +105,54 @@ class OfferController extends Controller
             }
         }
 
-        // --- Update data utama ---
-        $offer->update([
+        // 3. Siapkan Array Data Utama
+        $dataUtama = [
             'nama_klien' => $request->nama_klien,
             'client_details' => $request->client_details,
             'total_keseluruhan' => $totalProduk + $totalJasa,
-            // === UPDATE OPSI TAMBAHAN ===
-            // Menggunakan $request->has(...) untuk mengecek apakah checkbox dicentang
             'pisah_kriteria_total' => $request->has('pisah_kriteria_total'),
             'hilangkan_grand_total' => $request->has('hilangkan_grand_total'),
-        ]);
+        ];
 
-        // --- Hapus item lama dan buat ulang (cara termudah) ---
-        $offer->items()->delete();
-        $offer->jasaItems()->delete();
+        // 4. LOGIKA CABANG (UPDATE vs SAVE AS NEW)
+        $targetOffer = null;
+        $message = '';
 
-        // --- Simpan ulang item produk ---
+        if ($request->input('action') == 'save_and_copy') {
+            // === KASUS A: UPDATE & COPY (SAVE AS NEW) ===
+            // 1. Jangan sentuh $offer lama.
+            // 2. Buat object Offer BARU dengan data dari form.
+
+            // Opsional: Tambahkan penanda "(Copy)" jika nama klien tidak diubah user
+            // Jika user sudah merubah nama klien di form, pakai nama baru tersebut.
+            if ($dataUtama['nama_klien'] === $offer->nama_klien) {
+                $dataUtama['nama_klien'] .= ' (Copy)';
+            }
+
+            $targetOffer = Offer::create($dataUtama); // Insert data baru
+            $message = 'Data berhasil disimpan sebagai Penawaran Baru (Data lama tidak berubah)!';
+
+            // Tidak perlu delete items, karena ini offer baru yang masih kosong item-nya.
+
+        } else {
+            // === KASUS B: UPDATE BIASA ===
+            // 1. Update $offer lama.
+            $offer->update($dataUtama);
+            $targetOffer = $offer; // Target kita adalah offer yang sedang diedit
+
+            // 2. Hapus item lama (karena mau ditimpa dengan inputan form baru)
+            $targetOffer->items()->delete();
+            $targetOffer->jasaItems()->delete();
+
+            $message = 'Surat penawaran berhasil diperbarui.';
+        }
+
+        // 5. SIMPAN ITEM PRODUK (Ke $targetOffer)
+        // Logika ini dipakai bersama baik untuk Update maupun Copy
         if ($request->has('produk')) {
             foreach ($request->produk as $itemData) {
                 if (!empty($itemData['nama'])) {
-                    $offer->items()->create([
+                    $targetOffer->items()->create([
                         'nama_produk' => $itemData['nama'],
                         'area_dinding' => $itemData['area'],
                         'volume' => $itemData['volume'] ?? 0,
@@ -134,11 +162,11 @@ class OfferController extends Controller
             }
         }
 
-        // --- Simpan ulang item jasa ---
+        // 6. SIMPAN ITEM JASA (Ke $targetOffer)
         if ($request->has('jasa')) {
             foreach ($request->jasa as $jasaData) {
                 if (!empty($jasaData['nama'])) {
-                    $offer->jasaItems()->create([
+                    $targetOffer->jasaItems()->create([
                         'nama_jasa' => $jasaData['nama'],
                         'harga_jasa' => $jasaData['harga'] ?? 0,
                     ]);
@@ -146,6 +174,13 @@ class OfferController extends Controller
             }
         }
 
-        return redirect()->route('histori.index')->with('success', 'Data penawaran berhasil diperbarui!');
+        // 7. Redirect
+        // Jika Copy: Redirect ke halaman Edit milik Offer BARU
+        // Jika Update: Redirect ke halaman Index (atau tetap di edit, sesuai selera)
+        if ($request->input('action') == 'save_and_copy') {
+            return redirect()->route('histori.edit', $targetOffer->id)->with('success', $message);
+        }
+
+        return redirect()->route('histori.index')->with('success', $message);
     }
 }

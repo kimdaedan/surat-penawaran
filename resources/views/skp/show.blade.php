@@ -1,36 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- LOGIKA TANGGAL INDONESIA --}}
-@php
-    use Carbon\Carbon;
-
-    // Array Nama Hari & Bulan Indonesia
-    $namaHari = [
-        'Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa',
-        'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'
-    ];
-    $namaBulan = [
-        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
-        7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-    ];
-
-    // Fungsi Helper Lokal untuk Format Tanggal
-    $formatIndo = function($date, $pakaiHari = false) use ($namaHari, $namaBulan) {
-        if (!$date) return '-';
-        $d = Carbon::parse($date);
-        $hari = $namaHari[$d->format('l')];
-        $tgl = $d->format('d');
-        $bln = $namaBulan[(int)$d->format('m')];
-        $thn = $d->format('Y');
-
-        if ($pakaiHari) {
-            return "$hari, $tgl $bln $thn";
-        }
-        return "$tgl $bln $thn";
-    };
-@endphp
-
 <div class="container mx-auto my-12 px-4">
 
     <!-- Tombol Aksi (Hanya tampil di layar) -->
@@ -75,9 +45,9 @@
 
             <p>
                 Berdasarkan Surat Penawaran Kerja Nomor: <strong>SP-{{ $skp->offer_id }}</strong>
-                tertanggal <strong>{{ $formatIndo($skp->offer->created_at) }}</strong>,
+                tertanggal <strong>{{ $skp->offer->created_at->format('d F Y') }}</strong>,
                 tentang <strong>{{ $skp->judul_pekerjaan }}</strong>,
-                maka pada hari ini, <strong>{{ $formatIndo($skp->tanggal_surat, true) }}</strong>,
+                maka pada hari ini, <strong>{{ \Carbon\Carbon::parse($skp->tanggal_surat)->translatedFormat('l d F Y') }}</strong>,
                 kami yang bertanda tangan di bawah ini :
             </p>
 
@@ -156,7 +126,7 @@
                     <td class="align-top">:</td>
                     <td class="align-top">
                         {{ $skp->durasi_hari }} <br>
-                        dari tanggal {{ $formatIndo($skp->tanggal_mulai) }} sampai dengan tanggal {{ $formatIndo($skp->tanggal_selesai) }}
+                        dari tanggal {{ $skp->tanggal_mulai->format('d F Y') }} sampai dengan tanggal {{ $skp->tanggal_selesai->format('d F Y') }}
                     </td>
                 </tr>
                 <tr>
@@ -173,7 +143,7 @@
                                 <li class="mb-1">
                                     {{ $termin['keterangan'] }}
                                     @if(!empty($termin['tanggal']) && $termin['tanggal'] != '-')
-                                        ({{ $formatIndo($termin['tanggal']) }})
+                                        ({{ \Carbon\Carbon::parse($termin['tanggal'])->format('d M') }})
                                     @endif
                                     , dibayarkan {{ $termin['jumlah'] }}
                                 </li>

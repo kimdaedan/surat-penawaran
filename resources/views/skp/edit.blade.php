@@ -5,14 +5,15 @@
     <div class="max-w-5xl mx-auto bg-white p-8 md:p-12 shadow-lg rounded-lg">
 
         <div class="flex justify-between items-center mb-8 print:hidden">
-            <h1 class="text-2xl font-bold text-gray-800">Buat Surat Perintah Kerja (SKP)</h1>
-            <a href="{{ route('histori.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
+            <h1 class="text-2xl font-bold text-gray-800">Edit Surat Perintah Kerja (SKP)</h1>
+            <a href="{{ route('skp.index') }}" class="text-gray-600 hover:text-gray-900 font-medium">
                 &larr; Batal
             </a>
         </div>
 
-        <form action="{{ route('skp.store', $offer->id) }}" method="POST">
+        <form action="{{ route('skp.update', $skp->id) }}" method="POST">
             @csrf
+            @method('PUT')
 
             <!-- JUDUL -->
             <div class="text-center mb-8">
@@ -26,63 +27,57 @@
                     tertanggal <strong>{{ $offer->created_at->format('d F Y') }}</strong>,
                     tentang Pekerjaan:
                 </p>
-                <input type="text" name="judul_pekerjaan" class="w-full mt-2 border-b border-gray-400 bg-transparent focus:outline-none font-semibold" placeholder="Contoh: Renovasi dan pengecatan dinding Kantor..." required>
+                <input type="text" name="judul_pekerjaan" value="{{ old('judul_pekerjaan', $skp->judul_pekerjaan) }}" class="w-full mt-2 border-b border-gray-400 bg-transparent focus:outline-none font-semibold" required>
                 <p class="mt-4">
                     Maka pada hari ini, tanggal
-                    <input type="date" name="tanggal_surat" value="{{ date('Y-m-d') }}" class="border rounded px-2 py-1 bg-white">,
+                    <input type="date" name="tanggal_surat" value="{{ old('tanggal_surat', $skp->tanggal_surat->format('Y-m-d')) }}" class="border rounded px-2 py-1 bg-white">,
                     kami yang bertanda tangan di bawah ini :
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                <!-- PIHAK I (KLIEN/PEMBERI) -->
+                <!-- PIHAK I -->
                 <div class="border p-4 rounded bg-blue-50 border-blue-200">
                     <h3 class="font-bold text-blue-800 mb-4 border-b border-blue-300 pb-2">PIHAK I (Pemberi Pekerjaan)</h3>
-
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Nama</label>
-                            <input type="text" name="pihak_satu_nama" value="{{ old('pihak_satu_nama', $offer->nama_klien) }}" class="w-full border rounded px-2 py-1 focus:border-blue-500" required>
+                            <input type="text" name="pihak_satu_nama" value="{{ old('pihak_satu_nama', $skp->pihak_satu_nama) }}" class="w-full border rounded px-2 py-1 focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Perusahaan (Opsional)</label>
-                            <input type="text" name="pihak_satu_perusahaan" value="{{ old('pihak_satu_perusahaan', $offer->nama_klien) }}" placeholder="Tidak wajib diisi" class="w-full border rounded px-2 py-1 focus:border-blue-500">
+                            <input type="text" name="pihak_satu_perusahaan" value="{{ old('pihak_satu_perusahaan', $skp->pihak_satu_perusahaan) }}" class="w-full border rounded px-2 py-1 focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan (Opsional)</label>
-                            <input type="text" name="pihak_satu_jabatan" placeholder="Tidak wajib diisi" class="w-full border rounded px-2 py-1 focus:border-blue-500">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan</label>
+                            <input type="text" name="pihak_satu_jabatan" value="{{ old('pihak_satu_jabatan', $skp->pihak_satu_jabatan) }}" class="w-full border rounded px-2 py-1 focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Alamat</label>
-                            <textarea name="pihak_satu_alamat" id="alamat_pihak_satu" rows="2" class="w-full border rounded px-2 py-1 focus:border-blue-500" required>{{ old('pihak_satu_alamat', $offer->client_details) }}</textarea>
+                            <textarea name="pihak_satu_alamat" id="alamat_pihak_satu" rows="2" class="w-full border rounded px-2 py-1 focus:border-blue-500">{{ old('pihak_satu_alamat', $skp->pihak_satu_alamat) }}</textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- PIHAK II (KITA/PENERIMA) -->
+                <!-- PIHAK II -->
                 <div class="border p-4 rounded bg-green-50 border-green-200">
                     <h3 class="font-bold text-green-800 mb-4 border-b border-green-300 pb-2">PIHAK II (Penerima Pekerjaan)</h3>
-
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Nama</label>
-                            {{-- Input Manual / Default, Opsional --}}
-                            <input type="text" name="pihak_dua_nama" value="{{ $pihakDua['nama'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500">
+                            <input type="text" name="pihak_dua_nama" value="{{ old('pihak_dua_nama', $skp->pihak_dua_nama) }}" class="w-full border rounded px-2 py-1 focus:border-green-500" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase">Perusahaan (Opsional)</label>
-                            {{-- Input Manual / Default, Opsional (Readonly dihapus) --}}
-                            <input type="text" name="pihak_dua_perusahaan" value="{{ $pihakDua['perusahaan'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Perusahaan</label>
+                            <input type="text" name="pihak_dua_perusahaan" value="{{ old('pihak_dua_perusahaan', $skp->pihak_dua_perusahaan) }}" class="w-full border rounded px-2 py-1 bg-gray-100" readonly>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan (Opsional)</label>
-                            {{-- Input Manual / Default, Opsional --}}
-                            <input type="text" name="pihak_dua_jabatan" value="{{ $pihakDua['jabatan'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan</label>
+                            <input type="text" name="pihak_dua_jabatan" value="{{ old('pihak_dua_jabatan', $skp->pihak_dua_jabatan) }}" class="w-full border rounded px-2 py-1 focus:border-green-500" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Alamat</label>
-                            <textarea name="pihak_dua_alamat" rows="2" class="w-full border rounded px-2 py-1 bg-gray-100" readonly>{{ $pihakDua['alamat'] }}</textarea>
+                            <textarea name="pihak_dua_alamat" rows="2" class="w-full border rounded px-2 py-1 bg-gray-100" readonly>{{ $skp->pihak_dua_alamat }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -96,30 +91,35 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700">Nomor Surat SPK (Baru)</label>
-                        <input type="text" name="no_surat" value="{{ $noSurat }}" class="w-full border rounded px-3 py-2 mt-1 bg-gray-100" required>
+                        <label class="block text-sm font-bold text-gray-700">Nomor Surat SPK</label>
+                        <input type="text" name="no_surat" value="{{ old('no_surat', $skp->no_surat) }}" class="w-full border rounded px-3 py-2 mt-1 bg-gray-100" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700">Lokasi Pekerjaan</label>
-                        <input type="text" name="lokasi_pekerjaan" id="lokasi_pekerjaan" placeholder="Alamat Lokasi Proyek" class="w-full border rounded px-3 py-2 mt-1 bg-gray-5 focus:bg-white transition" required>
+                        <input type="text" name="lokasi_pekerjaan" id="lokasi_pekerjaan" value="{{ old('lokasi_pekerjaan', $skp->lokasi_pekerjaan) }}" class="w-full border rounded px-3 py-2 mt-1 bg-gray-5 focus:bg-white transition" required>
                         <p class="text-xs text-gray-500 mt-1">Otomatis diisi dari Alamat Pihak I (bisa diedit manual)</p>
                     </div>
 
                     <div class="md:col-span-2 bg-gray-50 p-4 rounded border grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-bold text-gray-700">Durasi (Hari Kalender)</label>
-                            <input type="number" id="durasi_angka" class="w-full border rounded px-3 py-2 mt-1" placeholder="Contoh: 60" required>
+                            {{-- Kita coba ambil angka dari teks durasi lama (misal "60 hari" -> 60) --}}
+                            @php
+                                preg_match('/\d+/', $skp->durasi_hari, $matches);
+                                $durasiAngka = $matches[0] ?? '';
+                            @endphp
+                            <input type="number" id="durasi_angka" class="w-full border rounded px-3 py-2 mt-1" value="{{ $durasiAngka }}" placeholder="Contoh: 60" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700">Dari Tanggal</label>
-                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="w-full border rounded px-3 py-2 mt-1" required>
+                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" value="{{ old('tanggal_mulai', $skp->tanggal_mulai->format('Y-m-d')) }}" class="w-full border rounded px-3 py-2 mt-1" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700">Sampai Tanggal</label>
-                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="w-full border rounded px-3 py-2 mt-1 bg-gray-200 cursor-not-allowed" readonly>
+                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" value="{{ old('tanggal_selesai', $skp->tanggal_selesai->format('Y-m-d')) }}" class="w-full border rounded px-3 py-2 mt-1 bg-gray-200 cursor-not-allowed" readonly>
                             <p class="text-xs text-blue-600 mt-1 font-semibold" id="info_selesai">Otomatis dihitung...</p>
                         </div>
-                        <input type="hidden" name="durasi_hari" id="durasi_hari_text">
+                        <input type="hidden" name="durasi_hari" id="durasi_hari_text" value="{{ old('durasi_hari', $skp->durasi_hari) }}">
                     </div>
                 </div>
 
@@ -129,10 +129,10 @@
                 </div>
             </fieldset>
 
-            <!-- SISTEM PEMBAYARAN (DINAMIS & OPSIONAL) -->
+            <!-- SISTEM PEMBAYARAN -->
             <fieldset class="border-t pt-6 mt-8">
-                <legend class="text-lg font-semibold text-gray-700 px-2">Sistem Pembayaran (Opsional)</legend>
-                <p class="text-sm text-gray-500 mb-4">Tambahkan baris jika diperlukan. Jika tidak, biarkan kosong.</p>
+                <legend class="text-lg font-semibold text-gray-700 px-2">Sistem Pembayaran</legend>
+                <p class="text-sm text-gray-500 mb-4">Tambahkan baris untuk setiap tahap pembayaran.</p>
 
                 <div class="bg-gray-50 p-4 rounded border">
                     <table class="w-full text-left" id="payment-table">
@@ -145,22 +145,25 @@
                             </tr>
                         </thead>
                         <tbody id="payment-rows">
-                            <!-- Baris 1 (Tidak Required) -->
+                            <!-- Loop Data Existing -->
+                            @foreach($skp->termin_pembayaran as $termin)
                             <tr>
                                 <td class="pr-2 pb-2">
-                                    <input type="text" name="termin_keterangan[]" placeholder="Contoh: DP / Progres I" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                                    <input type="text" name="termin_keterangan[]" value="{{ $termin['keterangan'] }}" class="w-full border rounded px-3 py-2 focus:border-blue-500" required>
                                 </td>
                                 <td class="pr-2 pb-2">
-                                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                                    <input type="date" name="termin_tanggal[]" value="{{ $termin['tanggal'] != '-' ? $termin['tanggal'] : '' }}" class="w-full border rounded px-3 py-2 focus:border-blue-500">
                                 </td>
                                 <td class="pr-2 pb-2 relative">
-                                    <input type="number" name="termin_jumlah[]" placeholder="30" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
+                                    {{-- Hapus simbol % untuk input value --}}
+                                    <input type="number" name="termin_jumlah[]" value="{{ str_replace('%', '', $termin['jumlah']) }}" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right" required>
                                     <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
                                 </td>
                                 <td class="pb-2 text-center">
-                                    <button type="button" class="text-red-500 hover:text-red-700 remove-row" disabled>x</button>
+                                    <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
                                 </td>
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
 
@@ -172,7 +175,7 @@
 
             <div class="mt-12 text-center">
                 <button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-10 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:-translate-y-1">
-                    Simpan & Buat SKP
+                    Simpan Perubahan
                 </button>
             </div>
 
@@ -187,11 +190,9 @@
         const alamatSumber = document.getElementById('alamat_pihak_satu');
         const lokasiTujuan = document.getElementById('lokasi_pekerjaan');
 
-        if (!lokasiTujuan.value) lokasiTujuan.value = alamatSumber.value;
         alamatSumber.addEventListener('input', function() {
             lokasiTujuan.value = this.value;
         });
-
 
         // --- 2. OTOMATISASI TANGGAL & DURASI ---
         const durasiInput = document.getElementById('durasi_angka');
@@ -223,7 +224,6 @@
 
         durasiInput.addEventListener('input', hitungSelesai);
         mulaiInput.addEventListener('change', hitungSelesai);
-
 
         // --- 3. TABEL PEMBAYARAN DINAMIS ---
         const tableBody = document.getElementById('payment-rows');

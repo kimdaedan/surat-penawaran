@@ -82,3 +82,5 @@ Route::delete('/skp/{skp}', [SkpController::class, 'destroy'])->name('skp.destro
 // Buat SKP Baru (Dari ID Penawaran)
 Route::get('/penawaran/{offer}/skp/create', [SkpController::class, 'create'])->name('skp.create');
 Route::post('/penawaran/{offer}/skp', [SkpController::class, 'store'])->name('skp.store');
+Route::get('/skp/{skp}/edit', [SkpController::class, 'edit'])->name('skp.edit');
+Route::put('/skp/{skp}', [SkpController::class, 'update'])->name('skp.update');

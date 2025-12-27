@@ -1,25 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- LOGIKA TANGGAL INDONESIA --}}
+{{-- LOGIKA TANGGAL & FORMAT NOMOR --}}
 @php
-use Carbon\Carbon;
-$namaHari = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
-$namaBulan = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+    use Carbon\Carbon;
 
-$formatIndo = function($date, $pakaiHari = false) use ($namaHari, $namaBulan) {
-if (!$date) return '-';
-$d = Carbon::parse($date);
-$hari = $namaHari[$d->format('l')];
-$tgl = $d->format('d');
-$bln = $namaBulan[(int)$d->format('m')];
-$thn = $d->format('Y');
+    // --- Helper Tanggal Indo ---
+    $namaHari = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
+    $namaBulan = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
 
-if ($pakaiHari) {
-return "$hari, $tgl $bln $thn";
-}
-return "$tgl $bln $thn";
-};
+    $formatIndo = function($date, $pakaiHari = false) use ($namaHari, $namaBulan) {
+        if (!$date) return '-';
+        $d = Carbon::parse($date);
+        $hari = $namaHari[$d->format('l')];
+        $tgl = $d->format('d');
+        $bln = $namaBulan[(int)$d->format('m')];
+        $thn = $d->format('Y');
+
+        if ($pakaiHari) {
+            return "$hari, $tgl $bln $thn";
+        }
+        return "$tgl $bln $thn";
+    };
+
+    // --- Helper Bulan Romawi untuk Nomor Surat ---
+    $bulanRomawi = [
+        1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI',
+        7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
+    ];
+
+    // Ambil bulan dan tahun dari tanggal pembuatan penawaran
+    $bulanOffer = (int) $skp->offer->created_at->format('n');
+    $tahunOffer = $skp->offer->created_at->format('Y');
+
+    // Susun Nomor Surat Lengkap
+    // Contoh: SP-005/SP/TGI-1/XII/2025
+    $nomorSuratLengkap = sprintf(
+        'SP-%04d/SP/TGI-1/%s/%s',
+        $skp->offer_id,
+        $bulanRomawi[$bulanOffer],
+        $tahunOffer
+    );
 @endphp
 
 <div class="container mx-auto my-12 px-4">
@@ -35,13 +56,11 @@ return "$tgl $bln $thn";
     </div>
 
     <!-- Area Dokumen Cetak -->
-    <!-- ID 'dokumen-skp' ini yang akan kita isolasi saat print -->
     <div class="max-w-5xl mx-auto bg-white p-8 md:p-16 shadow-lg rounded-lg font-serif" id="dokumen-skp">
 
         <!-- KOP SURAT -->
         <header class="border-b-2 border-gray-800 pb-4 mb-8 flex justify-between items-center">
             <div class="w-1/4">
-                {{-- Logo Kiri --}}
                 <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="w-32">
             </div>
             <div class="w-1/2 text-center font-serif">
@@ -51,7 +70,6 @@ return "$tgl $bln $thn";
                 <p class="text-xs text-gray-600">Telp: +62 778-7485 999 | Email: tgi_team040210@yahoo.com</p>
             </div>
             <div class="w-1/4 flex justify-end">
-                {{-- Logo Kanan --}}
                 <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="w-40">
             </div>
         </header>
@@ -64,8 +82,9 @@ return "$tgl $bln $thn";
         <!-- ISI SURAT -->
         <div class="text-justify leading-relaxed text-gray-900 text-base font-serif space-y-4">
 
+            {{-- BAGIAN YANG DIPERBAIKI --}}
             <p>
-                Berdasarkan Surat Penawaran Kerja Nomor: <strong>SP-00{{ $skp->offer_id }}/SP/TGI-1/IX/2025</strong>
+                Berdasarkan Surat Penawaran Kerja Nomor: <strong>{{ $nomorSuratLengkap }}</strong>
                 tertanggal <strong>{{ $formatIndo($skp->offer->created_at) }}</strong>,
                 tentang <strong>{{ $skp->judul_pekerjaan }}</strong>,
                 maka pada hari ini, <strong>{{ $formatIndo($skp->tanggal_surat, true) }}</strong>,

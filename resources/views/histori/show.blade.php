@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+        // 1. Array Konversi Bulan ke Romawi
+        $bulanRomawi = [
+            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI',
+            7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
+        ];
+
+        // 2. Ambil data waktu dari created_at
+        $bulanAngka = $offer->created_at->format('n'); // Mengambil angka 1-12
+        $tahun      = $offer->created_at->format('Y'); // Mengambil tahun (misal: 2025)
+
+        // 3. Format Nomor Urut (Padding 3 digit angka 0)
+        // Contoh: ID 1 menjadi 001, ID 10 menjadi 010, ID 100 tetap 100
+        $noUrut = str_pad($offer->id, 3, '0', STR_PAD_LEFT);
+
+        // 4. Susun Nomor Surat Akhir
+        // Format: 001/SP/TGI-1/XII/2025
+        $nomorSuratFix = sprintf('%s/SP/TGI-1/%s/%s', $noUrut, $bulanRomawi[$bulanAngka], $tahun);
+    @endphp
 <div class="container mx-auto my-12 px-4">
 
     <!-- Tombol Aksi -->
@@ -40,9 +59,9 @@
         </header>
 
         <section class="mt-8">
-            <p class="text-gray-700">Batam, {{ $offer->created_at->format('d F Y') }}</p>
-            <p class="text-gray-700">Nomor. : 00{{ $offer->id }}/SP/TGI-1/IX/2025</p>
-        </section>
+        <p class="text-gray-700">Batam, {{ $offer->created_at->format('d F Y') }}</p>
+        <p class="text-gray-700 font-bold">Nomor : {{ $nomorSuratFix }}</p>
+    </section>
 
         <section class="mt-8">
             <p class="text-gray-600">Kepada Yth,</p>

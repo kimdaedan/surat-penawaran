@@ -8,16 +8,26 @@ use Illuminate\Http\Request;
 
 class SkpController extends Controller
 {
-    // === FORMULIR PEMBUATAN SKP ===
+    // === 1. FORMULIR PEMBUATAN SKP ===
     public function create(Offer $offer)
     {
+        // Cek jika SKP sudah pernah dibuat
         if (Skp::where('offer_id', $offer->id)->exists()) {
              return redirect()->back()->with('error', 'SKP untuk penawaran ini sudah dibuat.');
         }
 
         $bulanRomawi = array("", "I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII");
+
+        // 1. Generate Nomor Surat SKP (Baru)
         $nextId = Skp::max('id') + 1;
         $noSurat = sprintf('00%d/SPK/TGI-1/%s/%s', $nextId, $bulanRomawi[date('n')], date('Y'));
+
+        // 2. Generate Nomor Surat Penawaran (Ref ID) Lengkap
+        // Asumsi format penawaran sama: 00{ID}/SP/TGI-1/{BULAN}/{TAHUN}
+        // Kita ambil bulan/tahun dari created_at penawaran agar akurat
+        $bulanOffer = $bulanRomawi[$offer->created_at->format('n')];
+        $tahunOffer = $offer->created_at->format('Y');
+        $refNoPenawaran = sprintf('00%d/SP/TGI-1/%s/%s', $offer->id, $bulanOffer, $tahunOffer);
 
         $pihakDua = [
             'nama' => 'Samsu Rizal',
@@ -29,47 +39,38 @@ class SkpController extends Controller
         return view('skp.create', [
             'offer' => $offer,
             'noSurat' => $noSurat,
+            'refNoPenawaran' => $refNoPenawaran, // Kirim variabel baru ini
             'pihakDua' => $pihakDua
         ]);
     }
 
-    // === SIMPAN DATA SKP ===
+    // === 2. SIMPAN DATA SKP ===
     public function store(Request $request, Offer $offer)
     {
-        // 1. Validasi Input (Dilonggarkan)
         $request->validate([
             'no_surat' => 'required',
             'tanggal_surat' => 'required|date',
-
-            // Pihak I (Klien)
             'pihak_satu_nama' => 'required',
-            'pihak_satu_perusahaan' => 'nullable', // <-- OPSIONAL
+            'pihak_satu_perusahaan' => 'nullable',
             'pihak_satu_alamat' => 'required',
-            'pihak_satu_jabatan' => 'nullable', // <-- OPSIONAL
-
-            // Pihak II (Kita)
+            'pihak_satu_jabatan' => 'nullable',
             'pihak_dua_nama' => 'required',
-            'pihak_dua_jabatan' => 'required',
-
-            // Detail Pekerjaan
-            'judul_pekerjaan' => 'required',
+            'pihak_dua_jabatan' => 'nullable',
+            'pihak_dua_perusahaan' => 'nullable',
+            'pihak_dua_alamat' => 'required',
+            'judul_pekerjaan' => 'required', // Validasi input select
             'lokasi_pekerjaan' => 'required',
             'durasi_hari' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
-
-            // Termin Pembayaran (OPSIONAL)
             'termin_keterangan' => 'nullable|array',
             'termin_tanggal' => 'nullable|array',
             'termin_jumlah' => 'nullable|array',
         ]);
 
-        // 2. Proses Data Termin Pembayaran
         $terminPembayaran = [];
-
         if ($request->has('termin_keterangan')) {
             foreach ($request->termin_keterangan as $index => $ket) {
-                // Hanya simpan jika keterangan TIDAK KOSONG
                 if (!empty($ket)) {
                     $tglRaw = $request->termin_tanggal[$index] ?? null;
                     $jumlahInput = $request->termin_jumlah[$index] ?? '';
@@ -84,36 +85,31 @@ class SkpController extends Controller
             }
         }
 
-        // 3. Simpan ke Database
         $skp = Skp::create([
             'offer_id' => $offer->id,
             'no_surat' => $request->no_surat,
             'tanggal_surat' => $request->tanggal_surat,
-
             'pihak_satu_nama' => $request->pihak_satu_nama,
             'pihak_satu_jabatan' => $request->pihak_satu_jabatan ?? '-',
             'pihak_satu_perusahaan' => $request->pihak_satu_perusahaan ?? '-',
             'pihak_satu_alamat' => $request->pihak_satu_alamat,
-
             'pihak_dua_nama' => $request->pihak_dua_nama,
-            'pihak_dua_jabatan' => $request->pihak_dua_jabatan,
-            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan,
+            'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? '-',
+            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? '-',
             'pihak_dua_alamat' => $request->pihak_dua_alamat,
-
-            'judul_pekerjaan' => $request->judul_pekerjaan,
+            'judul_pekerjaan' => $request->judul_pekerjaan, // Menyimpan nilai dari dropdown
             'lokasi_pekerjaan' => $request->lokasi_pekerjaan,
             'durasi_hari' => $request->durasi_hari,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'nilai_pekerjaan' => $offer->total_keseluruhan,
-
             'termin_pembayaran' => $terminPembayaran,
         ]);
 
         return redirect()->route('skp.index')->with('success', 'SKP berhasil dibuat!');
     }
 
-    // ... Method index, show, destroy, edit, update lainnya ...
+    // ... Method index, show, destroy, edit, update lainnya TETAP SAMA ...
 
     public function index(Request $request)
     {
@@ -154,17 +150,19 @@ class SkpController extends Controller
             'no_surat' => 'required',
             'tanggal_surat' => 'required|date',
             'pihak_satu_nama' => 'required',
-            'pihak_satu_perusahaan' => 'nullable', // Opsional
+            'pihak_satu_perusahaan' => 'nullable',
             'pihak_satu_alamat' => 'required',
-            'pihak_satu_jabatan' => 'nullable', // Opsional
+            'pihak_satu_jabatan' => 'nullable',
             'pihak_dua_nama' => 'required',
-            'pihak_dua_jabatan' => 'required',
+            'pihak_dua_jabatan' => 'nullable',
+            'pihak_dua_perusahaan' => 'nullable',
+            'pihak_dua_alamat' => 'required',
             'judul_pekerjaan' => 'required',
             'lokasi_pekerjaan' => 'required',
             'durasi_hari' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
-            'termin_keterangan' => 'nullable|array', // Opsional
+            'termin_keterangan' => 'nullable|array',
             'termin_tanggal' => 'nullable|array',
             'termin_jumlah' => 'nullable|array',
         ]);
@@ -194,8 +192,8 @@ class SkpController extends Controller
             'pihak_satu_perusahaan' => $request->pihak_satu_perusahaan ?? '-',
             'pihak_satu_alamat' => $request->pihak_satu_alamat,
             'pihak_dua_nama' => $request->pihak_dua_nama,
-            'pihak_dua_jabatan' => $request->pihak_dua_jabatan,
-            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan,
+            'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? '-',
+            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? '-',
             'pihak_dua_alamat' => $request->pihak_dua_alamat,
             'judul_pekerjaan' => $request->judul_pekerjaan,
             'lokasi_pekerjaan' => $request->lokasi_pekerjaan,

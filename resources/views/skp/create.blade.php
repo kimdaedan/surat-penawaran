@@ -22,11 +22,20 @@
             <!-- PREAMBULE -->
             <div class="bg-gray-50 p-4 rounded border mb-6 text-sm text-gray-700 leading-relaxed">
                 <p>
-                    Berdasarkan Surat Penawaran Kerja (Ref ID): <strong>SP-{{ $offer->id }}</strong>
+                    {{-- REF ID LENGKAP --}}
+                    Berdasarkan Surat Penawaran Kerja (Ref ID): <strong>{{ $refNoPenawaran }}</strong>
                     tertanggal <strong>{{ $offer->created_at->format('d F Y') }}</strong>,
                     tentang Pekerjaan:
                 </p>
-                <input type="text" name="judul_pekerjaan" class="w-full mt-2 border-b border-gray-400 bg-transparent focus:outline-none font-semibold" placeholder="Contoh: Renovasi dan pengecatan dinding Kantor..." required>
+
+                {{-- DROPDOWN TENTANG PEKERJAAN --}}
+                <select name="judul_pekerjaan" class="w-full mt-2 border-b border-gray-400 bg-transparent focus:outline-none font-semibold py-1 cursor-pointer hover:bg-gray-100 transition" required>
+                    <option value="" disabled selected>-- Pilih Jenis Pekerjaan --</option>
+                    <option value="Renovasi dan Pengecatan Interior">Renovasi dan Pengecatan Interior</option>
+                    <option value="Renovasi dan Pengecatan Exterior">Renovasi dan Pengecatan Exterior</option>
+                    <option value="Renovasi dan Pengecatan Interior & Exterior">Renovasi dan Pengecatan Interior & Exterior</option>
+                </select>
+
                 <p class="mt-4">
                     Maka pada hari ini, tanggal
                     <input type="date" name="tanggal_surat" value="{{ date('Y-m-d') }}" class="border rounded px-2 py-1 bg-white">,
@@ -67,17 +76,14 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Nama</label>
-                            {{-- Input Manual / Default, Opsional --}}
-                            <input type="text" name="pihak_dua_nama" value="{{ $pihakDua['nama'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500">
+                            <input type="text" name="pihak_dua_nama" value="{{ $pihakDua['nama'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500" required>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Perusahaan (Opsional)</label>
-                            {{-- Input Manual / Default, Opsional (Readonly dihapus) --}}
                             <input type="text" name="pihak_dua_perusahaan" value="{{ $pihakDua['perusahaan'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase">Jabatan (Opsional)</label>
-                            {{-- Input Manual / Default, Opsional --}}
                             <input type="text" name="pihak_dua_jabatan" value="{{ $pihakDua['jabatan'] }}" class="w-full border rounded px-2 py-1 focus:border-green-500">
                         </div>
                         <div>

@@ -1,6 +1,27 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- LOGIKA TANGGAL INDONESIA --}}
+@php
+use Carbon\Carbon;
+$namaHari = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
+$namaBulan = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+
+$formatIndo = function($date, $pakaiHari = false) use ($namaHari, $namaBulan) {
+if (!$date) return '-';
+$d = Carbon::parse($date);
+$hari = $namaHari[$d->format('l')];
+$tgl = $d->format('d');
+$bln = $namaBulan[(int)$d->format('m')];
+$thn = $d->format('Y');
+
+if ($pakaiHari) {
+return "$hari, $tgl $bln $thn";
+}
+return "$tgl $bln $thn";
+};
+@endphp
+
 <div class="container mx-auto my-12 px-4">
 
     <!-- Tombol Aksi (Hanya tampil di layar) -->
@@ -44,10 +65,10 @@
         <div class="text-justify leading-relaxed text-gray-900 text-base font-serif space-y-4">
 
             <p>
-                Berdasarkan Surat Penawaran Kerja Nomor: <strong>SP-{{ $skp->offer_id }}</strong>
-                tertanggal <strong>{{ $skp->offer->created_at->format('d F Y') }}</strong>,
+                Berdasarkan Surat Penawaran Kerja Nomor: <strong>SP-00{{ $skp->offer_id }}/SP/TGI-1/IX/2025</strong>
+                tertanggal <strong>{{ $formatIndo($skp->offer->created_at) }}</strong>,
                 tentang <strong>{{ $skp->judul_pekerjaan }}</strong>,
-                maka pada hari ini, <strong>{{ \Carbon\Carbon::parse($skp->tanggal_surat)->translatedFormat('l d F Y') }}</strong>,
+                maka pada hari ini, <strong>{{ $formatIndo($skp->tanggal_surat, true) }}</strong>,
                 kami yang bertanda tangan di bawah ini :
             </p>
 
@@ -59,12 +80,17 @@
                         <td class="w-4 align-top">:</td>
                         <td class="align-top font-bold">{{ $skp->pihak_satu_nama }}</td>
                     </tr>
+
+                    {{-- Tampilkan Perusahaan hanya jika tidak kosong --}}
+                    @if($skp->pihak_satu_perusahaan)
                     <tr>
                         <td class="align-top">Perusahaan</td>
                         <td class="align-top">:</td>
                         <td class="align-top">{{ $skp->pihak_satu_perusahaan }}</td>
                     </tr>
-                    @if($skp->pihak_satu_jabatan && $skp->pihak_satu_jabatan != '-')
+                    @endif
+
+                    @if($skp->pihak_satu_jabatan)
                     <tr>
                         <td class="align-top">Jabatan</td>
                         <td class="align-top">:</td>
@@ -88,16 +114,23 @@
                         <td class="w-4 align-top">:</td>
                         <td class="align-top font-bold">{{ $skp->pihak_dua_nama }}</td>
                     </tr>
+
+                    @if($skp->pihak_dua_perusahaan)
                     <tr>
                         <td class="align-top">Perusahaan</td>
                         <td class="align-top">:</td>
                         <td class="align-top">{{ $skp->pihak_dua_perusahaan }}</td>
                     </tr>
+                    @endif
+
+                    @if($skp->pihak_dua_jabatan)
                     <tr>
                         <td class="align-top">Jabatan</td>
                         <td class="align-top">:</td>
                         <td class="align-top">{{ $skp->pihak_dua_jabatan }}</td>
                     </tr>
+                    @endif
+
                     <tr>
                         <td class="align-top">Alamat</td>
                         <td class="align-top">:</td>
@@ -122,35 +155,45 @@
                     <td class="align-top">{{ $skp->lokasi_pekerjaan }}</td>
                 </tr>
                 <tr>
-                    <td class="align-top font-bold">Masa Pelaksanaan Pek.</td>
+                    <td class="align-top font-bold">Masa Pekerjaan</td>
                     <td class="align-top">:</td>
                     <td class="align-top">
                         {{ $skp->durasi_hari }} <br>
-                        dari tanggal {{ $skp->tanggal_mulai->format('d F Y') }} sampai dengan tanggal {{ $skp->tanggal_selesai->format('d F Y') }}
-                    </td>
+                </tr>
+
+                {{-- BARIS TERHITUNG DITAMBAHKAN DI SINI --}}
+                <tr>
+                <td class="font-bold">Terhitung </td>
+                <td class="align-top">:</td>
+                <td class="align-top"> dari tanggal {{ $formatIndo($skp->tanggal_mulai) }} sampai dengan tanggal {{ $formatIndo($skp->tanggal_selesai) }}
+                </td>
                 </tr>
                 <tr>
                     <td class="align-top font-bold">Total Nilai Pekerjaan</td>
                     <td class="align-top">:</td>
                     <td class="align-top font-bold">Rp {{ number_format($skp->nilai_pekerjaan, 0, ',', '.') }},-</td>
                 </tr>
+
+                {{-- Tampilkan Sistem Pembayaran HANYA jika ada data --}}
+                @if($skp->termin_pembayaran && count($skp->termin_pembayaran) > 0)
                 <tr>
                     <td class="align-top font-bold">Sistem Pembayaran</td>
                     <td class="align-top">:</td>
                     <td class="align-top">
                         <ul class="list-none pl-0 m-0">
                             @foreach($skp->termin_pembayaran as $termin)
-                                <li class="mb-1">
-                                    {{ $termin['keterangan'] }}
-                                    @if(!empty($termin['tanggal']) && $termin['tanggal'] != '-')
-                                        ({{ \Carbon\Carbon::parse($termin['tanggal'])->format('d M') }})
-                                    @endif
-                                    , dibayarkan {{ $termin['jumlah'] }}
-                                </li>
+                            <li class="mb-1">
+                                {{ $termin['keterangan'] }}
+                                @if(!empty($termin['tanggal']) && $termin['tanggal'] != '-')
+                                ({{ $formatIndo($termin['tanggal']) }})
+                                @endif
+                                , dibayarkan {{ $termin['jumlah'] }}
+                            </li>
                             @endforeach
                         </ul>
                     </td>
                 </tr>
+                @endif
             </table>
 
             <!-- SYARAT & KETENTUAN -->
@@ -183,18 +226,22 @@
 <!-- CSS KHUSUS PRINT -->
 <style>
     /* Mengatur Font Times New Roman untuk seluruh area dokumen */
-    .font-serif, #dokumen-skp, #dokumen-skp * {
+    .font-serif,
+    #dokumen-skp,
+    #dokumen-skp * {
         font-family: 'Times New Roman', Times, serif !important;
     }
 
     @media print {
+
         /* Sembunyikan elemen body utama */
         body * {
             visibility: hidden;
         }
 
         /* Tampilkan HANYA dokumen SKP dan isinya */
-        #dokumen-skp, #dokumen-skp * {
+        #dokumen-skp,
+        #dokumen-skp * {
             visibility: visible;
         }
 
@@ -206,8 +253,10 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            box-shadow: none !important; /* Hilangkan bayangan */
-            border: none !important; /* Hilangkan border container */
+            box-shadow: none !important;
+            /* Hilangkan bayangan */
+            border: none !important;
+            /* Hilangkan border container */
         }
 
         /* Hilangkan elemen navigasi/tombol yang mungkin terlewat */
@@ -223,7 +272,8 @@
         /* Setup Halaman A4 */
         @page {
             size: A4 portrait;
-            margin: 2cm; /* Margin standar surat resmi */
+            margin: 2cm;
+            /* Margin standar surat resmi */
         }
     }
 </style>

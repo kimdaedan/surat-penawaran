@@ -1,25 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@php
-        // 1. Array Konversi Bulan ke Romawi
-        $bulanRomawi = [
-            1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV', 5 => 'V', 6 => 'VI',
-            7 => 'VII', 8 => 'VIII', 9 => 'IX', 10 => 'X', 11 => 'XI', 12 => 'XII'
-        ];
-
-        // 2. Ambil data waktu dari created_at
-        $bulanAngka = $offer->created_at->format('n'); // Mengambil angka 1-12
-        $tahun      = $offer->created_at->format('Y'); // Mengambil tahun (misal: 2025)
-
-        // 3. Format Nomor Urut (Padding 3 digit angka 0)
-        // Contoh: ID 1 menjadi 001, ID 10 menjadi 010, ID 100 tetap 100
-        $noUrut = str_pad($offer->id, 3, '0', STR_PAD_LEFT);
-
-        // 4. Susun Nomor Surat Akhir
-        // Format: 001/SP/TGI-1/XII/2025
-        $nomorSuratFix = sprintf('%s/SP/TGI-1/%s/%s', $noUrut, $bulanRomawi[$bulanAngka], $tahun);
-    @endphp
 <div class="container mx-auto my-12 px-4">
 
     <!-- Tombol Aksi -->
@@ -59,9 +40,9 @@
         </header>
 
         <section class="mt-8">
-        <p class="text-gray-700">Batam, {{ $offer->created_at->format('d F Y') }}</p>
-        <p class="text-gray-700 font-bold">Nomor : {{ $nomorSuratFix }}</p>
-    </section>
+            <p class="text-gray-700">Batam, {{ $offer->created_at->format('d F Y') }}</p>
+            <p class="text-gray-700">Nomor. : 00{{ $offer->id }}/SP/TGI-1/IX/2025</p>
+        </section>
 
         <section class="mt-8">
             <p class="text-gray-600">Kepada Yth,</p>
@@ -85,32 +66,37 @@
             <p>Dengan ini kami sampaikan penawaran Upah Jasa pengecatan :</p>
         </section>
 
-        {{-- LOGIKA PEMISAHAN DATA (SPLIT) & HITUNG SUBTOTAL --}}
+        {{-- LOGIKA PEMISAHAN DATA (SPLIT) --}}
         @php
             $isSplit = $offer->pisah_kriteria_total;
+            $showTotal = !$offer->hilangkan_grand_total; // True jika opsi HILANGKAN TIDAK DICENTANG
             $exteriorItems = collect();
             $interiorItems = collect();
             $totalExterior = 0;
             $totalInterior = 0;
 
             if ($isSplit) {
-                // Filter & Hitung Exterior
+                // Filter untuk Exterior
                 $exteriorItems = $offer->items->filter(function($item) {
                     $prod = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
                     return $prod && $prod->kriteria == 'Exterior';
                 });
-                $totalExterior = $exteriorItems->sum(function($item) {
-                    return $item->volume * $item->harga_per_m2;
-                });
+                if ($showTotal) {
+                     $totalExterior = $exteriorItems->sum(function($item) {
+                        return $item->volume * $item->harga_per_m2;
+                    });
+                }
 
-                // Filter & Hitung Interior (Sisanya)
+                // Sisanya masuk Interior
                 $interiorItems = $offer->items->filter(function($item) {
                     $prod = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
                     return !$prod || $prod->kriteria != 'Exterior';
                 });
-                $totalInterior = $interiorItems->sum(function($item) {
-                    return $item->volume * $item->harga_per_m2;
-                });
+                if ($showTotal) {
+                    $totalInterior = $interiorItems->sum(function($item) {
+                        return $item->volume * $item->harga_per_m2;
+                    });
+                }
             }
         @endphp
 
@@ -123,7 +109,7 @@
 
                     {{-- TABEL EXTERIOR --}}
                     @if($exteriorItems->isNotEmpty())
-                        <div class="mb-6">
+                        <div class="mb-8 page-break-inside-avoid">
                             <h4 class="font-bold text-gray-800 mb-2 uppercase border-b-2 border-gray-800 inline-block text-sm">Pekerjaan Exterior</h4>
                             <table class="w-full text-left border-collapse mb-4">
                                 <thead class="bg-gray-800 text-white">
@@ -155,7 +141,8 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                {{-- SUBTOTAL EXTERIOR --}}
+                                {{-- SUBTOTAL EXTERIOR (HANYA MUNCUL JIKA TIDAK DIHILANGKAN) --}}
+                                @if($showTotal)
                                 <tfoot>
                                     <tr class="bg-gray-100 font-bold text-gray-800">
                                         <td colspan="5" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Exterior</td>
@@ -164,13 +151,14 @@
                                         </td>
                                     </tr>
                                 </tfoot>
+                                @endif
                             </table>
                         </div>
                     @endif
 
                     {{-- TABEL INTERIOR --}}
                     @if($interiorItems->isNotEmpty())
-                        <div class="mb-6">
+                        <div class="mb-8 page-break-inside-avoid">
                             <h4 class="font-bold text-gray-800 mb-2 uppercase border-b-2 border-gray-800 inline-block text-sm">Pekerjaan Interior</h4>
                             <table class="w-full text-left border-collapse mb-4">
                                 <thead class="bg-gray-800 text-white">
@@ -202,7 +190,8 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                {{-- SUBTOTAL INTERIOR --}}
+                                {{-- SUBTOTAL INTERIOR (HANYA MUNCUL JIKA TIDAK DIHILANGKAN) --}}
+                                @if($showTotal)
                                 <tfoot>
                                     <tr class="bg-gray-100 font-bold text-gray-800">
                                         <td colspan="5" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Interior</td>
@@ -211,6 +200,7 @@
                                         </td>
                                     </tr>
                                 </tfoot>
+                                @endif
                             </table>
                         </div>
                     @endif
@@ -252,7 +242,7 @@
 
                 {{-- TABEL JASA (SELALU MUNCUL DI BAWAH) --}}
                 @if($offer->jasaItems->isNotEmpty())
-                    <div class="mt-4">
+                    <div class="mt-4 page-break-inside-avoid">
                         @if($isSplit)
                             <h4 class="font-bold text-gray-800 mb-2 uppercase border-b-2 border-gray-800 inline-block text-sm">Pengerjaan Tambahan</h4>
                         @endif
@@ -295,6 +285,7 @@
         </section>
 
         <!-- GRAND TOTAL (Dikondisikan) -->
+        {{-- Hanya muncul jika opsi hilangkan_grand_total TIDAK dicentang (false/0) --}}
         @if(!$offer->hilangkan_grand_total)
         <section class="mt-4 flex justify-end" id="grand-total-block">
             <div class="w-full md:w-6/12">
@@ -360,6 +351,10 @@
 
         #grand-total-block {
             page-break-inside: avoid !important;
+        }
+
+        .page-break-inside-avoid {
+             page-break-inside: avoid;
         }
 
         /* WARNA HITAM UNTUK PRINT */

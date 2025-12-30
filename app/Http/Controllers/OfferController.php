@@ -41,12 +41,19 @@ class OfferController extends Controller
     /**
      * Menampilkan halaman detail untuk satu penawaran.
      */
-    public function show(Offer $offer)
+    public function show($id)
     {
-        // Memuat semua relasi
-        $offer->load(['items', 'jasaItems']);
+        // Ambil data penawaran beserta item-itemnya
+        $offer = Offer::with(['items', 'jasaItems'])->findOrFail($id);
 
-        return view('histori.show', ['offer' => $offer]);
+        // LOGIKA PEMILIHAN VIEW
+        if ($offer->jenis_penawaran == 'produk') {
+            // Arahkan ke file VIEW BARU yang baru kita buat
+            return view('histori.show_product', compact('offer'));
+        } else {
+            // Arahkan ke file VIEW LAMA (Proyek)
+            return view('histori.show', compact('offer'));
+        }
     }
 
     /**

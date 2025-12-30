@@ -4,83 +4,94 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\ProductOfferController; // Controller Baru
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\BastController;
 use App\Http\Controllers\SkpController;
 
-// Rute untuk menampilkan Dashboard
+// ====================================================
+// 1. DASHBOARD & HALAMAN UMUM
+// ====================================================
 Route::get('/', function () {
     return view('dashboard');
 });
 
-// Rute untuk menampilkan form pembuatan surat (Manual/Lama)
-Route::get('/penawaran/buat', function() {
-    return view('penawaran.create');
-})->name('penawaran.create');
+// ====================================================
+// 2. MASTER DATA PRODUK (CRUD)
+// ====================================================
+Route::resource('daftar-harga', ProductController::class)->parameters([
+    'daftar-harga' => 'product'
+])->names('harga');
+// Penjelasan: Route::resource otomatis membuat route index, create, store, edit, update, destroy.
 
-// Rute untuk memproses data dari formulir dan menampilkan hasilnya (Manual/Lama)
-Route::post('/buat-surat', function (Request $request) {
-    $data = $request->all();
-    return view('hasil_surat', ['data' => $data]);
+// ====================================================
+// 3. MENU PENAWARAN (PROYEK & PRODUK)
+// ====================================================
+Route::prefix('penawaran')->name('penawaran.')->group(function () {
+
+    // A. Penawaran PROYEK (Logika Lama ada di ProductController)
+    // Perhatikan: Gunakan ProductController, bukan OfferController
+    Route::get('/create-project', [ProductController::class, 'createCombined'])->name('create_combined');
+    Route::post('/store-project', [ProductController::class, 'storeCombined'])->name('store_combined');
+
+    // B. Penawaran PRODUK (Logika Baru ada di ProductOfferController)
+    Route::get('/create-product', [ProductOfferController::class, 'create'])->name('create_product');
+    Route::post('/store-product', [ProductOfferController::class, 'store'])->name('store_product');
+    // RUTE EDIT & UPDATE KHUSUS PRODUK (BARU)
+    Route::get('/edit-product/{offer}', [ProductOfferController::class, 'edit'])->name('edit_product');
+    Route::put('/update-product/{offer}', [ProductOfferController::class, 'update'])->name('update_product');
+
 });
 
-// === RUTE HARGA PRODUK ===
-Route::get('/daftar-harga', [ProductController::class, 'index'])->name('harga.index');
-Route::get('/daftar-harga/tambah', [ProductController::class, 'create'])->name('harga.create');
-Route::post('/daftar-harga', [ProductController::class, 'store'])->name('harga.store');
-Route::delete('/daftar-harga/{product}', [ProductController::class, 'destroy'])->name('harga.destroy');
-Route::get('/daftar-harga/{product}/edit', [ProductController::class, 'edit'])->name('harga.edit');
-Route::put('/daftar-harga/{product}', [ProductController::class, 'update'])->name('harga.update');
-
-// === RUTE PENAWARAN (OFFER) ===
-// Form penawaran produk + jasa
-Route::get('/penawaran/buat-kombinasi', [ProductController::class, 'createCombined'])->name('penawaran.create_combined');
-// Simpan data form penawaran produk + jasa
-Route::post('/penawaran/simpan-kombinasi', [ProductController::class, 'storeCombined'])->name('penawaran.store_combined');
-
-// Histori Penawaran
+// ====================================================
+// 4. HISTORI PENAWARAN (CRUD)
+// ====================================================
 Route::get('/histori-penawaran', [OfferController::class, 'index'])->name('histori.index');
 Route::get('/penawaran/{offer}', [OfferController::class, 'show'])->name('histori.show');
-Route::delete('/penawaran/{offer}', [OfferController::class, 'destroy'])->name('histori.destroy');
 Route::get('/penawaran/{offer}/edit', [OfferController::class, 'edit'])->name('histori.edit');
 Route::put('/penawaran/{offer}', [OfferController::class, 'update'])->name('histori.update');
+Route::delete('/penawaran/{offer}', [OfferController::class, 'destroy'])->name('histori.destroy');
 
-// === RUTE INVOICE ===
-Route::get('/invoice/create', [InvoiceController::class, 'create'])->name('invoice.create');
-Route::get('/invoice/create-from-offer/{offer}', [InvoiceController::class, 'createFromOffer'])->name('invoice.create_from_offer');
-Route::get('/invoice/histori', [InvoiceController::class, 'index'])->name('invoice.histori');
-Route::post('/invoice/store-from-offer', [InvoiceController::class, 'storeFromOffer'])->name('invoice.store_from_offer');
-Route::delete('/invoice/{invoice}', [InvoiceController::class, 'destroy'])->name('invoice.destroy');
-Route::get('invoice/show/{invoice}', [InvoiceController::class, 'show'])->name('invoice.show');
-Route::get('invoice/edit/{invoice}', [InvoiceController::class, 'edit'])->name('invoice.edit');
-Route::put('invoice/update/{invoice}', [InvoiceController::class, 'update'])->name('invoice.update');
 
-// === RUTE BAST (BERITA ACARA SERAH TERIMA) ===
-// Histori BAST
+// ====================================================
+// 5. INVOICE
+// ====================================================
+Route::prefix('invoice')->name('invoice.')->group(function() {
+    Route::get('/histori', [InvoiceController::class, 'index'])->name('histori');
+    Route::get('/create', [InvoiceController::class, 'create'])->name('create');
+    // Buat invoice dari ID Penawaran
+    Route::get('/create-from-offer/{offer}', [InvoiceController::class, 'createFromOffer'])->name('create_from_offer');
+    Route::post('/store-from-offer', [InvoiceController::class, 'storeFromOffer'])->name('store_from_offer');
+
+    // CRUD Standar Invoice
+    Route::get('/show/{invoice}', [InvoiceController::class, 'show'])->name('show');
+    Route::get('/edit/{invoice}', [InvoiceController::class, 'edit'])->name('edit');
+    Route::put('/update/{invoice}', [InvoiceController::class, 'update'])->name('update');
+    Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->name('destroy');
+});
+
+
+// ====================================================
+// 6. BAST (Berita Acara Serah Terima)
+// ====================================================
 Route::get('/histori-bast', [BastController::class, 'index'])->name('bast.index');
-// Detail & Cetak BAST
 Route::get('/bast/{bast}', [BastController::class, 'show'])->name('bast.show');
-// Hapus BAST
 Route::delete('/bast/{bast}', [BastController::class, 'destroy'])->name('bast.destroy');
 
-// Buat BAST Baru (Dari ID Penawaran)
+// Route BAST Spesifik per Penawaran
 Route::get('/penawaran/{offer}/bast/create', [BastController::class, 'create'])->name('bast.create');
-// Simpan BAST Baru
 Route::post('/penawaran/{offer}/bast', [BastController::class, 'store'])->name('bast.store');
 
 
-// === RUTE SKP (SURAT PERINTAH KERJA) ===
-// Histori SKP
+// ====================================================
+// 7. SKP (Surat Perintah Kerja)
+// ====================================================
 Route::get('/histori-skp', [SkpController::class, 'index'])->name('skp.index');
-
-// Detail & Cetak SKP
 Route::get('/skp/{skp}', [SkpController::class, 'show'])->name('skp.show');
-
-// Hapus SKP
-Route::delete('/skp/{skp}', [SkpController::class, 'destroy'])->name('skp.destroy');
-
-// Buat SKP Baru (Dari ID Penawaran)
-Route::get('/penawaran/{offer}/skp/create', [SkpController::class, 'create'])->name('skp.create');
-Route::post('/penawaran/{offer}/skp', [SkpController::class, 'store'])->name('skp.store');
 Route::get('/skp/{skp}/edit', [SkpController::class, 'edit'])->name('skp.edit');
 Route::put('/skp/{skp}', [SkpController::class, 'update'])->name('skp.update');
+Route::delete('/skp/{skp}', [SkpController::class, 'destroy'])->name('skp.destroy');
+
+// Route SKP Spesifik per Penawaran
+Route::get('/penawaran/{offer}/skp/create', [SkpController::class, 'create'])->name('skp.create');
+Route::post('/penawaran/{offer}/skp', [SkpController::class, 'store'])->name('skp.store');

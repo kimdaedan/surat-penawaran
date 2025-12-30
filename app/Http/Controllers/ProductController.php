@@ -23,26 +23,56 @@ class ProductController extends Controller
     }
 
     // 3. Menyimpan data harga baru (TERMASUK KRITERIA)
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_produk' => 'required|string|max:255',
-            'hasil_akhir' => 'required|string|max:255',
-            'performa' => 'required|string|max:255',
-            'kriteria' => 'required|string|in:Exterior,Interior', // <-- Validasi Kriteria
-            'harga' => 'required|integer',
+   public function store(Request $request)
+{
+    $request->validate([
+        // ... validasi lain ...
+        'diskon_global' => 'nullable|numeric|min:0', // Validasi baru
+        'pisah_kriteria_total' => 'nullable',
+        'hilangkan_grand_total' => 'nullable',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        $offer = Offer::create([
+            'nama_klien' => $request->nama_klien,
+            // ...
+            'jenis_penawaran' => 'produk',
+            // Simpan Opsi
+            'pisah_kriteria_total' => $request->has('pisah_kriteria_total'),
+            'hilangkan_grand_total' => $request->has('hilangkan_grand_total'),
+            // Simpan Diskon Global
+            'diskon_global' => $request->diskon_global ?? 0,
+            'total_keseluruhan' => 0,
         ]);
 
-        Product::create([
-            'nama_produk' => $request->nama_produk,
-            'hasil_akhir' => $request->hasil_akhir,
-            'performa' => $request->performa,
-            'kriteria' => $request->kriteria, // <-- Simpan Kriteria
-            'harga' => $request->harga,
-        ]);
+        $grandTotal = 0;
 
-        return redirect()->route('harga.index')->with('success', 'Data berhasil ditambahkan!');
+        foreach ($request->items as $itemData) {
+            // ... logika loop items sama seperti sebelumnya ...
+            $hargaSatuan = $itemData['harga_satuan'];
+            $qty = $itemData['qty'];
+            $diskonItem = $itemData['diskon'] ?? 0;
+
+            // Hitung Subtotal Baris
+            $subtotalBaris = ($hargaSatuan * $qty) - $diskonItem;
+            $grandTotal += $subtotalBaris;
+
+            // Simpan OfferItem ...
+        }
+
+        // Kurangi Grand Total dengan Diskon Global
+        $grandTotal -= ($request->diskon_global ?? 0);
+
+        $offer->update(['total_keseluruhan' => $grandTotal]);
+
+        DB::commit();
+        return redirect()->route('histori.index')->with('success', 'Berhasil!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
     }
+}
 
     // 4. Menghapus data harga
     public function destroy(Product $product)

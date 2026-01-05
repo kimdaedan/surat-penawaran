@@ -8,6 +8,28 @@ use App\Http\Controllers\ProductOfferController; // Controller Baru
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\BastController;
 use App\Http\Controllers\SkpController;
+use App\Http\Controllers\AuthController;
+
+// Menampilkan Halaman Login
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+
+// Proses Login (Submit Form)
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
+// Proses Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+// =========================================================================
+// ROUTE TERPROTEKSI (Harus Login Dulu)
+// =========================================================================
+Route::middleware(['auth'])->group(function () {
+
+    // Dashboard (Landing Page setelah login)
+    Route::get('/', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
 
 // ====================================================
 // 1. DASHBOARD & HALAMAN UMUM
@@ -95,3 +117,5 @@ Route::delete('/skp/{skp}', [SkpController::class, 'destroy'])->name('skp.destro
 // Route SKP Spesifik per Penawaran
 Route::get('/penawaran/{offer}/skp/create', [SkpController::class, 'create'])->name('skp.create');
 Route::post('/penawaran/{offer}/skp', [SkpController::class, 'store'])->name('skp.store');
+
+});

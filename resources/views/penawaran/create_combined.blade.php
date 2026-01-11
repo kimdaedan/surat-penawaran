@@ -34,7 +34,7 @@
                     <select id="produk-all-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <option value="">-- Pilih Produk --</option>
                         @foreach ($products as $product)
-                            <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
                         @endforeach
                     </select>
                     <p class="text-xs text-gray-500 mt-1">
@@ -42,7 +42,7 @@
                     </p>
                 </div>
                 <div id="product-rows-container" class="space-y-4 mt-4">
-                    </div>
+                </div>
                 <div class="mt-4">
                     <button type="button" id="add-product-row-btn" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"> + Tambah Produk </button>
                 </div>
@@ -51,7 +51,7 @@
             <fieldset class="border-t pt-6 mt-8">
                 <legend class="text-lg font-semibold text-gray-700 px-2">3. Tambahan Pengerjaan (optional)</legend>
                 <div id="jasa-rows-container" class="space-y-4 mt-4">
-                    </div>
+                </div>
                 <div class="mt-4">
                     <button type="button" id="add-jasa-row-btn" class="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-600"> + Tambah Pengerjaan </button>
                 </div>
@@ -98,14 +98,35 @@
 
         <template id="product-row-template">
             <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
-                <div class="md:col-span-3"><label class="block text-sm font-medium text-gray-600">Nama Produk</label><select class="product-select mt-1 block w-full rounded-md">
-                        <option value="">-- Pilih --</option>@foreach ($products as $product)<option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>@endforeach
-                    </select></div>
-                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Area</label><input type="text" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md"></div>
-                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Volume M²</label><input type="number" step="0.01" value="1" class="volume-input mt-1 block w-full rounded-md"></div>
-                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Harga/M²</label><input type="number" class="harga-input mt-1 block w-full bg-gray-100" readonly></div>
-                <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-600">Total</label><input type="text" class="total-output mt-1 block w-full bg-gray-100" readonly></div>
-                <div class="md:col-span-1"><label class="block text-sm font-medium text-transparent">Hapus</label><button type="button" class="remove-row-btn bg-red-500 text-white p-2 rounded w-full">-</button></div>
+                <div class="md:col-span-3">
+                    <label class="block text-sm font-medium text-gray-600">Nama Produk</label>
+                    <select class="product-select mt-1 block w-full rounded-md">
+                        <option value="">-- Pilih --</option>
+                        @foreach ($products as $product)
+                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-600">Area</label>
+                    <input type="text" placeholder="Dinding Luar" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-600">Volume M²</label>
+                    <input type="number" step="0.01" value="1" class="volume-input mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-600">Harga/M²</label>
+                    <input type="number" class="harga-input mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-600">Total</label>
+                    <input type="text" class="total-output mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm cursor-not-allowed" readonly>
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-transparent">Hapus</label>
+                    <button type="button" class="remove-row-btn bg-red-500 text-white p-2 rounded w-full hover:bg-red-600">-</button>
+                </div>
             </div>
         </template>
         <template id="jasa-row-template">
@@ -192,11 +213,19 @@
                 const selectedValue = this.value;
                 const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
                 const harga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
+
+                // Mengisi harga otomatis saat produk dipilih
                 hargaInput.value = harga || '';
                 calculateAllTotals();
             });
 
+            // --- TAMBAHAN BARU DISINI ---
+            // Agar saat harga diketik manual, total langsung berubah
+            hargaInput.addEventListener('input', calculateAllTotals);
+            // ---------------------------
+
             volumeInput.addEventListener('input', calculateAllTotals);
+
             removeBtn.addEventListener('click', () => {
                 if (productSelect.tomselect) productSelect.tomselect.destroy();
                 row.remove();

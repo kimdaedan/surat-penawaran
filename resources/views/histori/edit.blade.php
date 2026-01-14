@@ -37,7 +37,7 @@
                     <select id="produk-all-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <option value="">-- Pilih Produk --</option>
                         @foreach ($all_products as $product)
-                            <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
                         @endforeach
                     </select>
                     <p class="text-xs text-gray-500 mt-1">
@@ -67,7 +67,12 @@
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-600">Harga/M²</label>
-                            <input type="number" name="produk[{{$index}}][harga]" value="{{ $item->harga_per_m2 }}" class="harga-input mt-1 block w-full bg-gray-100 border-gray-300 shadow-sm" readonly>
+                            {{-- PERBAIKAN: Input ini sudah benar (tanpa readonly) --}}
+                            <input
+                                type="number"
+                                name="produk[{{$index}}][harga]"
+                                value="{{ $item->harga_per_m2 }}"
+                                class="harga-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800">
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-600">Total</label>
@@ -110,7 +115,7 @@
                     @empty
                     @endforelse
                 </div>
-                 <div class="mt-4">
+                <div class="mt-4">
                     <button type="button" id="add-jasa-row-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">
                         + Tambah Pengerjaan
                     </button>
@@ -153,21 +158,21 @@
                 </div>
             </div>
 
-            {{-- TOMBOL AKSI (PERBAIKAN UTAMA DI SINI) --}}
+            {{-- TOMBOL AKSI --}}
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {{-- Tombol 1: Simpan Biasa --}}
                 <button type="submit"
-                        value="save"
-                        onclick="document.getElementById('action_input').value = 'save';"
-                        class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded transition duration-200 shadow-md">
+                    value="save"
+                    onclick="document.getElementById('action_input').value = 'save';"
+                    class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded transition duration-200 shadow-md">
                     Update (Simpan Perubahan)
                 </button>
 
                 {{-- Tombol 2: Simpan & Duplikat --}}
                 <button type="submit"
-                        value="save_and_copy"
-                        onclick="document.getElementById('action_input').value = 'save_and_copy';"
-                        class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded transition duration-200 flex justify-center items-center gap-2 shadow-md">
+                    value="save_and_copy"
+                    onclick="document.getElementById('action_input').value = 'save_and_copy';"
+                    class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded transition duration-200 flex justify-center items-center gap-2 shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
                         <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
@@ -186,7 +191,7 @@
                     <select class="product-select mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <option value="">-- Pilih --</option>
                         @foreach ($all_products as $product)
-                            <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -200,7 +205,8 @@
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-600">Harga/M²</label>
-                    <input type="number" class="harga-input mt-1 block w-full bg-gray-100 border-gray-300 shadow-sm" readonly>
+                    {{-- PERBAIKAN: Readonly dan bg-gray-100 DIHAPUS disini --}}
+                    <input type="number" class="harga-input mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-600">Total</label>
@@ -215,7 +221,7 @@
 
         {{-- TEMPLATE ROW JASA --}}
         <template id="jasa-row-template">
-             <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
+            <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-4 items-end p-3 border rounded-md">
                 <div class="md:col-span-8">
                     <label class="block text-sm font-medium text-gray-600">Nama Pengerjaan</label>
                     <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
@@ -234,162 +240,172 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // --- Variabel Global & Fungsi Bantuan ---
-    const totalKeseluruhanDisplay = document.getElementById('total_keseluruhan');
-    let productRowIndex = {{ $offer->items->count() }};
-    let jasaRowIndex = {{ $offer->jasaItems->count() }};
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Variabel Global & Fungsi Bantuan ---
+        const totalKeseluruhanDisplay = document.getElementById('total_keseluruhan');
 
-    function formatRupiah(angka) {
-        return 'Rp ' + (angka || 0).toLocaleString('id-ID');
-    }
+        // PERBAIKAN: Menghapus spasi berlebih pada syntax Blade agar tidak error
+        let productRowIndex = {{ $offer->items->count() }};
+        let jasaRowIndex = {{ $offer->jasaItems->count() }};
 
-    // --- Logika Tom Select (Dropdown Searchable) ---
-    const tomSelectSettings = { create: false, sortField: { field: "text", direction: "asc" } };
-
-    // --- LOGIKA "PRODUK ALL" ---
-    const produkAllSelect = document.getElementById('produk-all-select');
-    // Inisialisasi TomSelect untuk produk All
-    const produkAllTomSelect = new TomSelect(produkAllSelect, tomSelectSettings);
-
-    produkAllSelect.addEventListener('change', function() {
-        const selectedValue = this.value;
-        if (!selectedValue) return;
-
-        const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
-        const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
-
-        document.querySelectorAll('.product-row').forEach(row => {
-            const rowSelect = row.querySelector('.product-select');
-            const rowHargaInput = row.querySelector('.harga-input');
-
-            rowHargaInput.value = masterHarga;
-
-            // Jika row menggunakan TomSelect, update via API TomSelect
-            if (rowSelect.tomselect) {
-                rowSelect.tomselect.setValue(selectedValue, 'silent');
-            } else {
-                rowSelect.value = selectedValue;
-            }
-        });
-        calculateAllTotals();
-    });
-
-    // --- Logika untuk Baris Produk ---
-    const productContainer = document.getElementById('product-rows-container');
-    const addProductRowBtn = document.getElementById('add-product-row-btn');
-    const productTemplate = document.getElementById('product-row-template').content.firstElementChild;
-
-    function addProductEventListeners(row) {
-        const productSelect = row.querySelector('.product-select');
-        const hargaInput = row.querySelector('.harga-input');
-        const volumeInput = row.querySelector('.volume-input');
-
-        // Inisialisasi TomSelect di baris ini
-        if (!productSelect.tomselect) {
-            new TomSelect(productSelect, tomSelectSettings);
+        function formatRupiah(angka) {
+            return 'Rp ' + (angka || 0).toLocaleString('id-ID');
         }
 
-        productSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            hargaInput.value = selectedOption ? selectedOption.getAttribute('data-harga') : '';
-            calculateAllTotals();
-        });
+        // --- Logika Tom Select (Dropdown Searchable) ---
+        const tomSelectSettings = {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            }
+        };
 
-        volumeInput.addEventListener('input', calculateAllTotals);
+        // --- LOGIKA "PRODUK ALL" ---
+        const produkAllSelect = document.getElementById('produk-all-select');
+        // Inisialisasi TomSelect untuk produk All
+        const produkAllTomSelect = new TomSelect(produkAllSelect, tomSelectSettings);
 
-        row.querySelector('.remove-row-btn').addEventListener('click', () => {
-            if(productSelect.tomselect) productSelect.tomselect.destroy();
-            row.remove();
-            calculateAllTotals();
-        });
-    }
+        produkAllSelect.addEventListener('change', function() {
+            const selectedValue = this.value;
+            if (!selectedValue) return;
 
-    addProductRowBtn.addEventListener('click', () => {
-        const newRow = productTemplate.cloneNode(true);
-        // Set name attributes
-        newRow.querySelector('.product-select').name = `produk[${productRowIndex}][nama]`;
-        newRow.querySelector('input[placeholder="Dinding Luar"]').name = `produk[${productRowIndex}][area]`;
-        newRow.querySelector('input[placeholder="Dinding Luar"]').placeholder = `Area`;
-        newRow.querySelector('.volume-input').name = `produk[${productRowIndex}][volume]`;
-        newRow.querySelector('.harga-input').name = `produk[${productRowIndex}][harga]`;
+            const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
+            const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
 
-        productContainer.appendChild(newRow);
-        addProductEventListeners(newRow);
-        productRowIndex++;
-    });
+            document.querySelectorAll('.product-row').forEach(row => {
+                const rowSelect = row.querySelector('.product-select');
+                const rowHargaInput = row.querySelector('.harga-input');
 
-    // --- Logika untuk Baris Jasa ---
-    const jasaContainer = document.getElementById('jasa-rows-container');
-    const addJasaRowBtn = document.getElementById('add-jasa-row-btn');
-    const jasaTemplate = document.getElementById('jasa-row-template').content.firstElementChild;
+                rowHargaInput.value = masterHarga;
 
-    function addJasaEventListeners(row) {
-        row.querySelector('.jasa-harga-input').addEventListener('input', calculateAllTotals);
-        row.querySelector('.remove-jasa-row-btn').addEventListener('click', () => {
-            row.remove();
-            calculateAllTotals();
-        });
-    }
-
-    addJasaRowBtn.addEventListener('click', () => {
-        const newRow = jasaTemplate.cloneNode(true);
-        newRow.querySelector('input[type="text"]').name = `jasa[${jasaRowIndex}][nama]`;
-        newRow.querySelector('.jasa-harga-input').name = `jasa[${jasaRowIndex}][harga]`;
-
-        jasaContainer.appendChild(newRow);
-        addJasaEventListeners(newRow);
-        jasaRowIndex++;
-    });
-
-    // --- Logika Kalkulasi Total ---
-    function calculateAllTotals() {
-        let totalProduk = 0;
-        document.querySelectorAll('.product-row').forEach(row => {
-            const volume = parseFloat(row.querySelector('.volume-input').value) || 0;
-            const harga = parseFloat(row.querySelector('.harga-input').value) || 0;
-            const total = volume * harga;
-            row.querySelector('.total-output').value = formatRupiah(total);
-            totalProduk += total;
-        });
-
-        let totalJasa = 0;
-        document.querySelectorAll('.jasa-row').forEach(row => {
-            totalJasa += parseFloat(row.querySelector('.jasa-harga-input').value) || 0;
-        });
-
-        totalKeseluruhanDisplay.textContent = formatRupiah(totalProduk + totalJasa);
-    }
-
-    // --- Inisialisasi Saat Halaman Dimuat ---
-    document.querySelectorAll('.product-row').forEach(row => addProductEventListeners(row));
-    document.querySelectorAll('.jasa-row').forEach(row => addJasaEventListeners(row));
-    calculateAllTotals();
-
-    // --- Anti Double-Submit Logic ---
-    const offerForm = document.getElementById('offer-form');
-    if (offerForm) {
-        offerForm.addEventListener('submit', function() {
-            // Ambil semua tombol submit
-            const submitButtons = offerForm.querySelectorAll('button[type="submit"]');
-
-            submitButtons.forEach(btn => {
-                // Disable tombol secara visual & fungsional (client side)
-                btn.disabled = true;
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-
-                // Ubah teks tombol sesuai valuenya (untuk UX)
-                if(btn.value === 'save') {
-                    btn.innerHTML = 'Menyimpan...';
-                } else if (btn.value === 'save_and_copy') {
-                    btn.innerHTML = 'Menduplikasi...';
+                // Jika row menggunakan TomSelect, update via API TomSelect
+                if (rowSelect.tomselect) {
+                    rowSelect.tomselect.setValue(selectedValue, 'silent');
+                } else {
+                    rowSelect.value = selectedValue;
                 }
             });
-
-            // CATATAN: Karena kita menggunakan <input type="hidden"> untuk 'action',
-            // data aksi tetap akan terkirim dengan aman meskipun tombol di-disable.
+            calculateAllTotals();
         });
-    }
-});
+
+        // --- Logika untuk Baris Produk ---
+        const productContainer = document.getElementById('product-rows-container');
+        const addProductRowBtn = document.getElementById('add-product-row-btn');
+        const productTemplate = document.getElementById('product-row-template').content.firstElementChild;
+
+        function addProductEventListeners(row) {
+            const productSelect = row.querySelector('.product-select');
+            const hargaInput = row.querySelector('.harga-input');
+            const volumeInput = row.querySelector('.volume-input');
+
+            // Inisialisasi TomSelect di baris ini
+            if (!productSelect.tomselect) {
+                new TomSelect(productSelect, tomSelectSettings);
+            }
+
+            // Event saat dropdown dipilih (Set harga default)
+            productSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                // Set harga, tapi user tetap bisa mengeditnya nanti
+                hargaInput.value = selectedOption ? selectedOption.getAttribute('data-harga') : '';
+                calculateAllTotals();
+            });
+
+            // Event saat Harga diubah manual (Ketik sendiri)
+            hargaInput.addEventListener('input', calculateAllTotals);
+
+            volumeInput.addEventListener('input', calculateAllTotals);
+
+            row.querySelector('.remove-row-btn').addEventListener('click', () => {
+                if (productSelect.tomselect) productSelect.tomselect.destroy();
+                row.remove();
+                calculateAllTotals();
+            });
+        }
+
+        addProductRowBtn.addEventListener('click', () => {
+            const newRow = productTemplate.cloneNode(true);
+            // Set name attributes
+            newRow.querySelector('.product-select').name = `produk[${productRowIndex}][nama]`;
+            newRow.querySelector('input[placeholder="Dinding Luar"]').name = `produk[${productRowIndex}][area]`;
+            newRow.querySelector('input[placeholder="Dinding Luar"]').placeholder = `Area`;
+            newRow.querySelector('.volume-input').name = `produk[${productRowIndex}][volume]`;
+            newRow.querySelector('.harga-input').name = `produk[${productRowIndex}][harga]`;
+
+            productContainer.appendChild(newRow);
+            addProductEventListeners(newRow);
+            productRowIndex++;
+        });
+
+        // --- Logika untuk Baris Jasa ---
+        const jasaContainer = document.getElementById('jasa-rows-container');
+        const addJasaRowBtn = document.getElementById('add-jasa-row-btn');
+        const jasaTemplate = document.getElementById('jasa-row-template').content.firstElementChild;
+
+        function addJasaEventListeners(row) {
+            row.querySelector('.jasa-harga-input').addEventListener('input', calculateAllTotals);
+            row.querySelector('.remove-jasa-row-btn').addEventListener('click', () => {
+                row.remove();
+                calculateAllTotals();
+            });
+        }
+
+        addJasaRowBtn.addEventListener('click', () => {
+            const newRow = jasaTemplate.cloneNode(true);
+            newRow.querySelector('input[type="text"]').name = `jasa[${jasaRowIndex}][nama]`;
+            newRow.querySelector('.jasa-harga-input').name = `jasa[${jasaRowIndex}][harga]`;
+
+            jasaContainer.appendChild(newRow);
+            addJasaEventListeners(newRow);
+            jasaRowIndex++;
+        });
+
+        // --- Logika Kalkulasi Total ---
+        function calculateAllTotals() {
+            let totalProduk = 0;
+            document.querySelectorAll('.product-row').forEach(row => {
+                const volume = parseFloat(row.querySelector('.volume-input').value) || 0;
+                const harga = parseFloat(row.querySelector('.harga-input').value) || 0;
+                const total = volume * harga;
+                row.querySelector('.total-output').value = formatRupiah(total);
+                totalProduk += total;
+            });
+
+            let totalJasa = 0;
+            document.querySelectorAll('.jasa-row').forEach(row => {
+                totalJasa += parseFloat(row.querySelector('.jasa-harga-input').value) || 0;
+            });
+
+            totalKeseluruhanDisplay.textContent = formatRupiah(totalProduk + totalJasa);
+        }
+
+        // --- Inisialisasi Saat Halaman Dimuat ---
+        document.querySelectorAll('.product-row').forEach(row => addProductEventListeners(row));
+        document.querySelectorAll('.jasa-row').forEach(row => addJasaEventListeners(row));
+        calculateAllTotals();
+
+        // --- Anti Double-Submit Logic ---
+        const offerForm = document.getElementById('offer-form');
+        if (offerForm) {
+            offerForm.addEventListener('submit', function() {
+                // Ambil semua tombol submit
+                const submitButtons = offerForm.querySelectorAll('button[type="submit"]');
+
+                submitButtons.forEach(btn => {
+                    // Disable tombol secara visual & fungsional (client side)
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                    // Ubah teks tombol sesuai valuenya (untuk UX)
+                    if (btn.value === 'save') {
+                        btn.innerHTML = 'Menyimpan...';
+                    } else if (btn.value === 'save_and_copy') {
+                        btn.innerHTML = 'Menduplikasi...';
+                    }
+                });
+            });
+        }
+    });
 </script>
 @endsection

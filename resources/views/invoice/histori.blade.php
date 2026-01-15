@@ -8,79 +8,110 @@
             <h1 class="text-3xl font-bold text-gray-800">
                 Histori Invoice
             </h1>
-            <a href="{{ route('invoice.create') }}" class="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
+            <a href="{{ route('invoice.create') }}" class="bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition shadow-sm">
                 + Buat Invoice Baru
             </a>
         </div>
 
-        <!-- Form Pencarian -->
-        <form action="{{ route('invoice.histori') }}" method="GET" class="mb-4">
-            <div class="flex">
+        <form action="{{ route('invoice.histori') }}" method="GET" class="mb-6">
+            <div class="flex gap-2">
                 <input type="text"
                        name="search"
-                       placeholder="Cari berdasarkan nama klien atau No. Invoice..."
+                       placeholder="Cari No. Invoice atau Nama Klien..."
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800"
                        value="{{ $search ?? '' }}">
-                <button type="submit" class="ml-2 bg-gray-800 text-white font-bold py-2 px-4 rounded hover:bg-gray-700 transition">
+                <button type="submit" class="mt-1 bg-gray-800 text-white font-bold py-2 px-6 rounded hover:bg-gray-700 transition">
                     Cari
                 </button>
             </div>
         </form>
 
-        <!-- Pesan Sukses -->
         @if (session('success'))
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 shadow-sm" role="alert">
                 <p>{{ session('success') }}</p>
             </div>
         @endif
 
-        <!-- Wrapper untuk tabel -->
-        <div class="bg-white shadow-md rounded-lg">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
             <table class="w-full text-sm text-left text-gray-700">
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
-                        <th scope="col" class="px-6 py-3 rounded-tl-lg">Tanggal</th>
+                        <th scope="col" class="px-6 py-3">Tanggal Invoice</th>
                         <th scope="col" class="px-6 py-3">No. Invoice</th>
                         <th scope="col" class="px-6 py-3">Nama Klien</th>
                         <th scope="col" class="px-6 py-3 text-right">Total Tagihan</th>
-                        <th scope="col" class="px-6 py-3 text-center rounded-tr-lg">Action</th>
+                        <th scope="col" class="px-6 py-3 text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-200">
                     @forelse ($invoices as $invoice)
-                    <tr class="bg-white hover:bg-gray-50 @if(!$loop->last) border-b @endif">
-                        <td class="px-6 py-4 @if($loop->last) rounded-bl-lg @endif">{{ $invoice->created_at->format('d M Y') }}</td>
-                        <td class="px-6 py-4 font-medium">{{ $invoice->no_invoice }}</td>
-                        <td class="px-6 py-4">{{ $invoice->nama_klien }}</td>
-                        <td class="px-6 py-4 text-right whitespace-nowrap">Rp {{ number_format($invoice->grand_total, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4 text-center @if($loop->last) rounded-br-lg @endif">
-                            <!-- Dropdown Actions -->
+                    <tr class="bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
+
+                        {{-- Tanggal --}}
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $invoice->created_at->format('d M Y') }}
+                        </td>
+
+                        {{-- No Invoice --}}
+                        <td class="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
+                            {{ $invoice->no_invoice }}
+                        </td>
+
+                        {{-- Nama Klien --}}
+                        <td class="px-6 py-4 font-medium text-gray-800">
+                            {{ $invoice->nama_klien }}
+                        </td>
+
+                        {{-- Total Tagihan --}}
+                        <td class="px-6 py-4 text-right whitespace-nowrap font-bold text-green-600">
+                            Rp {{ number_format($invoice->grand_total, 0, ',', '.') }}
+                        </td>
+
+                        {{-- Action Dropdown --}}
+                        <td class="px-6 py-4 text-center">
                             <div x-data="{ open: false }" class="relative inline-block text-left">
-                                <button @click="open = !open" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-                                    Actions
-                                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                <button @click="open = !open" @click.away="open = false" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-1.5 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+                                    Options
+                                    <svg class="-mr-1 ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
                                 </button>
-                                <div x-show="open" @click.away="open = false" x-transition class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+
+                                <div x-show="open"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+
                                     <div class="py-1" role="menu">
+                                        <a href="{{ route('invoice.show', $invoice->id) }}" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">
+                                            <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            Lihat Detail
+                                        </a>
 
-                                        <!-- === LINK DIPERBARUI === -->
-                                        <a href="{{ route('invoice.show', $invoice->id) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Lihat Invoice</a>
+                                        <a href="{{ route('invoice.edit', $invoice->id) }}" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700" role="menuitem">
+                                            <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                            Edit
+                                        </a>
 
-                                        <!-- === LINK EDIT SAYA TAMBAHKAN JUGA === -->
-                                        <a href="{{ route('invoice.edit', $invoice->id) }}"class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Edit</a>
-
-                                        <!-- ================================== -->
-                                        <!--    TOMBOL DELETE BARU DI SINI    -->
-                                        <!-- ================================== -->
-                                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus invoice ini?');">
+                                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus invoice ini? Data tidak bisa dikembalikan.');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="w-full text-left text-red-700 block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">
-                                                Delete
+                                            <button type="submit" class="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-800" role="menuitem">
+                                                <svg class="mr-3 h-5 w-5 text-red-400 group-hover:text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                                Hapus
                                             </button>
                                         </form>
-                                        <!-- ================================== -->
-
                                     </div>
                                 </div>
                             </div>
@@ -88,8 +119,14 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500 rounded-b-lg">
-                            Belum ada data invoice.
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p class="text-lg font-medium">Belum ada data invoice.</p>
+                                <p class="text-sm">Silakan buat invoice baru dari menu di atas.</p>
+                            </div>
                         </td>
                     </tr>
                     @endforelse
@@ -97,20 +134,10 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-         <div class="mt-6">
+        <div class="mt-6">
             {{ $invoices->appends(['search' => $search ?? ''])->links() }}
         </div>
 
     </div>
 </div>
-
-<!-- Script untuk print -->
-@push('scripts')
-<script>
-    function printInvoice() {
-        window.print();
-    }
-</script>
-@endpush
 @endsection

@@ -23,7 +23,7 @@ class InvoiceController extends Controller
         // Jika ada pencarian, filter berdasarkan nama klien atau no. invoice
         if ($search) {
             $query->where('nama_klien', 'like', '%' . $search . '%')
-                  ->orWhere('no_invoice', 'like', '%' . $search . '%');
+                ->orWhere('no_invoice', 'like', '%' . $search . '%');
         }
 
         // Ambil data terbaru dengan pagination (15 per halaman)
@@ -58,6 +58,14 @@ class InvoiceController extends Controller
     /**
      * Menyimpan invoice baru yang dibuat dari penawaran.
      */
+
+    public function print($id)
+    {
+        $invoice = \App\Models\Invoice::with(['offer', 'additions', 'payments'])->findOrFail($id);
+        return view('invoice.print', compact('invoice'));
+    }
+
+
     public function storeFromOffer(Request $request)
     {
         // Validasi data dasar
@@ -91,7 +99,7 @@ class InvoiceController extends Controller
         // 1. Simpan data ke tabel 'invoices'
         $invoice = Invoice::create([
             'offer_id' => $offer->id,
-            'no_invoice' => $request->no_invoice ?? 'INV-'.date('Ymd').'-'.$offer->id,
+            'no_invoice' => $request->no_invoice ?? 'INV-' . date('Ymd') . '-' . $offer->id,
             'nama_klien' => $offer->nama_klien,
             'total_penawaran' => $total_penawaran,
             'total_tambahan' => $total_tambahan,

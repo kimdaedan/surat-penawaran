@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        {{-- Form Pencarian & Alert --}}
+        {{-- Form Pencarian --}}
         <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
             <form action="{{ route('histori.index') }}" method="GET" class="w-full md:w-1/2">
                 <div class="flex">
@@ -40,10 +40,7 @@
             <table class="w-full text-sm text-left text-gray-700">
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
-                        {{-- 1. ACTION (Sekarang di Kiri) --}}
                         <th scope="col" class="px-6 py-3 rounded-tl-lg text-center w-24">Action</th>
-
-                        {{-- Kolom Lainnya --}}
                         <th scope="col" class="px-6 py-3">Tanggal</th>
                         <th scope="col" class="px-6 py-3">No. Surat</th>
                         <th scope="col" class="px-6 py-3 text-center">Jenis</th>
@@ -54,7 +51,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($offers as $offer)
-                    <tr class="bg-white hover:bg-gray-50 transition-colors align-top"> {{-- Tambah align-top agar teks rata atas --}}
+                    <tr class="bg-white hover:bg-gray-50 transition-colors align-top">
 
                         {{-- 1. ACTION --}}
                         <td class="px-6 py-4 text-center whitespace-nowrap">
@@ -66,11 +63,7 @@
                                     </svg>
                                 </button>
 
-                                <div x-show="open"
-                                     @click.away="open = false"
-                                     x-transition
-                                     class="origin-top-left absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
-                                     style="display: none;">
+                                <div x-show="open" @click.away="open = false" x-transition class="origin-top-left absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50" style="display: none;">
                                     <div class="py-1" role="menu">
                                         <a href="{{ route('histori.show', ['offer' => $offer->id]) }}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-100">👁️ Lihat / Print</a>
                                         <div class="border-t border-gray-100 my-1"></div>
@@ -110,7 +103,7 @@
                             @endif
                         </td>
 
-                        {{-- NAMA KLIEN (BAGIAN YANG DIPERBAIKI) --}}
+                        {{-- NAMA KLIEN --}}
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-normal min-w-[200px] max-w-[300px] leading-snug">
                             {{ $offer->nama_klien }}
                         </td>
@@ -120,8 +113,22 @@
                             {{ Str::limit($offer->client_details, 50) }}
                         </td>
 
-                        {{-- TOTAL HARGA --}}
-                        <td class="px-6 py-4 text-right whitespace-nowrap font-bold text-gray-800">Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}</td>
+                        {{-- TOTAL HARGA (DIPERBAIKI: HITUNG ULANG MANUAL) --}}
+                        <td class="px-6 py-4 text-right whitespace-nowrap font-bold text-gray-800">
+                            @php
+                                // Hitung Total Produk (Volume * Harga)
+                                $totalProduk = $offer->items->sum(function($item) {
+                                    return $item->volume * $item->harga_per_m2;
+                                });
+
+                                // Hitung Total Jasa (Harga Jasa di DB sudah Total)
+                                $totalJasa = $offer->jasaItems->sum('harga_jasa');
+
+                                // Grand Total
+                                $grandTotal = $totalProduk + $totalJasa;
+                            @endphp
+                            Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                        </td>
                     </tr>
                     @empty
                     <tr>
@@ -134,7 +141,6 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         <div class="mt-6 pb-12">
             {{ $offers->appends(['search' => $search])->links() }}
         </div>

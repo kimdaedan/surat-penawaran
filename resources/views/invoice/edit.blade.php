@@ -22,9 +22,25 @@
                         <!-- Menggunakan $invoice->offer->... -->
                         <input type="text" value="{{ $invoice->offer->nama_klien }}" class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm" readonly>
                     </div>
-                    <div>
+                   <div>
                         <label class="block text-sm font-medium text-gray-600">Nomor Surat Penawaran</label>
-                        <input type="text" value="00{{ $invoice->offer->id }}/SP/TGI-1/IX/2025" class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm" readonly>
+
+                        {{-- LOGIKA NOMOR SURAT OTOMATIS (ROMAWI) --}}
+                        @php
+                            $bulanRomawi = [1=>'I', 2=>'II', 3=>'III', 4=>'IV', 5=>'V', 6=>'VI', 7=>'VII', 8=>'VIII', 9=>'IX', 10=>'X', 11=>'XI', 12=>'XII'];
+
+                            // Kita ambil data dari relasi invoice ke offer
+                            $offerData = $invoice->offer;
+
+                            // Ambil bulan & tahun dari created_at penawaran
+                            $romawi = $bulanRomawi[$offerData->created_at->format('n')];
+                            $tahun = $offerData->created_at->format('Y');
+                        @endphp
+
+                        <input type="text"
+                               value="00{{ $offerData->id }}/SP/TGI-1/{{ $romawi }}/{{ $tahun }}"
+                               class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm text-gray-700"
+                               readonly>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-600">Detail Pengerjaan</label>

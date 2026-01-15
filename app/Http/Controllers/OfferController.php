@@ -83,6 +83,18 @@ class OfferController extends Controller
     /**
      * Memperbarui data penawaran di database.
      */
+
+    public function print($id)
+{
+    // Ambil data penawaran berdasarkan ID
+    $offer = \App\Models\Offer::with(['items', 'jasaItems'])->findOrFail($id);
+
+    // Ambil semua produk untuk keperluan pengecekan kriteria (Exterior/Interior)
+    // Jika Anda punya relasi di model Item ke Product, bisa pakai with('product'),
+    // tapi cara manual di view juga tidak apa-apa seperti sebelumnya.
+
+    return view('histori.print', compact('offer'));
+}
     public function update(Request $request, Offer $offer)
     {
         // 1. Validasi Input
@@ -171,15 +183,28 @@ class OfferController extends Controller
 
         // 6. SIMPAN ITEM JASA (Ke $targetOffer)
         if ($request->has('jasa')) {
+            // Hapus jasa lama (opsional, tergantung logika update Anda)
+            // $offer->jasaItems()->delete();
+
             foreach ($request->jasa as $jasaData) {
-                if (!empty($jasaData['nama'])) {
-                    $targetOffer->jasaItems()->create([
-                        'nama_jasa' => $jasaData['nama'],
-                        'harga_jasa' => $jasaData['harga'] ?? 0,
-                    ]);
-                }
+                // Hitung total manual untuk keamanan (Volume x Harga Satuan)
+                $vol = $jasaData['volume'] ?? 1;
+                $hrgSatuan = $jasaData['harga'] ?? 0; // Di form name-nya 'harga'
+                $total = $vol * $hrgSatuan;
+
+                // Simpan / Buat Baru
+                // Gunakan updateOrCreate atau create sesuai kebutuhan
+                $offer->jasaItems()->create([
+                    'nama_jasa'    => $jasaData['nama'],
+                    'volume'       => $vol,
+                    'satuan'       => $jasaData['satuan'] ?? 'Ls',
+                    'harga_satuan' => $hrgSatuan,
+                    'harga_jasa'   => $total, // Kolom harga_jasa diisi Total
+                ]);
             }
         }
+
+
 
         // 7. Redirect
         // Jika Copy: Redirect ke halaman Edit milik Offer BARU

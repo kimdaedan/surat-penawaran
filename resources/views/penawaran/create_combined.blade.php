@@ -119,7 +119,6 @@
 
 <template id="product-row-template">
     <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-4 border border-gray-200 rounded-lg bg-gray-50 relative hover:shadow-sm transition-shadow">
-
         <div class="md:col-span-4">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nama Produk</label>
             <select class="product-select w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
@@ -129,28 +128,24 @@
                 @endforeach
             </select>
         </div>
-
         <div class="md:col-span-2">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Area</label>
             <input type="text" placeholder="Dinding Luar" class="w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
-
-        <div class="md:col-span-2"> <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Vol (m²)</label>
-            <input type="number" step="0.01" value="1" class="volume-input w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
+        <div class="md:col-span-1">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Vol</label>
+            <input type="number" step="0.01" value="1" class="volume-input w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 text-center">
         </div>
-
         <div class="md:col-span-2">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Harga/m²</label>
             <input type="number" class="harga-input w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
-
         <div class="md:col-span-2">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Subtotal</label>
             <input type="text" class="total-output w-full bg-gray-200 border-gray-300 rounded-md text-sm font-bold text-gray-700 cursor-not-allowed" readonly>
         </div>
-
-        <div class="absolute top-2 right-2 md:static md:col-span-12 md:w-auto flex justify-end">
-             <button type="button" class="remove-row-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors" title="Hapus Baris">
+        <div class="absolute top-2 right-2 md:static md:col-span-1 md:flex md:justify-end">
+             <button type="button" class="remove-row-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition-colors" title="Hapus Baris">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                 </svg>
@@ -160,16 +155,43 @@
 </template>
 
 <template id="jasa-row-template">
-    <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-3 border border-gray-200 rounded-lg bg-gray-50 relative">
-        <div class="md:col-span-8">
+    <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-4 border border-gray-200 rounded-lg bg-gray-50 relative hover:shadow-sm transition-shadow">
+
+        <div class="md:col-span-4">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nama Pengerjaan</label>
             <input type="text" class="w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Biaya Scaffolding">
         </div>
-        <div class="md:col-span-3">
-            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Biaya (Rp)</label>
-            <input type="number" class="jasa-harga-input w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500">
+
+        <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Volume</label>
+            <input type="number" step="0.01" value="1" class="jasa-volume w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500 text-center">
         </div>
-        <div class="md:col-span-1 flex justify-end">
+
+        <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Satuan</label>
+            <select class="jasa-satuan w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500">
+                <option value="Ls">Ls (Lumpsum)</option>
+                <option value="Lot">Lot</option>
+                <option value="M2">M²</option>
+                <option value="M1">M¹</option>
+                <option value="Unit">Unit</option>
+                <option value="Pkt">Pkt (Paket)</option>
+                <option value="Liter">Liter</option>
+                <option value="Titik">Titik</option>
+            </select>
+        </div>
+
+        <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Harga Satuan</label>
+            <input type="number" class="jasa-harga w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500">
+        </div>
+
+        <div class="md:col-span-1">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Total</label>
+            <input type="text" class="jasa-total w-full bg-gray-200 border-gray-300 rounded-md text-sm font-bold text-gray-700 cursor-not-allowed" readonly>
+        </div>
+
+        <div class="absolute top-2 right-2 md:static md:col-span-1 md:flex md:justify-end">
             <button type="button" class="remove-jasa-row-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -181,7 +203,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Cek Library TomSelect
         if (typeof TomSelect === 'undefined') {
             console.error('TomSelect library not loaded.');
         }
@@ -190,12 +211,10 @@
         let productRowIndex = 0;
         let jasaRowIndex = 0;
 
-        // Fungsi Format Rupiah
         function formatRupiah(angka) {
             return 'Rp ' + (angka || 0).toLocaleString('id-ID');
         }
 
-        // Setting TomSelect
         const tomSelectSettings = {
             create: false,
             sortField: { field: "text", direction: "asc" },
@@ -203,7 +222,7 @@
             plugins: ['dropdown_input'],
         };
 
-        // --- 1. LOGIKA "PRODUK ALL" ---
+        // --- 1. LOGIKA PRODUK ALL ---
         const produkAllSelect = document.getElementById('produk-all-select');
         if(produkAllSelect){
             new TomSelect(produkAllSelect, tomSelectSettings);
@@ -215,15 +234,11 @@
                 const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
                 const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
 
-                // Loop ke semua baris yang ada
                 document.querySelectorAll('.product-row').forEach(row => {
                     const rowSelect = row.querySelector('.product-select');
                     const rowHargaInput = row.querySelector('.harga-input');
 
-                    // Set Harga
                     rowHargaInput.value = masterHarga;
-
-                    // Set Dropdown Value (Silent Update)
                     if (rowSelect.tomselect) {
                         rowSelect.tomselect.setValue(selectedValue, true);
                     } else {
@@ -234,30 +249,22 @@
             });
         }
 
-        // --- 2. LOGIKA TAMBAH BARIS PRODUK ---
+        // --- 2. LOGIKA PRODUK ROW ---
         const productContainer = document.getElementById('product-rows-container');
         const addProductRowBtn = document.getElementById('add-product-row-btn');
         const productTemplate = document.getElementById('product-row-template');
 
         function addProductRow() {
-            // Clone Template
             const clone = productTemplate.content.firstElementChild.cloneNode(true);
 
-            // Set Name Attributes untuk Laravel Request
             clone.querySelector('.product-select').name = `produk[${productRowIndex}][nama]`;
-            // Input Area
             const areaInput = clone.querySelector('input[placeholder="Dinding Luar"]');
             if(areaInput) areaInput.name = `produk[${productRowIndex}][area]`;
-
             clone.querySelector('.volume-input').name = `produk[${productRowIndex}][volume]`;
             clone.querySelector('.harga-input').name = `produk[${productRowIndex}][harga]`;
 
-            // Append ke Container
             productContainer.appendChild(clone);
-
-            // Inisialisasi Event Listener pada baris baru
             setupProductRowEvents(clone);
-
             productRowIndex++;
             calculateAllTotals();
         }
@@ -268,28 +275,18 @@
             const volumeInput = row.querySelector('.volume-input');
             const removeBtn = row.querySelector('.remove-row-btn');
 
-            // Init TomSelect
-            if(typeof TomSelect !== 'undefined') {
-                new TomSelect(productSelect, tomSelectSettings);
-            }
+            if(typeof TomSelect !== 'undefined') new TomSelect(productSelect, tomSelectSettings);
 
-            // Event Ganti Produk -> Update Harga Otomatis
             productSelect.addEventListener('change', function() {
                 const selectedValue = this.value;
-                // Cari option asli di dalam select (hidden oleh TomSelect)
-                // Note: TomSelect syncs value to original select
                 const originalOption = Array.from(this.options).find(opt => opt.value === selectedValue);
                 const hargaDefault = originalOption ? originalOption.getAttribute('data-harga') : 0;
-
                 hargaInput.value = hargaDefault;
                 calculateAllTotals();
             });
 
-            // Event Hitung Total saat mengetik
             hargaInput.addEventListener('input', calculateAllTotals);
             volumeInput.addEventListener('input', calculateAllTotals);
-
-            // Event Hapus Baris
             removeBtn.addEventListener('click', function() {
                 if (productSelect.tomselect) productSelect.tomselect.destroy();
                 row.remove();
@@ -299,11 +296,10 @@
 
         if(addProductRowBtn) {
             addProductRowBtn.addEventListener('click', addProductRow);
-            // Tambah 1 baris saat pertama kali load
             addProductRow();
         }
 
-        // --- 3. LOGIKA TAMBAH BARIS JASA ---
+        // --- 3. LOGIKA JASA ROW (UPDATED) ---
         const jasaContainer = document.getElementById('jasa-rows-container');
         const addJasaRowBtn = document.getElementById('add-jasa-row-btn');
         const jasaTemplate = document.getElementById('jasa-row-template');
@@ -311,14 +307,23 @@
         function addJasaRow() {
             const clone = jasaTemplate.content.firstElementChild.cloneNode(true);
 
-            clone.querySelector('input[type="text"]').name = `jasa[${jasaRowIndex}][nama]`;
-            clone.querySelector('.jasa-harga-input').name = `jasa[${jasaRowIndex}][harga]`;
+            // Set Name Attributes
+            clone.querySelector('input[placeholder="Contoh: Biaya Scaffolding"]').name = `jasa[${jasaRowIndex}][nama]`;
+            clone.querySelector('.jasa-volume').name = `jasa[${jasaRowIndex}][volume]`;
+            clone.querySelector('.jasa-satuan').name = `jasa[${jasaRowIndex}][satuan]`;
+            clone.querySelector('.jasa-harga').name = `jasa[${jasaRowIndex}][harga]`;
 
             jasaContainer.appendChild(clone);
 
-            // Event Listeners
-            clone.querySelector('.jasa-harga-input').addEventListener('input', calculateAllTotals);
-            clone.querySelector('.remove-jasa-row-btn').addEventListener('click', function() {
+            // Event Listeners Jasa
+            const volInput = clone.querySelector('.jasa-volume');
+            const hrgInput = clone.querySelector('.jasa-harga');
+            const removeBtn = clone.querySelector('.remove-jasa-row-btn');
+
+            volInput.addEventListener('input', calculateAllTotals);
+            hrgInput.addEventListener('input', calculateAllTotals);
+
+            removeBtn.addEventListener('click', function() {
                 clone.remove();
                 calculateAllTotals();
             });
@@ -330,7 +335,6 @@
             addJasaRowBtn.addEventListener('click', addJasaRow);
         }
 
-
         // --- 4. FUNGSI HITUNG TOTAL ---
         function calculateAllTotals() {
             let total = 0;
@@ -340,18 +344,23 @@
                 const vol = parseFloat(row.querySelector('.volume-input').value) || 0;
                 const hrg = parseFloat(row.querySelector('.harga-input').value) || 0;
                 const subtotal = vol * hrg;
-
                 row.querySelector('.total-output').value = formatRupiah(subtotal);
                 total += subtotal;
             });
 
-            // Hitung Jasa
+            // Hitung Jasa (Updated Formula: Volume * Harga)
             document.querySelectorAll('.jasa-row').forEach(row => {
-                const hrg = parseFloat(row.querySelector('.jasa-harga-input').value) || 0;
-                total += hrg;
+                const vol = parseFloat(row.querySelector('.jasa-volume').value) || 0;
+                const hrg = parseFloat(row.querySelector('.jasa-harga').value) || 0;
+                const subtotal = vol * hrg;
+
+                // Update input readonly total di row jasa
+                row.querySelector('.jasa-total').value = formatRupiah(subtotal);
+
+                total += subtotal;
             });
 
-            // Update Display
+            // Update Grand Total
             totalKeseluruhanDisplay.textContent = formatRupiah(total);
         }
 

@@ -18,6 +18,10 @@ class Offer extends Model
         'harga_per_m2',
         'jasa_nama',
         'jasa_harga',
+        'volume',       // TAMBAHAN BARU
+        'satuan',       // TAMBAHAN BARU
+        'harga_satuan', // TAMBAHAN BARU
+        'harga_jasa',   // Ini untuk TOTAL HARGA (Volume x Harga Satuan)
         'diskon_global',
         'pisah_kriteria_total',
         'hilangkan_grand_total',

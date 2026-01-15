@@ -22,9 +22,18 @@
                         <input type="text" value="{{ $offer->nama_klien }}" class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm" readonly>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-600">Nomor Surat Penawaran</label>
-                        <input type="text" value="00{{ $offer->id }}/SP/TGI-1/IX/2025" class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm" readonly>
-                    </div>
+    <label class="block text-sm font-medium text-gray-600">Nomor Surat Penawaran</label>
+
+    {{-- LOGIKA NOMOR SURAT REALTIME --}}
+    @php
+        $bulanRomawi = [1=>'I', 2=>'II', 3=>'III', 4=>'IV', 5=>'V', 6=>'VI', 7=>'VII', 8=>'VIII', 9=>'IX', 10=>'X', 11=>'XI', 12=>'XII'];
+        // Ambil bulan & tahun dari data penawaran
+        $romawi = $bulanRomawi[$offer->created_at->format('n')];
+        $tahun = $offer->created_at->format('Y');
+    @endphp
+
+    <input type="text" value="00{{ $offer->id }}/SP/TGI-1/{{ $romawi }}/{{ $tahun }}" class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm text-gray-700" readonly>
+</div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-600">Detail Pengerjaan</label>
                         <input type="text" value="{{ $offer->client_details }}" class="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm" readonly>
@@ -62,9 +71,27 @@
                 <legend class="text-lg font-semibold text-gray-700 px-2">Data Invoice Baru</legend>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                    <div>
+                   <div>
                         <label for="no_invoice" class="block text-sm font-medium text-gray-700">Nomor Invoice Baru</label>
-                        <input type="text" name="no_invoice" id="no_invoice" value="INV/2025/11/00{{ $offer->id }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800">
+
+                        {{-- LOGIKA NOMOR INVOICE REALTIME --}}
+                        @php
+                            $bulanRomawi = [1=>'I', 2=>'II', 3=>'III', 4=>'IV', 5=>'V', 6=>'VI', 7=>'VII', 8=>'VIII', 9=>'IX', 10=>'X', 11=>'XI', 12=>'XII'];
+
+                            // Ambil Tanggal Hari Ini (Realtime saat form dibuka)
+                            $currentMonth = date('n');
+                            $currentYear = date('Y');
+
+                            $romawi = $bulanRomawi[$currentMonth];
+                        @endphp
+
+                        {{-- Format: 00[ID_OFFER]/INV/TGI/[ROMAWI]/[TAHUN] --}}
+                        {{-- Catatan: ID menggunakan Offer ID karena Invoice ID belum terbentuk --}}
+                        <input type="text"
+                               name="no_invoice"
+                               id="no_invoice"
+                               value="00{{ $offer->id }}/INV/TGI/{{ $romawi }}/{{ $currentYear }}"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800">
                     </div>
                     <div>
                          <label for="diskon" class="block text-sm font-medium text-gray-700">Diskon (Rp)</label>

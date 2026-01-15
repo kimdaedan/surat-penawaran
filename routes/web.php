@@ -61,7 +61,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/penawaran/{offer}', [OfferController::class, 'update'])->name('histori.update');
     Route::delete('/penawaran/{offer}', [OfferController::class, 'destroy'])->name('histori.destroy');
 
+    // Route untuk Print Surat Penawaran
+Route::get('/histori/{offer}/print', [App\Http\Controllers\OfferController::class, 'print'])->name('histori.print');
+
     // 5. INVOICE
+    Route::get('/invoice/{id}/print', [App\Http\Controllers\InvoiceController::class, 'print'])->name('invoice.print');
     Route::prefix('invoice')->name('invoice.')->group(function() {
         Route::get('/histori', [InvoiceController::class, 'index'])->name('histori');
         Route::get('/create', [InvoiceController::class, 'create'])->name('create');
@@ -74,6 +78,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{invoice}', [InvoiceController::class, 'edit'])->name('edit');
         Route::put('/update/{invoice}', [InvoiceController::class, 'update'])->name('update');
         Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->name('destroy');
+
+
     });
 
     // 6. BAST

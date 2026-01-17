@@ -83,6 +83,7 @@ Route::get('/histori/{offer}/print', [App\Http\Controllers\OfferController::clas
     });
 
     // 6. BAST
+    Route::get('/bast/{id}/print', [App\Http\Controllers\BastController::class, 'print'])->name('bast.print');
     Route::get('/histori-bast', [BastController::class, 'index'])->name('bast.index');
     Route::get('/bast/{bast}', [BastController::class, 'show'])->name('bast.show');
     Route::delete('/bast/{bast}', [BastController::class, 'destroy'])->name('bast.destroy');
@@ -90,6 +91,7 @@ Route::get('/histori/{offer}/print', [App\Http\Controllers\OfferController::clas
     Route::post('/penawaran/{offer}/bast', [BastController::class, 'store'])->name('bast.store');
 
     // 7. SKP
+    Route::get('/skp/{id}/print', [App\Http\Controllers\SkpController::class, 'print'])->name('skp.print');
     Route::get('/histori-skp', [SkpController::class, 'index'])->name('skp.index');
     Route::get('/skp/{skp}', [SkpController::class, 'show'])->name('skp.show');
     Route::get('/skp/{skp}/edit', [SkpController::class, 'edit'])->name('skp.edit');

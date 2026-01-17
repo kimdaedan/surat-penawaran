@@ -17,7 +17,7 @@
             <div class="flex gap-2">
                 <input type="text"
                        name="search"
-                       placeholder="Cari No. Invoice atau Nama Klien..."
+                       placeholder="Cari No. Invoice, Nama Klien, atau No. Surat Penawaran..."
                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800"
                        value="{{ $search ?? '' }}">
                 <button type="submit" class="mt-1 bg-gray-800 text-white font-bold py-2 px-6 rounded hover:bg-gray-700 transition">
@@ -32,43 +32,60 @@
             </div>
         @endif
 
-        <div class="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200">
+        {{-- PERBAIKAN: Hapus overflow-hidden agar dropdown tidak terpotong --}}
+        {{-- Jika tabel butuh scroll horizontal, pindahkan overflow ke div dalam --}}
+        <div class="bg-white shadow-md rounded-lg border border-gray-200 relative">
             <table class="w-full text-sm text-left text-gray-700">
                 <thead class="text-xs text-white uppercase bg-gray-800">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Tanggal Invoice</th>
+                        <th scope="col" class="px-6 py-3 rounded-tl-lg">Tanggal Invoice</th>
                         <th scope="col" class="px-6 py-3">No. Invoice</th>
                         <th scope="col" class="px-6 py-3">Nama Klien</th>
+                        <th scope="col" class="px-6 py-3">No. Surat Penawaran</th>
                         <th scope="col" class="px-6 py-3 text-right">Total Tagihan</th>
-                        <th scope="col" class="px-6 py-3 text-center">Action</th>
+                        <th scope="col" class="px-6 py-3 text-center rounded-tr-lg">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @forelse ($invoices as $invoice)
+                    @forelse ($invoices as $index => $invoice)
                     <tr class="bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
 
-                        {{-- Tanggal --}}
                         <td class="px-6 py-4 whitespace-nowrap">
                             {{ $invoice->created_at->format('d M Y') }}
                         </td>
 
-                        {{-- No Invoice --}}
                         <td class="px-6 py-4 font-semibold text-gray-900 whitespace-nowrap">
                             {{ $invoice->no_invoice }}
                         </td>
 
-                        {{-- Nama Klien --}}
                         <td class="px-6 py-4 font-medium text-gray-800">
                             {{ $invoice->nama_klien }}
                         </td>
 
-                        {{-- Total Tagihan --}}
+                        {{-- No Surat Penawaran --}}
+                        <td class="px-6 py-4 text-gray-600 whitespace-nowrap text-xs">
+                            @if($invoice->offer)
+                                @php
+                                    $bulanRomawi = [1=>'I', 2=>'II', 3=>'III', 4=>'IV', 5=>'V', 6=>'VI', 7=>'VII', 8=>'VIII', 9=>'IX', 10=>'X', 11=>'XI', 12=>'XII'];
+                                    $tglOffer = $invoice->offer->created_at;
+                                    $romawi = $bulanRomawi[$tglOffer->format('n')];
+                                    $tahun = $tglOffer->format('Y');
+                                @endphp
+                                <span class="bg-gray-100 text-gray-600 py-1 px-2 rounded-full border border-gray-300">
+                                    00{{ $invoice->offer->id }}/SP/TGI-1/{{ $romawi }}/{{ $tahun }}
+                                </span>
+                            @else
+                                <span class="text-red-500 italic">-</span>
+                            @endif
+                        </td>
+
                         <td class="px-6 py-4 text-right whitespace-nowrap font-bold text-green-600">
                             Rp {{ number_format($invoice->grand_total, 0, ',', '.') }}
                         </td>
 
-                        {{-- Action Dropdown --}}
+                        {{-- Action Dropdown (DIPERBAIKI) --}}
                         <td class="px-6 py-4 text-center">
+                            {{-- Tambahkan 'relative' di td agar posisi absolute dropdown benar --}}
                             <div x-data="{ open: false }" class="relative inline-block text-left">
                                 <button @click="open = !open" @click.away="open = false" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-1.5 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
                                     Options
@@ -77,14 +94,19 @@
                                     </svg>
                                 </button>
 
+                                {{-- Logika Posisi Dropdown: --}}
+                                {{-- Gunakan z-50 agar tampil paling depan --}}
+                                {{-- Jika ini 3 baris terakhir, dropdown muncul KE ATAS agar tidak tertutup footer --}}
                                 <div x-show="open"
+                                     x-cloak
                                      x-transition:enter="transition ease-out duration-100"
                                      x-transition:enter-start="transform opacity-0 scale-95"
                                      x-transition:enter-end="transform opacity-100 scale-100"
                                      x-transition:leave="transition ease-in duration-75"
                                      x-transition:leave-start="transform opacity-100 scale-100"
                                      x-transition:leave-end="transform opacity-0 scale-95"
-                                     class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                                     class="absolute right-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50
+                                            {{ $index >= count($invoices) - 2 ? 'bottom-full mb-2 origin-bottom-right' : 'mt-2 origin-top-right' }}">
 
                                     <div class="py-1" role="menu">
                                         <a href="{{ route('invoice.show', $invoice->id) }}" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700" role="menuitem">
@@ -119,7 +141,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                             <div class="flex flex-col items-center justify-center">
                                 <svg class="h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

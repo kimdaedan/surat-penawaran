@@ -13,10 +13,10 @@ class SkpController extends Controller
     {
         // Cek jika SKP sudah pernah dibuat
         if (Skp::where('offer_id', $offer->id)->exists()) {
-             return redirect()->back()->with('error', 'SKP untuk penawaran ini sudah dibuat.');
+            return redirect()->back()->with('error', 'SKP untuk penawaran ini sudah dibuat.');
         }
 
-        $bulanRomawi = array("", "I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII");
+        $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
 
         // 1. Generate Nomor Surat SKP (Baru)
         $nextId = Skp::max('id') + 1;
@@ -118,13 +118,26 @@ class SkpController extends Controller
 
         if ($search) {
             $query->where('no_surat', 'like', '%' . $search . '%')
-                  ->orWhere('pihak_satu_nama', 'like', '%' . $search . '%')
-                  ->orWhere('judul_pekerjaan', 'like', '%' . $search . '%');
+                ->orWhere('pihak_satu_nama', 'like', '%' . $search . '%')
+                ->orWhere('judul_pekerjaan', 'like', '%' . $search . '%');
         }
 
         $skps = $query->latest()->paginate(15);
         return view('skp.index', ['skps' => $skps, 'search' => $search]);
     }
+
+    public function print($id)
+    {
+        $skp = \App\Models\Skp::with('offer')->findOrFail($id);
+
+        // Decode JSON termin pembayaran jika perlu (tergantung cara simpan)
+        if (is_string($skp->termin_pembayaran)) {
+            $skp->termin_pembayaran = json_decode($skp->termin_pembayaran, true);
+        }
+
+        return view('skp.print', compact('skp'));
+    }
+
 
     public function show(Skp $skp)
     {
@@ -146,7 +159,7 @@ class SkpController extends Controller
 
     public function update(Request $request, Skp $skp)
     {
-         $request->validate([
+        $request->validate([
             'no_surat' => 'required',
             'tanggal_surat' => 'required|date',
             'pihak_satu_nama' => 'required',

@@ -50,21 +50,39 @@
     <div class="max-w-[21cm] mx-auto bg-white p-4">
 
         {{-- 1. HEADER KOP SURAT --}}
-        <header class="border-b-2 border-gray-300 pb-4 mb-6 flex justify-between items-center">
-                <div class="w-1/4">
-                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="w-32">
-                </div>
-                <div class="w-1/2 text-center sans">
-                    <h1 class="text-xl font-bold text-gray-800">PT. TASNIEM GERAI INSPIRASI</h1>
-                    <p class="text-sm font-semibold text-gray-600">(The First Inspiration Center of Jotun Indonesia)</p>
-                    <p class="text-xs text-gray-500 mt-2">Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
-                    <p class="text-xs text-gray-500">Telp : +62 778-7485 999, 7080 549 Fax : +62 778-7485 789</p>
-                    <p class="text-xs text-gray-500">E-mail : tgi_team040210@yahoo.com Website : www.jotun.com/ap</p>
-                </div>
-                <div class="w-1/4 flex justify-end">
-                    <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="w-40">
-                </div>
-            </header>
+        <header class="w-full mb-6">
+    <div class="flex justify-between items-center w-full px-0">
+
+        <div class="w-[22%] flex justify-start">
+            <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
+        </div>
+
+        <div class="w-[61%] text-center">
+
+            <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
+                style="font-family: 'Times New Roman', Times, serif; transform: scaleY(1.1);">
+                PT. TASNIEM GERAI INSPIRASI
+            </h1>
+
+            <p class="text-xs font-bold text-[#d32f2f]  mb-1"
+               style="font-family: 'Times New Roman', Times, serif;">
+                ( The First Inspiration Center of Jotun Indonesia )
+            </p>
+
+            <div class="text-[9px] font-bold text-[#1a237e] leading-tight font-sans">
+                <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
+                <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
+                <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
+            </div>
+        </div>
+
+        <div class="w-[22%] flex justify-end">
+            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
+        </div>
+    </div>
+
+    <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
+</header>
 
         {{-- 2. INFO KLIEN & INVOICE --}}
         <section class="mt-8 flex justify-between text-sm sans">

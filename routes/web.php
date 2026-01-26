@@ -10,38 +10,53 @@ use App\Http\Controllers\BastController;
 use App\Http\Controllers\SkpController;
 use App\Http\Controllers\AuthController;
 
-// =========================================================================
-// ROUTE AUTH (LOGIN & LOGOUT)
-// =========================================================================
+/*
+|--------------------------------------------------------------------------
+| 1. PUBLIC ROUTES (Halaman Utama / Landing Page)
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    // Jika user sudah login, arahkan langsung ke dashboard
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('front.landing'); // Pastikan file resources/views/landing.blade.php sudah ada
+})->name('front.landing');
+
+
+/*
+|--------------------------------------------------------------------------
+| 2. AUTH ROUTES (Login & Logout)
+|--------------------------------------------------------------------------
+*/
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// =========================================================================
-// ROUTE TERPROTEKSI (Harus Login Dulu)
-// =========================================================================
+
+/*
+|--------------------------------------------------------------------------
+| 3. PROTECTED ROUTES (Hanya Bisa Diakses Setelah Login)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
 
-    // 1. DASHBOARD
-    Route::get('/', function () {
+    // --- DASHBOARD ---
+    Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // 2. MASTER DATA PRODUK (DAFTAR HARGA)
+    // --- MASTER DATA PRODUK (DAFTAR HARGA) ---
+    Route::prefix('daftar-harga')->name('harga.')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
+        Route::get('/tambah', [ProductController::class, 'create'])->name('create');
+        Route::post('/', [ProductController::class, 'store'])->name('store');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::put('/{product}', [ProductController::class, 'update'])->name('update');
+        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
+    });
 
-    // A. Route Spesifik (Harus Paling Atas)
-    Route::get('/daftar-harga/tambah', [ProductController::class, 'create'])->name('harga.create');
-    Route::post('/daftar-harga', [ProductController::class, 'store'])->name('harga.store');
-
-    // B. Route Utama (Index)
-    Route::get('/daftar-harga', [ProductController::class, 'index'])->name('harga.index');
-
-    // C. Route Dinamis (Harus Paling Bawah agar tidak bentrok)
-    // Perhatikan: Jangan sampai ada route lain yang mengarah ke 'show' jika method-nya tidak ada
-    Route::get('/daftar-harga/{product}/edit', [ProductController::class, 'edit'])->name('harga.edit');
-    Route::put('/daftar-harga/{product}', [ProductController::class, 'update'])->name('harga.update');
-    Route::delete('/daftar-harga/{product}', [ProductController::class, 'destroy'])->name('harga.destroy');
-    // 3. MENU PENAWARAN
+    // --- MENU PENAWARAN ---
     Route::prefix('penawaran')->name('penawaran.')->group(function () {
         // Penawaran PROYEK
         Route::get('/create-project', [ProductController::class, 'createCombined'])->name('create_combined');
@@ -54,49 +69,48 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/update-product/{offer}', [ProductOfferController::class, 'update'])->name('update_product');
     });
 
-    // 4. HISTORI PENAWARAN
-    Route::get('/histori-penawaran', [OfferController::class, 'index'])->name('histori.index');
-    Route::get('/penawaran/{offer}', [OfferController::class, 'show'])->name('histori.show');
-    Route::get('/penawaran/{offer}/edit', [OfferController::class, 'edit'])->name('histori.edit');
-    Route::put('/penawaran/{offer}', [OfferController::class, 'update'])->name('histori.update');
-    Route::delete('/penawaran/{offer}', [OfferController::class, 'destroy'])->name('histori.destroy');
+    // --- HISTORI & DETAIL PENAWARAN ---
+    Route::prefix('histori-penawaran')->name('histori.')->group(function () {
+        Route::get('/', [OfferController::class, 'index'])->name('index');
+        Route::get('/{offer}', [OfferController::class, 'show'])->name('show');
+        Route::get('/{offer}/edit', [OfferController::class, 'edit'])->name('edit');
+        Route::put('/{offer}', [OfferController::class, 'update'])->name('update');
+        Route::delete('/{offer}', [OfferController::class, 'destroy'])->name('destroy');
+        Route::get('/{offer}/print', [OfferController::class, 'print'])->name('print');
+    });
 
-    // Route untuk Print Surat Penawaran
-Route::get('/histori/{offer}/print', [App\Http\Controllers\OfferController::class, 'print'])->name('histori.print');
-
-    // 5. INVOICE
-    Route::get('/invoice/{id}/print', [App\Http\Controllers\InvoiceController::class, 'print'])->name('invoice.print');
+    // --- INVOICE ---
     Route::prefix('invoice')->name('invoice.')->group(function() {
         Route::get('/histori', [InvoiceController::class, 'index'])->name('histori');
         Route::get('/create', [InvoiceController::class, 'create'])->name('create');
-
-        // Rute ini butuh parameter {offer}, ini yang menyebabkan error jika parameternya null
         Route::get('/create-from-offer/{offer}', [InvoiceController::class, 'createFromOffer'])->name('create_from_offer');
         Route::post('/store-from-offer', [InvoiceController::class, 'storeFromOffer'])->name('store_from_offer');
-
         Route::get('/show/{invoice}', [InvoiceController::class, 'show'])->name('show');
         Route::get('/edit/{invoice}', [InvoiceController::class, 'edit'])->name('edit');
         Route::put('/update/{invoice}', [InvoiceController::class, 'update'])->name('update');
         Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->name('destroy');
-
-
+        Route::get('/{id}/print', [InvoiceController::class, 'print'])->name('print');
     });
 
-    // 6. BAST
-    Route::get('/bast/{id}/print', [App\Http\Controllers\BastController::class, 'print'])->name('bast.print');
-    Route::get('/histori-bast', [BastController::class, 'index'])->name('bast.index');
-    Route::get('/bast/{bast}', [BastController::class, 'show'])->name('bast.show');
-    Route::delete('/bast/{bast}', [BastController::class, 'destroy'])->name('bast.destroy');
-    Route::get('/penawaran/{offer}/bast/create', [BastController::class, 'create'])->name('bast.create');
-    Route::post('/penawaran/{offer}/bast', [BastController::class, 'store'])->name('bast.store');
+    // --- BAST (Berita Acara Serah Terima) ---
+    Route::prefix('bast')->name('bast.')->group(function () {
+        Route::get('/histori', [BastController::class, 'index'])->name('index');
+        Route::get('/show/{bast}', [BastController::class, 'show'])->name('show');
+        Route::delete('/{bast}', [BastController::class, 'destroy'])->name('destroy');
+        Route::get('/create/{offer}', [BastController::class, 'create'])->name('create');
+        Route::post('/store/{offer}', [BastController::class, 'store'])->name('store');
+        Route::get('/{id}/print', [BastController::class, 'print'])->name('print');
+    });
 
-    // 7. SKP
-    Route::get('/skp/{id}/print', [App\Http\Controllers\SkpController::class, 'print'])->name('skp.print');
-    Route::get('/histori-skp', [SkpController::class, 'index'])->name('skp.index');
-    Route::get('/skp/{skp}', [SkpController::class, 'show'])->name('skp.show');
-    Route::get('/skp/{skp}/edit', [SkpController::class, 'edit'])->name('skp.edit');
-    Route::put('/skp/{skp}', [SkpController::class, 'update'])->name('skp.update');
-    Route::delete('/skp/{skp}', [SkpController::class, 'destroy'])->name('skp.destroy');
-    Route::get('/penawaran/{offer}/skp/create', [SkpController::class, 'create'])->name('skp.create');
-    Route::post('/penawaran/{offer}/skp', [SkpController::class, 'store'])->name('skp.store');
+    // --- SPK (Surat Perintah Kerja) ---
+    Route::prefix('spk')->name('skp.')->group(function () {
+        Route::get('/histori', [SkpController::class, 'index'])->name('index');
+        Route::get('/show/{skp}', [SkpController::class, 'show'])->name('show');
+        Route::get('/edit/{skp}', [SkpController::class, 'edit'])->name('edit');
+        Route::put('/update/{skp}', [SkpController::class, 'update'])->name('update');
+        Route::delete('/{skp}', [SkpController::class, 'destroy'])->name('destroy');
+        Route::get('/create/{offer}', [SkpController::class, 'create'])->name('create');
+        Route::post('/store/{offer}', [SkpController::class, 'store'])->name('store');
+        Route::get('/{id}/print', [SkpController::class, 'print'])->name('print');
+    });
 });

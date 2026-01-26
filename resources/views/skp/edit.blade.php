@@ -28,10 +28,10 @@
                         (Karena di edit kita mungkin tidak pass variable refNoPenawaran, kita buat manual di sini)
                     --}}
                     @php
-                        $bulanRomawi = array("", "I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII");
-                        $bulanOffer = $bulanRomawi[$offer->created_at->format('n')];
-                        $tahunOffer = $offer->created_at->format('Y');
-                        $refNoPenawaranLengkap = sprintf('00%d/SP/TGI-1/%s/%s', $offer->id, $bulanOffer, $tahunOffer);
+                    $bulanRomawi = array("", "I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII");
+                    $bulanOffer = $bulanRomawi[$offer->created_at->format('n')];
+                    $tahunOffer = $offer->created_at->format('Y');
+                    $refNoPenawaranLengkap = sprintf('00%d/SP/TGI-1/%s/%s', $offer->id, $bulanOffer, $tahunOffer);
                     @endphp
 
                     Berdasarkan Surat Penawaran Kerja (Ref ID): <strong>{{ $refNoPenawaranLengkap }}</strong>
@@ -124,8 +124,8 @@
                             <label class="block text-sm font-bold text-gray-700">Durasi (Hari Kalender)</label>
                             {{-- Kita coba ambil angka dari teks durasi lama (misal "60 hari" -> 60) --}}
                             @php
-                                preg_match('/\d+/', $skp->durasi_hari, $matches);
-                                $durasiAngka = $matches[0] ?? '';
+                            preg_match('/\d+/', $skp->durasi_hari, $matches);
+                            $durasiAngka = $matches[0] ?? '';
                             @endphp
                             <input type="number" id="durasi_angka" class="w-full border rounded px-3 py-2 mt-1" value="{{ $durasiAngka }}" placeholder="Contoh: 60" required>
                         </div>
@@ -148,7 +148,6 @@
                 </div>
             </fieldset>
 
-            <!-- SISTEM PEMBAYARAN (DINAMIS & OPSIONAL) -->
             <fieldset class="border-t pt-6 mt-8">
                 <legend class="text-lg font-semibold text-gray-700 px-2">Sistem Pembayaran (Opsional)</legend>
                 <p class="text-sm text-gray-500 mb-4">Tambahkan baris jika diperlukan. Jika tidak, biarkan kosong.</p>
@@ -158,49 +157,27 @@
                         <thead>
                             <tr>
                                 <th class="pb-2 text-sm text-gray-600 w-5/12">Keterangan Progres</th>
-                                <th class="pb-2 text-sm text-gray-600 w-4/12">Tanggal</th>
-                                <th class="pb-2 text-sm text-gray-600 w-2/12">Persentase (%)</th>
+                                <th class="pb-2 text-sm text-gray-600 w-3/12">Tanggal</th>
+                                <th class="pb-2 text-sm text-gray-600 w-3/12">Amount (Jumlah)</th>
                                 <th class="pb-2 w-1/12"></th>
                             </tr>
                         </thead>
                         <tbody id="payment-rows">
-                            <!-- Loop Data Existing -->
-                            @if(count($skp->termin_pembayaran) > 0)
-                                @foreach($skp->termin_pembayaran as $termin)
-                                <tr>
-                                    <td class="pr-2 pb-2">
-                                        <input type="text" name="termin_keterangan[]" value="{{ $termin['keterangan'] }}" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                                    </td>
-                                    <td class="pr-2 pb-2">
-                                        <input type="date" name="termin_tanggal[]" value="{{ $termin['tanggal'] != '-' ? $termin['tanggal'] : '' }}" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                                    </td>
-                                    <td class="pr-2 pb-2 relative">
-                                        {{-- Hapus simbol % untuk input value --}}
-                                        <input type="number" name="termin_jumlah[]" value="{{ str_replace('%', '', $termin['jumlah']) }}" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
-                                        <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
-                                    </td>
-                                    <td class="pb-2 text-center">
-                                        <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td class="pr-2 pb-2">
-                                        <input type="text" name="termin_keterangan[]" placeholder="Contoh: DP / Progres I" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                                    </td>
-                                    <td class="pr-2 pb-2">
-                                        <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                                    </td>
-                                    <td class="pr-2 pb-2 relative">
-                                        <input type="number" name="termin_jumlah[]" placeholder="30" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
-                                        <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
-                                    </td>
-                                    <td class="pb-2 text-center">
-                                        <button type="button" class="text-red-500 hover:text-red-700 remove-row" disabled>x</button>
-                                    </td>
-                                </tr>
-                            @endif
+                            <tr>
+                                <td class="pr-2 pb-2">
+                                    <input type="text" name="termin_keterangan[]" placeholder="Contoh: DP / Progres I" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                                </td>
+                                <td class="pr-2 pb-2">
+                                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                                </td>
+                                <td class="pr-2 pb-2 relative">
+                                    <span class="absolute left-3 top-2.5 text-gray-500 font-semibold">Rp</span>
+                                    <input type="number" name="termin_jumlah[]" placeholder="0" class="w-full border rounded px-3 py-2 pl-10 focus:border-blue-500 text-right">
+                                </td>
+                                <td class="pb-2 text-center">
+                                    <button type="button" class="text-red-500 hover:text-red-700 remove-row" disabled>x</button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -254,7 +231,11 @@
                 selesaiInput.value = `${yyyy}-${mm}-${dd}`;
                 durasiTextHidden.value = `${hari} hari kalender`;
 
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
                 infoSelesai.innerText = `Selesai pada: ${selesai.toLocaleDateString('id-ID', options)}`;
             }
         }
@@ -263,26 +244,27 @@
         mulaiInput.addEventListener('change', hitungSelesai);
 
         // --- 3. TABEL PEMBAYARAN DINAMIS ---
+        // --- 3. TABEL PEMBAYARAN DINAMIS ---
         const tableBody = document.getElementById('payment-rows');
         const addBtn = document.getElementById('add-payment-btn');
 
         addBtn.addEventListener('click', function() {
             const newRow = document.createElement('tr');
             newRow.innerHTML = `
-                <td class="pr-2 pb-2">
-                    <input type="text" name="termin_keterangan[]" placeholder="Keterangan progres..." class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                </td>
-                <td class="pr-2 pb-2">
-                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                </td>
-                <td class="pr-2 pb-2 relative">
-                    <input type="number" name="termin_jumlah[]" placeholder="%" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
-                    <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
-                </td>
-                <td class="pb-2 text-center">
-                    <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
-                </td>
-            `;
+        <td class="pr-2 pb-2">
+            <input type="text" name="termin_keterangan[]" placeholder="Keterangan progres..." class="w-full border rounded px-3 py-2 focus:border-blue-500">
+        </td>
+        <td class="pr-2 pb-2">
+            <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+        </td>
+        <td class="pr-2 pb-2 relative">
+            <span class="absolute left-3 top-2.5 text-gray-500 font-semibold">Rp</span>
+            <input type="number" name="termin_jumlah[]" placeholder="0" class="w-full border rounded px-3 py-2 pl-10 focus:border-blue-500 text-right">
+        </td>
+        <td class="pb-2 text-center">
+            <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
+        </td>
+    `;
             tableBody.appendChild(newRow);
         });
 

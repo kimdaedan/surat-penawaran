@@ -137,44 +137,43 @@
 
             <!-- SISTEM PEMBAYARAN (DINAMIS & OPSIONAL) -->
             <fieldset class="border-t pt-6 mt-8">
-                <legend class="text-lg font-semibold text-gray-700 px-2">Sistem Pembayaran (Opsional)</legend>
-                <p class="text-sm text-gray-500 mb-4">Tambahkan baris jika diperlukan. Jika tidak, biarkan kosong.</p>
+    <legend class="text-lg font-semibold text-gray-700 px-2">Sistem Pembayaran (Opsional)</legend>
+    <p class="text-sm text-gray-500 mb-4">Tambahkan baris jika diperlukan. Jika tidak, biarkan kosong.</p>
 
-                <div class="bg-gray-50 p-4 rounded border">
-                    <table class="w-full text-left" id="payment-table">
-                        <thead>
-                            <tr>
-                                <th class="pb-2 text-sm text-gray-600 w-5/12">Keterangan Progres</th>
-                                <th class="pb-2 text-sm text-gray-600 w-4/12">Tanggal</th>
-                                <th class="pb-2 text-sm text-gray-600 w-2/12">Persentase (%)</th>
-                                <th class="pb-2 w-1/12"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="payment-rows">
-                            <!-- Baris 1 (Tidak Required) -->
-                            <tr>
-                                <td class="pr-2 pb-2">
-                                    <input type="text" name="termin_keterangan[]" placeholder="Contoh: DP / Progres I" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                                </td>
-                                <td class="pr-2 pb-2">
-                                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                                </td>
-                                <td class="pr-2 pb-2 relative">
-                                    <input type="number" name="termin_jumlah[]" placeholder="30" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
-                                    <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
-                                </td>
-                                <td class="pb-2 text-center">
-                                    <button type="button" class="text-red-500 hover:text-red-700 remove-row" disabled>x</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+    <div class="bg-gray-50 p-4 rounded border">
+        <table class="w-full text-left" id="payment-table">
+            <thead>
+                <tr>
+                    <th class="pb-2 text-sm text-gray-600 w-5/12">Keterangan Progres</th>
+                    <th class="pb-2 text-sm text-gray-600 w-3/12">Tanggal</th>
+                    <th class="pb-2 text-sm text-gray-600 w-3/12">Amount (Jumlah)</th>
+                    <th class="pb-2 w-1/12"></th>
+                </tr>
+            </thead>
+            <tbody id="payment-rows">
+                <tr>
+                    <td class="pr-2 pb-2">
+                        <input type="text" name="termin_keterangan[]" placeholder="Contoh: DP / Progres I" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                    </td>
+                    <td class="pr-2 pb-2">
+                        <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+                    </td>
+                    <td class="pr-2 pb-2 relative">
+                        <span class="absolute left-3 top-2.5 text-gray-500 font-semibold">Rp</span>
+                        <input type="number" name="termin_jumlah[]" placeholder="0" class="w-full border rounded px-3 py-2 pl-10 focus:border-blue-500 text-right">
+                    </td>
+                    <td class="pb-2 text-center">
+                        <button type="button" class="text-red-500 hover:text-red-700 remove-row" disabled>x</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-                    <button type="button" id="add-payment-btn" class="mt-2 text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 font-bold flex items-center gap-1">
-                        <span>+</span> Tambah Tahap Pembayaran
-                    </button>
-                </div>
-            </fieldset>
+        <button type="button" id="add-payment-btn" class="mt-2 text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 font-bold flex items-center gap-1">
+            <span>+</span> Tambah Tahap Pembayaran
+        </button>
+    </div>
+</fieldset>
 
             <div class="mt-12 text-center">
                 <button type="submit" class="bg-indigo-600 text-white font-bold py-3 px-10 rounded-full shadow-lg hover:bg-indigo-700 transition transform hover:-translate-y-1">
@@ -231,29 +230,29 @@
         mulaiInput.addEventListener('change', hitungSelesai);
 
 
-        // --- 3. TABEL PEMBAYARAN DINAMIS ---
-        const tableBody = document.getElementById('payment-rows');
-        const addBtn = document.getElementById('add-payment-btn');
+       // --- 3. TABEL PEMBAYARAN DINAMIS ---
+const tableBody = document.getElementById('payment-rows');
+const addBtn = document.getElementById('add-payment-btn');
 
-        addBtn.addEventListener('click', function() {
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td class="pr-2 pb-2">
-                    <input type="text" name="termin_keterangan[]" placeholder="Keterangan progres..." class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                </td>
-                <td class="pr-2 pb-2">
-                    <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
-                </td>
-                <td class="pr-2 pb-2 relative">
-                    <input type="number" name="termin_jumlah[]" placeholder="%" class="w-full border rounded px-3 py-2 pr-8 focus:border-blue-500 text-right">
-                    <span class="absolute right-6 top-4 text-gray-500 font-bold">%</span>
-                </td>
-                <td class="pb-2 text-center">
-                    <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
-                </td>
-            `;
-            tableBody.appendChild(newRow);
-        });
+addBtn.addEventListener('click', function() {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td class="pr-2 pb-2">
+            <input type="text" name="termin_keterangan[]" placeholder="Keterangan progres..." class="w-full border rounded px-3 py-2 focus:border-blue-500">
+        </td>
+        <td class="pr-2 pb-2">
+            <input type="date" name="termin_tanggal[]" class="w-full border rounded px-3 py-2 focus:border-blue-500">
+        </td>
+        <td class="pr-2 pb-2 relative">
+            <span class="absolute left-3 top-2.5 text-gray-500 font-semibold">Rp</span>
+            <input type="number" name="termin_jumlah[]" placeholder="0" class="w-full border rounded px-3 py-2 pl-10 focus:border-blue-500 text-right">
+        </td>
+        <td class="pb-2 text-center">
+            <button type="button" class="text-red-500 hover:text-red-700 remove-row text-xl font-bold">&times;</button>
+        </td>
+    `;
+    tableBody.appendChild(newRow);
+});
 
         tableBody.addEventListener('click', function(e) {
             if (e.target.classList.contains('remove-row')) {

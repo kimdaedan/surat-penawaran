@@ -185,13 +185,15 @@ class SkpController extends Controller
             foreach ($request->termin_keterangan as $index => $ket) {
                 if (!empty($ket)) {
                     $tglRaw = $request->termin_tanggal[$index] ?? null;
-                    $jumlahInput = $request->termin_jumlah[$index] ?? '';
-                    $jumlahFormatted = str_contains($jumlahInput, '%') ? $jumlahInput : $jumlahInput . '%';
+                    $jumlahInput = $request->termin_jumlah[$index] ?? 0;
 
+                    // Hapus logika format '%' sebelumnya
+                    // Kita simpan sebagai nominal murni (integer/float)
+                    // agar di view print nanti bisa kita format dengan number_format
                     $terminPembayaran[] = [
                         'keterangan' => $ket,
                         'tanggal' => $tglRaw,
-                        'jumlah' => $jumlahFormatted
+                        'jumlah' => $jumlahInput // Simpan nominal angka saja
                     ];
                 }
             }

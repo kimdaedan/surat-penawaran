@@ -41,44 +41,53 @@
     </style>
 </head>
 
-<body class="bg-white text-black text-sm" onload="window.print()">
+<body class="bg-white text-black text-sm">
 
-    <div class="max-w-[21cm] mx-auto">
-
-        {{-- 1. KOP SURAT --}}
-        <header class="w-full mb-6">
-    <div class="flex justify-between items-center w-full px-0">
-
-        <div class="w-[22%] flex justify-start">
-            <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
-        </div>
-
-        <div class="w-[61%] text-center">
-
-            <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
-                style="font-family: 'Times New Roman', Times, serif; transform: scaleY(1.1);">
-                PT. TASNIEM GERAI INSPIRASI
-            </h1>
-
-            <p class="text-xs font-bold text-[#d32f2f]  mb-1"
-               style="font-family: 'Times New Roman', Times, serif;">
-                ( The First Inspiration Center of Jotun Indonesia )
-            </p>
-
-            <div class="text-[9px] font-bold text-[#1a237e] leading-tight font-sans">
-                <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
-                <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
-                <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
-            </div>
-        </div>
-
-        <div class="w-[22%] flex justify-end">
-            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
-        </div>
+    {{-- Tombol Navigasi (Hanya tampil di layar, hilang saat diprint) --}}
+    <div class="no-print fixed top-5 right-5 flex gap-2">
+        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg flex items-center gap-2 transition">
+            <span>🖨️</span> Cetak Dokumen
+        </button>
+        <a href="javascript:window.close();" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded shadow-lg transition">
+            Tutup
+        </a>
     </div>
 
-    <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
-</header>
+    <div class="max-w-[21cm] mx-auto">
+        {{-- 1. KOP SURAT --}}
+        <header class="w-full mb-6">
+            <div class="flex justify-between items-center w-full px-0">
+
+                <div class="w-[22%] flex justify-start">
+                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
+                </div>
+
+                <div class="w-[61%] text-center">
+
+                    <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
+                        style="font-family: 'Times New Roman', Times, serif; transform: scaleY(1.1);">
+                        PT. TASNIEM GERAI INSPIRASI
+                    </h1>
+
+                    <p class="text-xs font-bold text-[#d32f2f]  mb-1"
+                        style="font-family: 'Times New Roman', Times, serif;">
+                        ( The First Inspiration Center of Jotun Indonesia )
+                    </p>
+
+                    <div class="text-[9px] font-bold text-[#1a237e] leading-tight font-sans">
+                        <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
+                        <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
+                        <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
+                    </div>
+                </div>
+
+                <div class="w-[22%] flex justify-end">
+                    <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
+                </div>
+            </div>
+
+            <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
+        </header>
 
         {{-- 2. JUDUL SURAT --}}
         <div class="text-center mb-6">
@@ -211,6 +220,7 @@
                     <td class="align-top font-bold">Rp {{ number_format($skp->nilai_pekerjaan, 0, ',', '.') }},-</td>
                 </tr>
 
+                {{-- Tampilkan Sistem Pembayaran HANYA jika ada data --}}
                 @if($skp->termin_pembayaran && count($skp->termin_pembayaran) > 0)
                 <tr>
                     <td class="align-top font-bold">Sistem Pembayaran</td>
@@ -220,10 +230,14 @@
                             @foreach($skp->termin_pembayaran as $termin)
                             <li class="mb-1">
                                 {{ $termin['keterangan'] }}
+
+                                {{-- Tanggal jika ada --}}
                                 @if(!empty($termin['tanggal']) && $termin['tanggal'] != '-')
                                 ({{ $formatIndo($termin['tanggal']) }})
                                 @endif
-                                , dibayarkan {{ $termin['jumlah'] }}
+
+                                {{-- Perubahan di sini: Format Rupiah untuk Amount --}}
+                                , dibayarkan sebesar <strong>Rp {{ number_format((float)$termin['jumlah'], 0, ',', '.') }},-</strong>
                             </li>
                             @endforeach
                         </ul>

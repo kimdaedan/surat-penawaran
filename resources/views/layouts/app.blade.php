@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,19 +21,24 @@
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
+
         .submenu.open {
             max-height: 500px;
         }
+
         .rotate-icon {
             transform: rotate(180deg);
         }
+
         /* Fix agar dropdown tabel tidak terpotong */
         .table-responsive {
             overflow-x: auto;
-            min-height: 300px; /* Memberi ruang untuk dropdown */
+            min-height: 300px;
+            /* Memberi ruang untuk dropdown */
         }
     </style>
 </head>
+
 <body class="bg-gray-50 font-sans leading-normal tracking-normal">
 
     <div class="flex h-screen overflow-hidden">
@@ -40,9 +46,16 @@
         <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex md:flex-col flex-shrink-0 z-30">
 
             <div class="p-6 flex items-center justify-center border-b border-gray-100">
-                <a href="{{ route('dashboard') }}" class="text-xl font-bold text-blue-800 flex items-center gap-2">
-                    <span class="bg-blue-100 text-blue-600 p-2 rounded-lg">🚀</span>
-                    <span>PENAWARAN.APP</span>
+                <a href="{{ route('dashboard') }}" class="text-xl font-bold text-blue-800 flex items-center gap-3">
+                    {{-- Kontainer Logo --}}
+                    <div class="flex items-center justify-center">
+                        <img src="{{ asset('images/logo-app.png') }}"
+                            alt="Logo Penawaran"
+                            class="h-14 w-auto object-contain transition-transform hover:scale-120">
+                    </div>
+
+                    {{-- Teks Aplikasi --}}
+                    <span class="tracking-tight">PENAWARAN.APP</span>
                 </a>
             </div>
 
@@ -132,7 +145,7 @@
                 </h2>
                 <button class="md:hidden text-gray-500 focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
             </header>
@@ -170,7 +183,7 @@
 
             // Tutup semua dropdown lain dulu
             document.querySelectorAll('.table-dropdown-menu').forEach(el => {
-                if(el.id !== dropdownId) el.classList.add('hidden');
+                if (el.id !== dropdownId) el.classList.add('hidden');
             });
 
             // Toggle dropdown target
@@ -193,4 +206,5 @@
         });
     </script>
 </body>
+
 </html>

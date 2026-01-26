@@ -129,10 +129,32 @@
                     </div>
                 </div>
 
-                <div class="mt-4 bg-yellow-50 p-4 rounded border border-yellow-200">
-                    <p class="font-bold text-gray-800">Total Nilai Pekerjaan (Otomatis dari Penawaran):</p>
-                    <p class="text-2xl font-bold text-blue-600">Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}</p>
-                </div>
+                <div class="mt-6 p-6 bg-indigo-50 rounded-lg border border-indigo-100 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+        <p class="text-sm font-bold text-gray-600 uppercase">Nilai Pekerjaan Awal:</p>
+        <p class="text-xl font-bold text-gray-800">Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}</p>
+        {{-- Hidden input untuk menyimpan nilai asli dari server --}}
+        <input type="hidden" id="nilai_asli" value="{{ $offer->total_keseluruhan }}">
+    </div>
+
+    <div>
+        <label class="block text-sm font-bold text-gray-600 uppercase">Diskon (Rp):</label>
+        <div class="relative mt-1">
+            <span class="absolute left-3 top-2 text-gray-500 font-semibold">Rp</span>
+            <input type="number" name="diskon" id="input_diskon" value="0"
+                class="w-full border rounded px-3 py-2 pl-10 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0">
+        </div>
+    </div>
+
+    <div class="bg-white p-3 rounded shadow-sm border border-indigo-200">
+        <p class="text-sm font-bold text-indigo-600 uppercase">Total Akhir (Netto):</p>
+        <p class="text-2xl font-bold text-indigo-700" id="display_total_akhir">
+            Rp {{ number_format($offer->total_keseluruhan, 0, ',', '.') }}
+        </p>
+        {{-- Hidden input untuk dikirim ke Controller --}}
+        <input type="hidden" name="nilai_pekerjaan" id="input_total_akhir" value="{{ $offer->total_keseluruhan }}">
+    </div>
+</div>
             </fieldset>
 
             <!-- SISTEM PEMBAYARAN (DINAMIS & OPSIONAL) -->
@@ -228,6 +250,38 @@
 
         durasiInput.addEventListener('input', hitungSelesai);
         mulaiInput.addEventListener('change', hitungSelesai);
+
+
+        // --- 4. LOGIKA DISKON ---
+const nilaiAsli = parseFloat(document.getElementById('nilai_asli').value);
+const inputDiskon = document.getElementById('input_diskon');
+const displayTotalAkhir = document.getElementById('display_total_akhir');
+const inputTotalAkhir = document.getElementById('input_total_akhir');
+
+function formatRupiah(angka) {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(angka).replace("IDR", "Rp");
+}
+
+inputDiskon.addEventListener('input', function() {
+    let diskon = parseFloat(this.value) || 0;
+
+    // Cegah diskon melebihi nilai asli
+    if (diskon > nilaiAsli) {
+        diskon = nilaiAsli;
+        this.value = nilaiAsli;
+    }
+
+    const totalAkhir = nilaiAsli - diskon;
+
+    // Update Tampilan & Input Hidden
+    displayTotalAkhir.innerText = formatRupiah(totalAkhir);
+    inputTotalAkhir.value = totalAkhir;
+});
+
 
 
        // --- 3. TABEL PEMBAYARAN DINAMIS ---

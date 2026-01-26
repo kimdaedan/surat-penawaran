@@ -51,35 +51,29 @@ class SkpController extends Controller
             'no_surat' => 'required',
             'tanggal_surat' => 'required|date',
             'pihak_satu_nama' => 'required',
-            'pihak_satu_perusahaan' => 'nullable',
             'pihak_satu_alamat' => 'required',
-            'pihak_satu_jabatan' => 'nullable',
-            'pihak_dua_nama' => 'required',
-            'pihak_dua_jabatan' => 'nullable',
-            'pihak_dua_perusahaan' => 'nullable',
-            'pihak_dua_alamat' => 'required',
-            'judul_pekerjaan' => 'required', // Validasi input select
+            'judul_pekerjaan' => 'required',
             'lokasi_pekerjaan' => 'required',
             'durasi_hari' => 'required',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
+            // Tambahkan validasi untuk nilai baru
+            'nilai_pekerjaan' => 'required|numeric',
+            'diskon' => 'nullable|numeric',
             'termin_keterangan' => 'nullable|array',
             'termin_tanggal' => 'nullable|array',
             'termin_jumlah' => 'nullable|array',
         ]);
 
+        // Proses Termin Pembayaran (Nominal Murni)
         $terminPembayaran = [];
         if ($request->has('termin_keterangan')) {
             foreach ($request->termin_keterangan as $index => $ket) {
                 if (!empty($ket)) {
-                    $tglRaw = $request->termin_tanggal[$index] ?? null;
-                    $jumlahInput = $request->termin_jumlah[$index] ?? '';
-                    $jumlahFormatted = str_contains($jumlahInput, '%') ? $jumlahInput : $jumlahInput . '%';
-
                     $terminPembayaran[] = [
                         'keterangan' => $ket,
-                        'tanggal' => $tglRaw,
-                        'jumlah' => $jumlahFormatted
+                        'tanggal' => $request->termin_tanggal[$index] ?? null,
+                        'jumlah' => $request->termin_jumlah[$index] ?? 0 // Simpan sebagai angka
                     ];
                 }
             }
@@ -97,18 +91,77 @@ class SkpController extends Controller
             'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? '-',
             'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? '-',
             'pihak_dua_alamat' => $request->pihak_dua_alamat,
-            'judul_pekerjaan' => $request->judul_pekerjaan, // Menyimpan nilai dari dropdown
+            'judul_pekerjaan' => $request->judul_pekerjaan,
             'lokasi_pekerjaan' => $request->lokasi_pekerjaan,
             'durasi_hari' => $request->durasi_hari,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
-            'nilai_pekerjaan' => $offer->total_keseluruhan,
+            // Simpan Nilai Netto & Diskon
+            'nilai_pekerjaan' => $request->nilai_pekerjaan,
+            'diskon' => $request->diskon ?? 0,
             'termin_pembayaran' => $terminPembayaran,
         ]);
 
         return redirect()->route('skp.index')->with('success', 'SKP berhasil dibuat!');
     }
 
+    public function update(Request $request, Skp $skp)
+    {
+        $request->validate([
+            'no_surat' => 'required',
+            'tanggal_surat' => 'required|date',
+            'pihak_satu_nama' => 'required',
+            'pihak_satu_alamat' => 'required',
+            'judul_pekerjaan' => 'required',
+            'lokasi_pekerjaan' => 'required',
+            'durasi_hari' => 'required',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date',
+            // Tambahkan validasi nominal di sini agar aman
+            'nilai_pekerjaan' => 'required|numeric',
+            'diskon' => 'nullable|numeric',
+            'termin_keterangan' => 'nullable|array',
+            'termin_tanggal' => 'nullable|array',
+            'termin_jumlah' => 'nullable|array',
+        ]);
+
+        $terminPembayaran = [];
+        if ($request->has('termin_keterangan')) {
+            foreach ($request->termin_keterangan as $index => $ket) {
+                if (!empty($ket)) {
+                    $terminPembayaran[] = [
+                        'keterangan' => $ket,
+                        'tanggal' => $request->termin_tanggal[$index] ?? null,
+                        'jumlah' => $request->termin_jumlah[$index] ?? 0
+                    ];
+                }
+            }
+        }
+
+        $skp->update([
+            'no_surat' => $request->no_surat,
+            'tanggal_surat' => $request->tanggal_surat,
+            'pihak_satu_nama' => $request->pihak_satu_nama,
+            'pihak_satu_jabatan' => $request->pihak_satu_jabatan ?? '-',
+            'pihak_satu_perusahaan' => $request->pihak_satu_perusahaan ?? '-',
+            'pihak_satu_alamat' => $request->pihak_satu_alamat,
+            'pihak_dua_nama' => $request->pihak_dua_nama,
+            'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? '-',
+            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? '-',
+            'pihak_dua_alamat' => $request->pihak_dua_alamat,
+            'judul_pekerjaan' => $request->judul_pekerjaan,
+            'lokasi_pekerjaan' => $request->lokasi_pekerjaan,
+            'durasi_hari' => $request->durasi_hari,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            // PERBAIKAN: Tambahkan field ini agar nilai pekerjaan & diskon terupdate
+            'nilai_pekerjaan' => $request->nilai_pekerjaan,
+            'diskon' => $request->diskon ?? 0,
+            'termin_pembayaran' => $terminPembayaran,
+        ]);
+
+        return redirect()->route('skp.index')->with('success', 'SKP berhasil diperbarui!');
+    }
     // ... Method index, show, destroy, edit, update lainnya TETAP SAMA ...
 
     public function index(Request $request)
@@ -155,69 +208,5 @@ class SkpController extends Controller
     {
         $skp->load('offer');
         return view('skp.edit', ['skp' => $skp, 'offer' => $skp->offer]);
-    }
-
-    public function update(Request $request, Skp $skp)
-    {
-        $request->validate([
-            'no_surat' => 'required',
-            'tanggal_surat' => 'required|date',
-            'pihak_satu_nama' => 'required',
-            'pihak_satu_perusahaan' => 'nullable',
-            'pihak_satu_alamat' => 'required',
-            'pihak_satu_jabatan' => 'nullable',
-            'pihak_dua_nama' => 'required',
-            'pihak_dua_jabatan' => 'nullable',
-            'pihak_dua_perusahaan' => 'nullable',
-            'pihak_dua_alamat' => 'required',
-            'judul_pekerjaan' => 'required',
-            'lokasi_pekerjaan' => 'required',
-            'durasi_hari' => 'required',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date',
-            'termin_keterangan' => 'nullable|array',
-            'termin_tanggal' => 'nullable|array',
-            'termin_jumlah' => 'nullable|array',
-        ]);
-
-        $terminPembayaran = [];
-        if ($request->has('termin_keterangan')) {
-            foreach ($request->termin_keterangan as $index => $ket) {
-                if (!empty($ket)) {
-                    $tglRaw = $request->termin_tanggal[$index] ?? null;
-                    $jumlahInput = $request->termin_jumlah[$index] ?? 0;
-
-                    // Hapus logika format '%' sebelumnya
-                    // Kita simpan sebagai nominal murni (integer/float)
-                    // agar di view print nanti bisa kita format dengan number_format
-                    $terminPembayaran[] = [
-                        'keterangan' => $ket,
-                        'tanggal' => $tglRaw,
-                        'jumlah' => $jumlahInput // Simpan nominal angka saja
-                    ];
-                }
-            }
-        }
-
-        $skp->update([
-            'no_surat' => $request->no_surat,
-            'tanggal_surat' => $request->tanggal_surat,
-            'pihak_satu_nama' => $request->pihak_satu_nama,
-            'pihak_satu_jabatan' => $request->pihak_satu_jabatan ?? '-',
-            'pihak_satu_perusahaan' => $request->pihak_satu_perusahaan ?? '-',
-            'pihak_satu_alamat' => $request->pihak_satu_alamat,
-            'pihak_dua_nama' => $request->pihak_dua_nama,
-            'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? '-',
-            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? '-',
-            'pihak_dua_alamat' => $request->pihak_dua_alamat,
-            'judul_pekerjaan' => $request->judul_pekerjaan,
-            'lokasi_pekerjaan' => $request->lokasi_pekerjaan,
-            'durasi_hari' => $request->durasi_hari,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'termin_pembayaran' => $terminPembayaran,
-        ]);
-
-        return redirect()->route('skp.index')->with('success', 'SKP berhasil diperbarui!');
     }
 }

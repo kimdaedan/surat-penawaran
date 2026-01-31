@@ -8,92 +8,134 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* CSS Khusus Print */
-        @media print {
-            @page {
-                size: A4;
-                margin: 1.5cm; /* Margin yang cukup */
-            }
-
-            body {
-                background-color: white;
-                margin: 0;
-                padding: 0;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                font-size: 10pt; /* Ukuran font standar surat */
-            }
-
-            /* Hapus elemen yang tidak perlu */
-            .no-print { display: none !important; }
-
-            /* Pastikan elemen hitam pekat untuk teks */
-            .text-black-print { color: #000 !important; }
-
-            /* Page Break Management */
-            table { page-break-inside: auto; }
-            tr    { page-break-inside: avoid; page-break-after: auto; }
-            thead { display: table-header-group; }
-            tfoot { display: table-row-group; }
-
-            /* Border Tabel Tegas */
-            .border-print { border: 1px solid #000 !important; }
+    /* 1. RESET STANDAR UNTUK PRINT */
+    @media print {
+        @page {
+            size: A4;
+            margin: 0; /* Margin nol agar kita kontrol penuh lewat CSS */
         }
 
-        /* Font styling */
-        body { font-family: 'Times New Roman', Times, serif; }
-        .sans { font-family: Arial, Helvetica, sans-serif; }
-    </style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .no-print { display: none !important; }
+
+        /* KONTROL PRESISI A4 */
+        #main-container {
+            width: 210mm;
+            /* Jangan gunakan min-height: 297mm agar jika konten sedikit tidak memaksa 2 halaman */
+            margin: 0 auto !important;
+            padding: 15mm 20mm !important; /* Margin konten standar surat */
+            box-shadow: none !important;
+            border: none !important;
+            float: none !important;
+        }
+
+        /* LOGIKA PRINT TANPA KOP */
+        .hide-header-on-print .invoice-header {
+            display: none !important;
+        }
+
+        .hide-header-on-print #main-container {
+            padding-top: 60mm !important; /* Sesuaikan dengan tinggi Kop fisik Anda */
+        }
+
+        /* ANTI TERPOTONG */
+        table { page-break-inside: auto; width: 100%; }
+        tr { page-break-inside: avoid; page-break-after: auto; }
+        thead { display: table-header-group; }
+
+        /* Mencegah bagian tanda tangan terpisah sendirian di halaman baru */
+        .signature-section {
+            page-break-inside: avoid;
+        }
+    }
+
+    /* 2. TAMPILAN LAYAR (PREVIEW) */
+    body {
+        font-family: 'Times New Roman', Times, serif;
+        background-color: #f3f4f6; /* Abu-abu netral */
+    }
+
+    #main-container {
+        background-color: white;
+        width: 210mm;
+        min-height: 297mm; /* Simulasi kertas A4 di layar */
+        margin: 20px auto;
+        padding: 20mm;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .sans { font-family: Arial, Helvetica, sans-serif; }
+    .nav-floating {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        display: flex;
+        gap: 10px;
+    }
+</style>
 </head>
-<body class="bg-white text-black" onload="window.print()">
+<body class="bg-gray-100 text-black">
 
-    <div class="max-w-[21cm] mx-auto bg-white p-4">
-
-        {{-- 1. HEADER KOP SURAT --}}
-        <header class="w-full mb-6">
-    <div class="flex justify-between items-center w-full px-0">
-
-        <div class="w-[22%] flex justify-start">
-            <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
-        </div>
-
-        <div class="w-[61%] text-center">
-
-            <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
-                style="font-family: 'Times New Roman', Times, serif; transform: scaleY(1.1);">
-                PT. TASNIEM GERAI INSPIRASI
-            </h1>
-
-            <p class="text-xs font-bold text-[#d32f2f]  mb-1"
-               style="font-family: 'Times New Roman', Times, serif;">
-                ( The First Inspiration Center of Jotun Indonesia )
-            </p>
-
-            <div class="text-[9px] font-bold text-[#1a237e] leading-tight font-sans">
-                <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
-                <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
-                <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
-            </div>
-        </div>
-
-        <div class="w-[22%] flex justify-end">
-            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
-        </div>
+    {{-- Tombol Navigasi Terapung (Hanya Muncul di Layar) --}}
+    <div class="nav-floating no-print">
+        <button onclick="printWithHeader()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg flex items-center gap-2 transition">
+            <span>🖨️</span> Cetak Normal
+        </button>
+        <button onclick="printWithoutHeader()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow-lg flex items-center gap-2 transition">
+            <span>📄</span> Tanpa Kop Surat
+        </button>
+        <button onclick="window.close()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded shadow-lg transition">
+            Tutup
+        </button>
     </div>
 
-    <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
-</header>
+    <div id="main-container" class="max-w-[21cm] mx-auto bg-white shadow-xl my-10 p-10 print:shadow-none print:my-0">
+
+        {{-- 1. HEADER KOP SURAT --}}
+        <header class="w-full mb-6 invoice-header">
+            <div class="flex justify-between items-center w-full px-0">
+                <div class="w-[22%] flex justify-start">
+                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
+                </div>
+
+                <div class="w-[61%] text-center">
+                    <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
+                        style="font-family: 'Times New Roman', Times, serif; transform: scaleY(1.1);">
+                        PT. TASNIEM GERAI INSPIRASI
+                    </h1>
+                    <p class="text-xs font-bold text-[#d32f2f] mb-1">
+                        ( The First Inspiration Center of Jotun Indonesia )
+                    </p>
+                    <div class="text-[9px] font-bold text-[#1a237e] leading-tight font-sans">
+                        <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
+                        <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
+                        <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
+                    </div>
+                </div>
+
+                <div class="w-[22%] flex justify-end">
+                    <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
+                </div>
+            </div>
+            <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
+        </header>
 
         {{-- 2. INFO KLIEN & INVOICE --}}
         <section class="mt-8 flex justify-between text-sm sans">
-            <div class="w-1/2">
+            <div class="w-1/2 text-black">
                 <p class="font-bold mb-1">TO:</p>
                 <p class="font-bold text-lg uppercase">{{ $invoice->nama_klien }}</p>
-
                 @if($invoice->offer && $invoice->offer->client_details)
                 <p class="text-gray-700">{{ $invoice->offer->client_details }}</p>
                 @endif
-
                 <p class="mt-4 font-bold">Attn:</p>
                 <p>{{ $invoice->nama_klien }}</p>
             </div>
@@ -111,7 +153,7 @@
 
         {{-- 3. TABEL RINCIAN --}}
         <section class="mt-8 text-sm sans">
-            <p class="mb-2">Bersama ini kami sampaikan tagihan untuk:</p>
+            <p class="mb-2 italic">Bersama ini kami sampaikan tagihan untuk:</p>
             <div class="mb-4">
                 <p><span class="font-bold w-20 inline-block">Project</span>: Pengecatan dan Supply Cat Jotun Paints</p>
                 @if($invoice->offer && $invoice->offer->client_details)
@@ -144,38 +186,32 @@
                         @endforeach
                     @endif
 
-                    <tr>
-                        <td class="border border-black border-print p-2 h-8"></td>
-                        <td class="border border-black border-print p-2"></td>
-                        <td class="border border-black border-print p-2"></td>
-                    </tr>
-
-                    <tr class="font-medium">
-                        <td colspan="2" class="border border-black border-print p-2 text-right font-bold">TOTAL</td>
-                        <td class="border border-black border-print p-2 text-right font-bold">
+                    <tr class="font-bold bg-gray-50">
+                        <td colspan="2" class="border border-black border-print p-2 text-right uppercase">Total Pekerjaan</td>
+                        <td class="border border-black border-print p-2 text-right">
                             Rp {{ number_format($invoice->total_penawaran + ($invoice->total_tambahan ?? 0), 0, ',', '.') }}
                         </td>
                     </tr>
 
                     @if($invoice->diskon > 0)
-                    <tr class="font-medium">
-                        <td colspan="2" class="border border-black border-print p-2 text-right">Diskon</td>
-                        <td class="border border-black border-print p-2 text-right text-red-600">
+                    <tr class="font-medium text-red-600">
+                        <td colspan="2" class="border border-black border-print p-2 text-right italic">Potongan Harga (Diskon)</td>
+                        <td class="border border-black border-print p-2 text-right">
                             - Rp {{ number_format($invoice->diskon, 0, ',', '.') }}
                         </td>
                     </tr>
                     @endif
 
                     <tr class="font-bold bg-gray-100">
-                        <td colspan="2" class="border border-black border-print p-2 text-right">TOTAL TAGIHAN</td>
-                        <td class="border border-black border-print p-2 text-right">Rp {{ number_format($invoice->grand_total, 0, ',', '.') }}</td>
+                        <td colspan="2" class="border border-black border-print p-2 text-right uppercase">Grand Total Tagihan</td>
+                        <td class="border border-black border-print p-2 text-right text-lg">Rp {{ number_format($invoice->grand_total, 0, ',', '.') }}</td>
                     </tr>
 
                     @if(isset($invoice->payments) && count($invoice->payments) > 0)
                         @foreach($invoice->payments as $payment)
-                        <tr class="font-medium text-gray-700">
-                            <td colspan="2" class="border border-black border-print p-2 text-right italic">
-                                {{ $payment->keterangan }} ({{ \Carbon\Carbon::parse($payment->created_at)->format('d/m/Y') }})
+                        <tr class="font-medium text-gray-700 italic">
+                            <td colspan="2" class="border border-black border-print p-2 text-right">
+                                Pembayaran: {{ $payment->keterangan }} ({{ \Carbon\Carbon::parse($payment->created_at)->format('d/m/Y') }})
                             </td>
                             <td class="border border-black border-print p-2 text-right text-green-700">
                                 - Rp {{ number_format($payment->jumlah, 0, ',', '.') }}
@@ -185,7 +221,7 @@
                     @endif
 
                     <tr class="font-bold text-lg bg-gray-200">
-                        <td colspan="2" class="border border-black border-print p-2 text-right uppercase">SISA PEMBAYARAN</td>
+                        <td colspan="2" class="border border-black border-print p-2 text-right uppercase tracking-wider">Sisa Pembayaran</td>
                         <td class="border border-black border-print p-2 text-right">Rp {{ number_format($invoice->sisa_pembayaran, 0, ',', '.') }}</td>
                     </tr>
                 </tbody>
@@ -194,26 +230,39 @@
 
         {{-- 4. INFO TTD & BANK --}}
         <section class="mt-12 flex justify-between text-sm sans page-break-inside-avoid">
-
             <div class="text-center w-64">
                 <p class="mb-4">Hormat kami,</p>
                 <p class="font-bold">PT. Tasniem Gerai Inspirasi</p>
                 <div class="h-24 w-full flex justify-center items-center my-2">
-                    <img src="{{ asset('images/ttd.png') }}" alt="Logo & Tanda Tangan" class="h-24 opacity-100 object-contain">
+                    <img src="{{ asset('images/ttd.png') }}" alt="Tanda Tangan" class="h-24 object-contain">
                 </div>
                 <p class="font-bold border-b border-black inline-block pb-1">SAMSU RIZAL</p>
                 <p class="text-xs mt-1">General Manager</p>
             </div>
 
             <div class="text-left border border-gray-400 p-4 rounded-lg bg-gray-50 h-fit">
-                <p class="font-bold border-b border-gray-300 pb-2 mb-2">Pembayaran melalui Bank:</p>
-                <p>Nama Akun : <strong>PT. Tasniem Gerai Inspirasi</strong></p>
-                <p>Bank : <strong>Bank BRI</strong> Cab. Nagoya</p>
-                <p>No. Rekening : <strong>0331 - 0100 1817 306</strong></p>
+                <p class="font-bold border-b border-gray-300 pb-2 mb-2">Informasi Pembayaran:</p>
+                <div class="space-y-1">
+                    <p>Nama Akun : <strong>PT. Tasniem Gerai Inspirasi</strong></p>
+                    <p>Bank : <strong>Bank BRI</strong> Cab. Nagoya</p>
+                    <p>No. Rekening : <strong>0331 - 0100 1817 306</strong></p>
+                </div>
             </div>
         </section>
-
     </div>
 
+    <script>
+        // Fungsi Cetak Normal
+        function printWithHeader() {
+            document.body.classList.remove('hide-header-on-print');
+            window.print();
+        }
+
+        // Fungsi Cetak Tanpa Kop
+        function printWithoutHeader() {
+            document.body.classList.add('hide-header-on-print');
+            window.print();
+        }
+    </script>
 </body>
 </html>

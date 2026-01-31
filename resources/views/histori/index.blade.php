@@ -70,6 +70,7 @@
                                         <a href="{{ route('invoice.create_from_offer', ['offer' => $offer->id]) }}" class="text-green-700 block px-4 py-2 text-sm hover:bg-gray-100 font-medium">💰 Buat Invoice</a>
                                         <a href="{{ route('skp.create', ['offer' => $offer->id]) }}" class="text-indigo-700 block px-4 py-2 text-sm hover:bg-gray-100 font-medium">📝 Buat SPK</a>
                                         <a href="{{ route('bast.create', ['offer' => $offer->id]) }}" class="text-teal-700 block px-4 py-2 text-sm hover:bg-gray-100 font-medium">🤝 Buat BAST</a>
+                                        <a href="{{ route('histori.recap', ['offer' => $offer->id]) }}" class="text-blue-700 block px-4 py-2 text-sm hover:bg-gray-100 font-medium">📋 Buat Rekapan</a>
                                         <div class="border-t border-gray-100 my-1"></div>
                                         @if($offer->jenis_penawaran == 'produk')
                                             <a href="{{ route('penawaran.edit_product', ['offer' => $offer->id]) }}" class="text-yellow-600 block px-4 py-2 text-sm hover:bg-gray-100 font-medium">✏️ Edit Produk</a>

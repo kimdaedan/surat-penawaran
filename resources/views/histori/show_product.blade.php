@@ -26,18 +26,47 @@
 
     <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 shadow-lg rounded-lg print:shadow-none print:p-0" id="surat-penawaran">
 
-        <header class="border-b-2 border-gray-300 pb-2 mb-6">
-            <div class="flex justify-between items-center">
-                <div class="w-1/4"><img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo" class="w-28"></div>
-                <div class="w-1/2 text-center">
-                    <h1 class="text-lg font-bold text-gray-800 uppercase">PT. TASNIEM GERAI INSPIRASI</h1>
-                    <p class="text-xs font-semibold text-gray-600">(The First Inspiration Center of Jotun Indonesia)</p>
-                    <p class="text-[10px] text-gray-500 mt-1">Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre</p>
-                    <p class="text-[10px] text-gray-500">Telp : +62 778-7485 999</p>
-                </div>
-                <div class="w-1/4 flex justify-end"><img src="{{ asset('images/logo-jotun.png') }}" alt="Logo" class="w-28"></div>
+        <style>
+    .font-times {
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>
+
+<header class="mb-8 font-times">
+    <div class="flex justify-between items-center px-2 pb-4">
+        {{-- Logo Perusahaan --}}
+        <div class="w-1/5 flex justify-start">
+            <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-24 object-contain">
+        </div>
+
+        {{-- Isi Kop Surat --}}
+        <div class="w-61% text-center">
+            <h1 class="text-3xl font-bold text-[#1a237e] uppercase tracking-tight leading-tight">
+                PT. TASNIEM GERAI INSPIRASI
+            </h1>
+            <p class="text-sm font-bold text-[#d32f2f] italic mb-1">
+                (The First Inspiration Center of Jotun Indonesia)
+            </p>
+            <div class="space-y-0.5 text-[11px] text-[#1a237e] font-semibold">
+                <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Kepri - Indonesia</p>
+                <p>Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
+                <p>
+                    E-mail : <span class="underline italic">tgi_team040210@yahoo.com</span> &nbsp; | &nbsp;
+                    Website : <span class="underline italic">www.jotun.com/ap</span>
+                </p>
             </div>
-        </header>
+        </div>
+
+        {{-- Logo Jotun --}}
+        <div class="w-1/5 flex justify-end">
+            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-16 object-contain">
+        </div>
+    </div>
+
+    {{-- Double Line: Garis Hitam Tipis & Garis Merah Tebal --}}
+    <div class="border-b-[1px] border-black w-full"></div>
+    <div class="mt-0.5 bg-[#d32f2f] h-[4px] w-full"></div>
+</header>
 
         <section class="text-sm">
 

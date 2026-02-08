@@ -40,7 +40,7 @@
         </div>
 
         {{-- Isi Kop Surat --}}
-        <div class="w-61% text-center">
+        <div class="w-40% text-center">
             <h1 class="text-3xl font-bold text-[#1a237e] uppercase tracking-tight leading-tight">
                 PT. TASNIEM GERAI INSPIRASI
             </h1>
@@ -59,7 +59,7 @@
 
         {{-- Logo Jotun --}}
         <div class="w-1/5 flex justify-end">
-            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-16 object-contain">
+            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 object-contain">
         </div>
     </div>
 

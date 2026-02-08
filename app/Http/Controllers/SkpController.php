@@ -47,17 +47,18 @@ class SkpController extends Controller
     // === 2. SIMPAN DATA SKP ===
     public function store(Request $request, Offer $offer)
     {
+        // 1. Validasi
         $request->validate([
             'no_surat' => 'required',
-            'tanggal_surat' => 'required|date',
+            // 'tanggal_surat' dihapus dari required jika tidak ada di form,
+            // atau kita set default di bawah.
             'pihak_satu_nama' => 'required',
             'pihak_satu_alamat' => 'required',
             'judul_pekerjaan' => 'required',
             'lokasi_pekerjaan' => 'required',
-            'durasi_hari' => 'required',
+            'durasi_hari' => 'required', // Pastikan di blade ada name="durasi_hari"
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
-            // Tambahkan validasi untuk nilai baru
             'nilai_pekerjaan' => 'required|numeric',
             'diskon' => 'nullable|numeric',
             'termin_keterangan' => 'nullable|array',
@@ -65,7 +66,7 @@ class SkpController extends Controller
             'termin_jumlah' => 'nullable|array',
         ]);
 
-        // Proses Termin Pembayaran (Nominal Murni)
+        // 2. Proses Termin Pembayaran
         $terminPembayaran = [];
         if ($request->has('termin_keterangan')) {
             foreach ($request->termin_keterangan as $index => $ket) {
@@ -73,33 +74,33 @@ class SkpController extends Controller
                     $terminPembayaran[] = [
                         'keterangan' => $ket,
                         'tanggal' => $request->termin_tanggal[$index] ?? null,
-                        'jumlah' => $request->termin_jumlah[$index] ?? 0 // Simpan sebagai angka
+                        'jumlah' => $request->termin_jumlah[$index] ?? 0
                     ];
                 }
             }
         }
 
+        // 3. Simpan Data
         $skp = Skp::create([
             'offer_id' => $offer->id,
             'no_surat' => $request->no_surat,
-            'tanggal_surat' => $request->tanggal_surat,
+            'tanggal_surat' => $request->tanggal_surat ?? now(), // Gunakan tanggal sekarang jika tidak ada di form
             'pihak_satu_nama' => $request->pihak_satu_nama,
             'pihak_satu_jabatan' => $request->pihak_satu_jabatan ?? '-',
             'pihak_satu_perusahaan' => $request->pihak_satu_perusahaan ?? '-',
             'pihak_satu_alamat' => $request->pihak_satu_alamat,
             'pihak_dua_nama' => $request->pihak_dua_nama,
-            'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? '-',
-            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? '-',
+            'pihak_dua_jabatan' => $request->pihak_dua_jabatan ?? 'General Manager', // Default dari create method
+            'pihak_dua_perusahaan' => $request->pihak_dua_perusahaan ?? 'PT. Tasniem Gerai Inspirasi',
             'pihak_dua_alamat' => $request->pihak_dua_alamat,
             'judul_pekerjaan' => $request->judul_pekerjaan,
             'lokasi_pekerjaan' => $request->lokasi_pekerjaan,
             'durasi_hari' => $request->durasi_hari,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
-            // Simpan Nilai Netto & Diskon
             'nilai_pekerjaan' => $request->nilai_pekerjaan,
             'diskon' => $request->diskon ?? 0,
-            'termin_pembayaran' => $terminPembayaran,
+            'termin_pembayaran' => $terminPembayaran, // Pastikan Model Skp sudah cast ini ke 'array' atau 'json'
         ]);
 
         return redirect()->route('skp.index')->with('success', 'SKP berhasil dibuat!');

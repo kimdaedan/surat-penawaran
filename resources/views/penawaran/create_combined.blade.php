@@ -18,6 +18,7 @@
         <form id="offer-form" action="{{ route('penawaran.store_combined') }}" method="POST" class="p-6 md:p-8">
             @csrf
 
+            <!-- 1. Informasi Klien -->
             <div class="mb-8 border-b border-gray-100 pb-6">
                 <h2 class="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
                     <span class="bg-blue-100 text-blue-600 p-1.5 rounded-md text-xs">1</span> Informasi Klien
@@ -25,15 +26,18 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Klien / Perusahaan <span class="text-red-500">*</span></label>
-                        <input type="text" name="nama_klien" required class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: PT. Maju Jaya / Bpk. Andi">
+                        <input type="text" name="nama_klien" value="{{ old('nama_klien') }}" required class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: PT. Maju Jaya / Bpk. Andi">
+                        @error('nama_klien') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Detail Proyek (Opsional)</label>
-                        <input type="text" name="client_details" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Renovasi Ruko Lantai 2">
+                        <input type="text" name="client_details" value="{{ old('client_details') }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Renovasi Ruko Lantai 2">
+                        @error('client_details') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
+            <!-- 2. Detail Produk -->
             <div class="mb-8 border-b border-gray-100 pb-6">
                 <div class="flex justify-between items-end mb-4">
                     <h2 class="text-lg font-bold text-gray-700 flex items-center gap-2">
@@ -41,19 +45,21 @@
                     </h2>
                 </div>
 
+                <!-- Set Produk Masal -->
                 <div class="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-100">
                     <label class="block text-sm font-bold text-blue-800 mb-1">Set Produk Masal (Opsional)</label>
                     <p class="text-xs text-blue-600 mb-2">Pilih produk di sini untuk mengisi semua baris di bawah secara otomatis.</p>
                     <select id="produk-all-select" class="w-full rounded-lg border-blue-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="">-- Pilih Produk untuk Semua --</option>
                         @foreach ($products as $product)
-                            <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div id="product-rows-container" class="space-y-3">
-                    </div>
+                    <!-- Baris produk akan ditambahkan di sini melalui JavaScript -->
+                </div>
 
                 <div class="mt-4">
                     <button type="button" id="add-product-row-btn" class="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors border border-dashed border-blue-300 w-full justify-center">
@@ -65,13 +71,15 @@
                 </div>
             </div>
 
+            <!-- 3. Jasa Tambahan -->
             <div class="mb-8 border-b border-gray-100 pb-6">
                 <h2 class="text-lg font-bold text-gray-700 mb-4 flex items-center gap-2">
                     <span class="bg-blue-100 text-blue-600 p-1.5 rounded-md text-xs">3</span> Jasa / Pengerjaan Tambahan
                 </h2>
 
                 <div id="jasa-rows-container" class="space-y-3">
-                    </div>
+                    <!-- Baris jasa akan ditambahkan di sini melalui JavaScript -->
+                </div>
 
                 <div class="mt-4">
                     <button type="button" id="add-jasa-row-btn" class="flex items-center gap-2 text-sm font-bold text-green-600 hover:text-green-800 hover:bg-green-50 px-4 py-2 rounded-lg transition-colors border border-dashed border-green-300 w-full justify-center">
@@ -83,19 +91,30 @@
                 </div>
             </div>
 
+            <!-- Footer & Pengaturan -->
             <div class="flex flex-col md:flex-row justify-between items-start gap-8">
-
                 <div class="w-full md:w-1/2 space-y-3 bg-gray-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-gray-700 text-sm mb-2">Pengaturan Dokumen</h3>
+                    <h3 class="font-bold text-gray-700 text-sm mb-2 uppercase tracking-wide">Pengaturan Dokumen</h3>
                     <div class="flex items-center">
-                        <input id="pisah_kriteria_total" name="pisah_kriteria_total" type="checkbox" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                        <label for="pisah_kriteria_total" class="ml-2 block text-sm text-gray-700">
+                        <input id="pisah_kriteria_total"
+                            name="pisah_kriteria_total"
+                            type="checkbox"
+                            value="1"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                            {{ (old('pisah_kriteria_total') ?? ($offer->pisah_kriteria_total ?? false)) ? 'checked' : '' }}>
+                        <label for="pisah_kriteria_total" class="ml-2 block text-sm text-gray-700 cursor-pointer">
                             Pisahkan Total (Interior/Exterior)
                         </label>
                     </div>
+
                     <div class="flex items-center">
-                        <input id="hilangkan_grand_total" name="hilangkan_grand_total" type="checkbox" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                        <label for="hilangkan_grand_total" class="ml-2 block text-sm text-gray-700">
+                        <input id="hilangkan_grand_total"
+                            name="hilangkan_grand_total"
+                            type="checkbox"
+                            value="1"
+                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                            {{ (old('hilangkan_grand_total') ?? ($offer->hilangkan_grand_total ?? false)) ? 'checked' : '' }}>
+                        <label for="hilangkan_grand_total" class="ml-2 block text-sm text-gray-700 cursor-pointer">
                             Sembunyikan Grand Total
                         </label>
                     </div>
@@ -108,44 +127,53 @@
             </div>
 
             <div class="mt-8 pt-6 border-t border-gray-200">
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-lg">
-                    💾 Simpan & Buat Penawaran
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-lg flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                    Simpan & Buat Penawaran
                 </button>
             </div>
-
         </form>
     </div>
 </div>
 
+<!-- Template Produk (Gunakan HTML Template untuk efisiensi JS) -->
 <template id="product-row-template">
     <div class="product-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-4 border border-gray-200 rounded-lg bg-gray-50 relative hover:shadow-sm transition-shadow">
+
         <div class="md:col-span-4">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nama Produk</label>
             <select class="product-select w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
                 <option value="">-- Pilih --</option>
                 @foreach ($products as $product)
-                    <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
                 @endforeach
             </select>
         </div>
+
         <div class="md:col-span-2">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Area</label>
-            <input type="text" placeholder="Dinding Luar" class="w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
+            <input type="text" class="area-input w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: Dinding Luar">
         </div>
-        <div class="md:col-span-1">
-            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Vol</label>
+
+        <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Vol (m²)</label>
             <input type="number" step="0.01" value="1" class="volume-input w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 text-center">
         </div>
+
         <div class="md:col-span-2">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Harga/m²</label>
             <input type="number" class="harga-input w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
+
         <div class="md:col-span-2">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Subtotal</label>
             <input type="text" class="total-output w-full bg-gray-200 border-gray-300 rounded-md text-sm font-bold text-gray-700 cursor-not-allowed" readonly>
         </div>
-        <div class="absolute top-2 right-2 md:static md:col-span-1 md:flex md:justify-end">
-             <button type="button" class="remove-row-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition-colors" title="Hapus Baris">
+
+        <div class="absolute top-2 right-2 md:static md:col-span-12 md:w-auto flex justify-end">
+            <button type="button" class="remove-row-btn text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors" title="Hapus Baris">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                 </svg>
@@ -154,12 +182,13 @@
     </div>
 </template>
 
+<!-- Template Jasa -->
 <template id="jasa-row-template">
     <div class="jasa-row grid grid-cols-1 md:grid-cols-12 gap-3 items-end p-4 border border-gray-200 rounded-lg bg-gray-50 relative hover:shadow-sm transition-shadow">
 
         <div class="md:col-span-4">
             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nama Pengerjaan</label>
-            <input type="text" class="w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Biaya Scaffolding">
+            <input type="text" class="jasa-nama-input w-full rounded-md border-gray-300 text-sm focus:ring-green-500 focus:border-green-500" placeholder="Contoh: Biaya Scaffolding">
         </div>
 
         <div class="md:col-span-2">
@@ -203,28 +232,39 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('pisah_kriteria_total').addEventListener('change', calculateAllTotals);
+        document.getElementById('hilangkan_grand_total').addEventListener('change', calculateAllTotals);
+        // Cek TomSelect
         if (typeof TomSelect === 'undefined') {
             console.error('TomSelect library not loaded.');
         }
 
         const totalKeseluruhanDisplay = document.getElementById('total_keseluruhan');
+
+        // Inisialisasi Index (Mulai dari 0)
         let productRowIndex = 0;
         let jasaRowIndex = 0;
 
+        // Helper Format Rupiah
         function formatRupiah(angka) {
             return 'Rp ' + (angka || 0).toLocaleString('id-ID');
         }
 
+        // Setting TomSelect Standar
         const tomSelectSettings = {
             create: false,
-            sortField: { field: "text", direction: "asc" },
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
             placeholder: "Cari Produk...",
             plugins: ['dropdown_input'],
+            allowEmptyOption: true,
         };
 
-        // --- 1. LOGIKA PRODUK ALL ---
+        // --- 1. LOGIKA PRODUK ALL (MASS SELECT) ---
         const produkAllSelect = document.getElementById('produk-all-select');
-        if(produkAllSelect){
+        if (produkAllSelect) {
             new TomSelect(produkAllSelect, tomSelectSettings);
 
             produkAllSelect.addEventListener('change', function() {
@@ -234,6 +274,7 @@
                 const selectedOption = Array.from(this.options).find(opt => opt.value === selectedValue);
                 const masterHarga = selectedOption ? selectedOption.getAttribute('data-harga') : 0;
 
+                // Ubah semua baris produk yang ada
                 document.querySelectorAll('.product-row').forEach(row => {
                     const rowSelect = row.querySelector('.product-select');
                     const rowHargaInput = row.querySelector('.harga-input');
@@ -254,12 +295,45 @@
         const addProductRowBtn = document.getElementById('add-product-row-btn');
         const productTemplate = document.getElementById('product-row-template');
 
+        function setupProductRowEvents(row) {
+            const productSelect = row.querySelector('.product-select');
+            const hargaInput = row.querySelector('.harga-input');
+            const volumeInput = row.querySelector('.volume-input');
+            const removeBtn = row.querySelector('.remove-row-btn');
+
+            // Init TomSelect pada row baru
+            if (typeof TomSelect !== 'undefined' && !productSelect.tomselect) {
+                new TomSelect(productSelect, tomSelectSettings);
+            }
+
+            // Event saat produk dipilih
+            productSelect.addEventListener('change', function() {
+                const selectedValue = this.value;
+                const originalOption = Array.from(this.options).find(opt => opt.value === selectedValue);
+                const hargaDefault = originalOption ? originalOption.getAttribute('data-harga') : 0;
+
+                hargaInput.value = hargaDefault;
+                calculateAllTotals();
+            });
+
+            // Input Listener untuk kalkulasi
+            hargaInput.addEventListener('input', calculateAllTotals);
+            volumeInput.addEventListener('input', calculateAllTotals);
+
+            // Hapus baris
+            removeBtn.addEventListener('click', function() {
+                if (productSelect.tomselect) productSelect.tomselect.destroy();
+                row.remove();
+                calculateAllTotals();
+            });
+        }
+
         function addProductRow() {
             const clone = productTemplate.content.firstElementChild.cloneNode(true);
 
+            // Set atribut name secara dinamis agar Laravel membacanya sebagai array
             clone.querySelector('.product-select').name = `produk[${productRowIndex}][nama]`;
-            const areaInput = clone.querySelector('input[placeholder="Dinding Luar"]');
-            if(areaInput) areaInput.name = `produk[${productRowIndex}][area]`;
+            clone.querySelector('.area-input').name = `produk[${productRowIndex}][area]`;
             clone.querySelector('.volume-input').name = `produk[${productRowIndex}][volume]`;
             clone.querySelector('.harga-input').name = `produk[${productRowIndex}][harga]`;
 
@@ -269,101 +343,125 @@
             calculateAllTotals();
         }
 
-        function setupProductRowEvents(row) {
-            const productSelect = row.querySelector('.product-select');
-            const hargaInput = row.querySelector('.harga-input');
-            const volumeInput = row.querySelector('.volume-input');
-            const removeBtn = row.querySelector('.remove-row-btn');
-
-            if(typeof TomSelect !== 'undefined') new TomSelect(productSelect, tomSelectSettings);
-
-            productSelect.addEventListener('change', function() {
-                const selectedValue = this.value;
-                const originalOption = Array.from(this.options).find(opt => opt.value === selectedValue);
-                const hargaDefault = originalOption ? originalOption.getAttribute('data-harga') : 0;
-                hargaInput.value = hargaDefault;
-                calculateAllTotals();
-            });
-
-            hargaInput.addEventListener('input', calculateAllTotals);
-            volumeInput.addEventListener('input', calculateAllTotals);
-            removeBtn.addEventListener('click', function() {
-                if (productSelect.tomselect) productSelect.tomselect.destroy();
-                row.remove();
-                calculateAllTotals();
-            });
-        }
-
-        if(addProductRowBtn) {
-            addProductRowBtn.addEventListener('click', addProductRow);
-            addProductRow();
-        }
-
-        // --- 3. LOGIKA JASA ROW (UPDATED) ---
+        // --- 3. LOGIKA JASA ROW ---
         const jasaContainer = document.getElementById('jasa-rows-container');
         const addJasaRowBtn = document.getElementById('add-jasa-row-btn');
         const jasaTemplate = document.getElementById('jasa-row-template');
 
-        function addJasaRow() {
-            const clone = jasaTemplate.content.firstElementChild.cloneNode(true);
-
-            // Set Name Attributes
-            clone.querySelector('input[placeholder="Contoh: Biaya Scaffolding"]').name = `jasa[${jasaRowIndex}][nama]`;
-            clone.querySelector('.jasa-volume').name = `jasa[${jasaRowIndex}][volume]`;
-            clone.querySelector('.jasa-satuan').name = `jasa[${jasaRowIndex}][satuan]`;
-            clone.querySelector('.jasa-harga').name = `jasa[${jasaRowIndex}][harga]`;
-
-            jasaContainer.appendChild(clone);
-
-            // Event Listeners Jasa
-            const volInput = clone.querySelector('.jasa-volume');
-            const hrgInput = clone.querySelector('.jasa-harga');
-            const removeBtn = clone.querySelector('.remove-jasa-row-btn');
+        function setupJasaRowEvents(row) {
+            const volInput = row.querySelector('.jasa-volume');
+            const hrgInput = row.querySelector('.jasa-harga');
+            const removeBtn = row.querySelector('.remove-jasa-row-btn');
 
             volInput.addEventListener('input', calculateAllTotals);
             hrgInput.addEventListener('input', calculateAllTotals);
 
             removeBtn.addEventListener('click', function() {
-                clone.remove();
+                row.remove();
                 calculateAllTotals();
             });
+        }
 
+        function addJasaRow() {
+            const clone = jasaTemplate.content.firstElementChild.cloneNode(true);
+
+            // Set atribut name dinamis
+            clone.querySelector('.jasa-nama-input').name = `jasa[${jasaRowIndex}][nama]`;
+            clone.querySelector('.jasa-volume').name = `jasa[${jasaRowIndex}][volume]`;
+            clone.querySelector('.jasa-satuan').name = `jasa[${jasaRowIndex}][satuan]`;
+            clone.querySelector('.jasa-harga').name = `jasa[${jasaRowIndex}][harga]`;
+
+            jasaContainer.appendChild(clone);
+            setupJasaRowEvents(clone);
             jasaRowIndex++;
+            calculateAllTotals();
         }
 
-        if(addJasaRowBtn) {
-            addJasaRowBtn.addEventListener('click', addJasaRow);
-        }
-
-        // --- 4. FUNGSI HITUNG TOTAL ---
+        // --- 4. FUNGSI HITUNG TOTAL (GRAND TOTAL) ---
         function calculateAllTotals() {
-            let total = 0;
+            let grandTotal = 0;
+            let interiorTotal = 0;
+            let exteriorTotal = 0;
 
-            // Hitung Produk
+            const isPisah = document.getElementById('pisah_kriteria_total').checked;
+            const isSembunyi = document.getElementById('hilangkan_grand_total').checked;
+
+            // Iterasi Baris Produk
             document.querySelectorAll('.product-row').forEach(row => {
+                const area = (row.querySelector('.area-input').value || '').toLowerCase();
                 const vol = parseFloat(row.querySelector('.volume-input').value) || 0;
                 const hrg = parseFloat(row.querySelector('.harga-input').value) || 0;
                 const subtotal = vol * hrg;
-                row.querySelector('.total-output').value = formatRupiah(subtotal);
-                total += subtotal;
+
+                const output = row.querySelector('.total-output');
+                if (output) output.value = formatRupiah(subtotal);
+
+                grandTotal += subtotal;
+
+                // Logika Pemisahan
+                if (area.includes('interior')) {
+                    interiorTotal += subtotal;
+                } else if (area.includes('exterior') || area.includes('eksterior')) {
+                    exteriorTotal += subtotal;
+                }
             });
 
-            // Hitung Jasa (Updated Formula: Volume * Harga)
+            // Iterasi Baris Jasa
             document.querySelectorAll('.jasa-row').forEach(row => {
                 const vol = parseFloat(row.querySelector('.jasa-volume').value) || 0;
                 const hrg = parseFloat(row.querySelector('.jasa-harga').value) || 0;
                 const subtotal = vol * hrg;
 
-                // Update input readonly total di row jasa
-                row.querySelector('.jasa-total').value = formatRupiah(subtotal);
+                const output = row.querySelector('.jasa-total');
+                if (output) output.value = formatRupiah(subtotal);
 
-                total += subtotal;
+                grandTotal += subtotal;
             });
 
-            // Update Grand Total
-            totalKeseluruhanDisplay.textContent = formatRupiah(total);
+            // --- Update Tampilan ---
+            if (isSembunyi) {
+                totalKeseluruhanDisplay.textContent = "Rp - (Disembunyikan)";
+            } else if (isPisah) {
+                totalKeseluruhanDisplay.innerHTML = `
+            <div class="text-sm font-normal text-gray-500">
+                Int: ${formatRupiah(interiorTotal)} | Ext: ${formatRupiah(exteriorTotal)}
+            </div>
+            ${formatRupiah(grandTotal)}
+        `;
+            } else {
+                totalKeseluruhanDisplay.textContent = formatRupiah(grandTotal);
+            }
         }
 
+        // Event Listeners Tombol Tambah
+        if (addProductRowBtn) {
+            addProductRowBtn.addEventListener('click', addProductRow);
+        }
+        if (addJasaRowBtn) {
+            addJasaRowBtn.addEventListener('click', addJasaRow);
+        }
+
+        // INSIALISASI: Tambah 1 baris produk secara otomatis saat halaman pertama dimuat
+        addProductRow();
+
+        // --- 5. LOGIKA ANTI DOUBLE-SUBMIT ---
+        const offerForm = document.getElementById('offer-form');
+        if (offerForm) {
+            offerForm.addEventListener('submit', function() {
+                const submitBtn = offerForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    submitBtn.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Memproses...
+                    `;
+                }
+            });
+        }
     });
 </script>
 @endsection

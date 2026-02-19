@@ -13,7 +13,8 @@
         @media print {
             @page {
                 size: A4;
-                margin: 0; /* Margin dikontrol via padding di container agar presisi */
+                margin: 0;
+                /* Margin dikontrol via padding di container agar presisi */
             }
 
             body {
@@ -24,13 +25,16 @@
                 font-size: 11pt;
             }
 
-            .no-print { display: none !important; }
+            .no-print {
+                display: none !important;
+            }
 
             /* Paksa Kontainer mengikuti ukuran A4 Murni */
             #print-paper {
                 width: 210mm;
                 min-height: 297mm;
-                padding: 15mm 20mm !important; /* Standar margin surat resmi */
+                padding: 15mm 20mm !important;
+                /* Standar margin surat resmi */
                 margin: 0 auto !important;
                 box-shadow: none !important;
                 border: none !important;
@@ -40,8 +44,10 @@
             .hide-header-on-print .invoice-header {
                 display: none !important;
             }
+
             .hide-header-on-print #print-paper {
-                padding-top: 65mm !important; /* Jarak pas agar teks mulai di bawah Kop Fisik */
+                padding-top: 65mm !important;
+                /* Jarak pas agar teks mulai di bawah Kop Fisik */
             }
 
             /* Mencegah Tanda Tangan terpisah dari kalimat penutup di halaman berbeda */
@@ -50,11 +56,24 @@
             }
 
             /* Optimasi Tabel agar tidak berantakan saat pindah halaman */
-            table { page-break-inside: auto; width: 100%; border-collapse: collapse; }
-            tr { page-break-inside: avoid; page-break-after: auto; }
-            thead { display: table-header-group; }
+            table {
+                page-break-inside: auto;
+                width: 100%;
+                border-collapse: collapse;
+            }
 
-            .border-print { border: 1px solid #000 !important; }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            .border-print {
+                border: 1px solid #000 !important;
+            }
         }
 
         /* Gaya Tampilan di Browser (Preview Mode) */
@@ -69,7 +88,7 @@
             min-height: 297mm;
             margin: 30px auto;
             padding: 20mm;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             position: relative;
         }
 
@@ -82,7 +101,9 @@
             gap: 10px;
         }
 
-        .sans { font-family: Arial, Helvetica, sans-serif; }
+        .sans {
+            font-family: Arial, Helvetica, sans-serif;
+        }
     </style>
 </head>
 
@@ -102,34 +123,11 @@
     </div>
 
     <div id="print-content" class="max-w-[21cm] mx-auto p-12 print:m-0 print:shadow-none">
-
         {{-- HEADER KOP SURAT --}}
-        <header class="w-full mb-6 invoice-header">
-            <div class="flex justify-between items-center w-full px-0">
-                <div class="w-[22%] flex justify-start">
-                    <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
-                </div>
-
-                <div class="w-[61%] text-center">
-                    <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
-                        style="transform: scaleY(1.1);">
-                        PT. TASNIEM GERAI INSPIRASI
-                    </h1>
-                    <p class="text-xs font-bold text-[#d32f2f] mb-1">
-                        ( The First Inspiration Center of Jotun Indonesia )
-                    </p>
-                    <div class="text-[9px] font-bold text-[#1a237e] leading-tight sans">
-                        <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
-                        <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
-                        <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
-                    </div>
-                </div>
-
-                <div class="w-[22%] flex justify-end">
-                    <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
-                </div>
+        <header class="w-full mb-6 invoice-header"> {{-- Tambahkan class invoice-header di sini --}}
+            <div class="w-full">
+                <img src="{{ asset('images/kopsurat.jpg') }}" alt="Kop Surat PT Tasniem Gerai Inspirasi" class="w-full h-auto">
             </div>
-            <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
         </header>
 
         {{-- KONTEN PENAWARAN --}}
@@ -177,16 +175,18 @@
         $totalInterior = 0;
 
         if ($isSplit) {
+        // Filter berdasarkan teks "Area" yang diinput user (lebih akurat untuk tampilan)
         $exteriorItems = $offer->items->filter(function($item) {
-        $prod = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
-        return $prod && $prod->kriteria == 'Exterior';
+        $area = strtolower($item->area_dinding);
+        return str_contains($area, 'exterior') || str_contains($area, 'eksterior') || str_contains($area, 'luar');
         });
-        $totalExterior = $exteriorItems->sum(function($item) { return $item->volume * $item->harga_per_m2; });
 
         $interiorItems = $offer->items->filter(function($item) {
-        $prod = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
-        return !$prod || $prod->kriteria != 'Exterior';
+        $area = strtolower($item->area_dinding);
+        return !str_contains($area, 'exterior') && !str_contains($area, 'eksterior') && !str_contains($area, 'luar');
         });
+
+        $totalExterior = $exteriorItems->sum(function($item) { return $item->volume * $item->harga_per_m2; });
         $totalInterior = $interiorItems->sum(function($item) { return $item->volume * $item->harga_per_m2; });
         }
         @endphp
@@ -218,7 +218,7 @@
                                 <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->area_dinding }}</td>
                                 <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">
                                     @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
-                                    {{ $p->performa ?? '-' }}
+                                    {{ $p ? $p->performa : 'Jotun' }}
                                 </td>
                                 <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->nama_produk }}</td>
                                 <td class="py-0.5 px-1 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
@@ -351,7 +351,7 @@
                                 <td class="py-1 px-1 font-medium text-gray-800 text-xs leading-none align-middle" colspan="3">{{ $jasa->nama_jasa }}</td>
                                 <td class="py-1 px-1 text-right text-xs leading-none align-middle whitespace-nowrap">{{ $jasa->volume + 0 }} {{ $jasa->satuan }}</td>
                                 <td class="py-1 px-1 text-xs leading-none whitespace-nowrap align-middle">
-                                    <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($jasa->harga_satuan ?? ($jasa->harga_jasa / ($jasa->volume ?: 1)), 0, ',', '.') }}</span></div>
+                                    <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($jasa->harga_satuan, 0, ',', '.') }}</span></div>
                                 </td>
                                 <td class="py-1 px-1 text-xs leading-none whitespace-nowrap font-bold text-gray-900 align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($jasa->harga_jasa, 0, ',', '.') }}</span></div>

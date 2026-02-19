@@ -32,41 +32,15 @@
     }
 </style>
 
-<header class="mb-8 font-times">
-    <div class="flex justify-between items-center px-2 pb-4">
-        {{-- Logo Perusahaan --}}
-        <div class="w-1/5 flex justify-start">
-            <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-24 object-contain">
-        </div>
-
-        {{-- Isi Kop Surat --}}
-        <div class="w-40% text-center">
-            <h1 class="text-3xl font-bold text-[#1a237e] uppercase tracking-tight leading-tight">
-                PT. TASNIEM GERAI INSPIRASI
-            </h1>
-            <p class="text-sm font-bold text-[#d32f2f] italic mb-1">
-                (The First Inspiration Center of Jotun Indonesia)
-            </p>
-            <div class="space-y-0.5 text-[11px] text-[#1a237e] font-semibold">
-                <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Kepri - Indonesia</p>
-                <p>Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
-                <p>
-                    E-mail : <span class="underline italic">tgi_team040210@yahoo.com</span> &nbsp; | &nbsp;
-                    Website : <span class="underline italic">www.jotun.com/ap</span>
-                </p>
+{{-- HEADER KOP SURAT --}}
+        <header class="w-full mb-6">
+            <div class="w-full">
+                {{-- Menggunakan class w-full agar gambar memenuhi lebar kontainer --}}
+                <img src="{{ asset('images/kopsurat.jpg') }}" alt="Kop Surat PT Tasniem Gerai Inspirasi" class="w-full h-auto">
             </div>
-        </div>
-
-        {{-- Logo Jotun --}}
-        <div class="w-1/5 flex justify-end">
-            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 object-contain">
-        </div>
-    </div>
-
-    {{-- Double Line: Garis Hitam Tipis & Garis Merah Tebal --}}
-    <div class="border-b-[1px] border-black w-full"></div>
-    <div class="mt-0.5 bg-[#d32f2f] h-[4px] w-full"></div>
-</header>
+            {{-- Garis merah di bawah tetap dipertahankan atau dihapus sesuai keinginan --}}
+            <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
+        </header>
 
         <section class="text-sm">
 

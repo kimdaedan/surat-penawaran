@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,8 +13,10 @@
         @media print {
             @page {
                 size: A4;
-                margin: 2.5cm; /* Margin surat resmi biasanya agak lebar */
+                margin: 2.5cm;
+                /* Margin surat resmi biasanya agak lebar */
             }
+
             body {
                 background-color: white;
                 -webkit-print-color-adjust: exact;
@@ -31,7 +34,9 @@
             }
 
             /* Hapus elemen no-print */
-            .no-print { display: none !important; }
+            .no-print {
+                display: none !important;
+            }
         }
 
         /* Font Resmi */
@@ -40,47 +45,23 @@
             color: black;
             line-height: 1.5;
         }
-        .sans { font-family: Arial, Helvetica, sans-serif; }
+
+        .sans {
+            font-family: Arial, Helvetica, sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-white text-black">
 
     <div class="max-w-[21cm] mx-auto">
 
-        {{-- 1. KOP SURAT --}}
-        <header class="w-full mb-6">
-    <div class="flex justify-between items-center w-full px-0">
-
-        <div class="w-[22%] flex justify-start">
-            <img src="{{ asset('images/logo-tasniem.png') }}" alt="Logo Tasniem" class="h-20 w-auto object-contain">
-        </div>
-
-        <div class="w-[61%] text-center">
-
-            <h1 class="text-2xl font-extrabold text-[#1a237e] uppercase tracking-wide whitespace-nowrap leading-none mb-1"
-                style="font-family: 'Times New Roman', Times, serif; transform: scaleY(1.1);">
-                PT. TASNIEM GERAI INSPIRASI
-            </h1>
-
-            <p class="text-xs font-bold text-[#d32f2f]  mb-1"
-               style="font-family: 'Times New Roman', Times, serif;">
-                ( The First Inspiration Center of Jotun Indonesia )
-            </p>
-
-            <div class="text-[9px] font-bold text-[#1a237e] leading-tight font-sans">
-                <p>Komp. Ruko KDA Junction Blok C 8 - 9 Batam Centre, Batam, Kepri - Indonesia</p>
-                <p class="mt-0.5">Telp : +62 778-7485 999, Fax : +62 778-7485 789</p>
-                <p class="mt-0.5">E-mail : tgi_team040210@yahoo.com &nbsp;&nbsp; Website : www.jotun.com/ap</p>
+        {{-- HEADER KOP SURAT --}}
+        <header class="w-full mb-6 invoice-header"> {{-- Tambahkan class invoice-header di sini --}}
+            <div class="w-full">
+                <img src="{{ asset('images/kopsurat.jpg') }}" alt="Kop Surat PT Tasniem Gerai Inspirasi" class="w-full h-auto">
             </div>
-        </div>
-
-        <div class="w-[22%] flex justify-end">
-            <img src="{{ asset('images/logo-jotun.png') }}" alt="Logo Jotun" class="h-30 w-auto object-contain">
-        </div>
-    </div>
-
-    <div class="w-full border-b-[4px] border-[#d32f2f] mt-1"></div>
-</header>
+        </header>
 
         {{-- 2. JUDUL DOKUMEN --}}
         <div class="text-center mb-8">
@@ -90,15 +71,15 @@
 
         {{-- PHP LOGIC TANGGAL INDONESIA --}}
         @php
-            use Carbon\Carbon;
-            $date = Carbon::parse($bast->tanggal_bast);
-            $days = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
-            $months = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+        use Carbon\Carbon;
+        $date = Carbon::parse($bast->tanggal_bast);
+        $days = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu'];
+        $months = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
 
-            $hari = $days[$date->format('l')];
-            $tanggal = $date->format('d');
-            $bulan = $months[(int)$date->format('m')];
-            $tahun = $date->format('Y');
+        $hari = $days[$date->format('l')];
+        $tanggal = $date->format('d');
+        $bulan = $months[(int)$date->format('m')];
+        $tahun = $date->format('Y');
         @endphp
 
         {{-- 3. ISI SURAT --}}
@@ -219,26 +200,26 @@
                 <div class="space-y-6">
                     <h3 class="text-lg font-bold text-center bg-gray-200 py-2 border border-gray-400">BEFORE (SEBELUM)</h3>
                     @if(isset($beforeImages) && count($beforeImages) > 0)
-                        @foreach($beforeImages as $img)
-                            <div class="border border-gray-400 p-2 avoid-break">
-                                <img src="{{ asset('storage/' . $img) }}" class="w-full h-48 object-cover block" alt="Foto Sebelum">
-                            </div>
-                        @endforeach
+                    @foreach($beforeImages as $img)
+                    <div class="border border-gray-400 p-2 avoid-break">
+                        <img src="{{ asset('storage/' . $img) }}" class="w-full h-48 object-cover block" alt="Foto Sebelum">
+                    </div>
+                    @endforeach
                     @else
-                        <p class="text-center italic text-gray-500 py-10 border border-dashed border-gray-300">Tidak ada dokumentasi.</p>
+                    <p class="text-center italic text-gray-500 py-10 border border-dashed border-gray-300">Tidak ada dokumentasi.</p>
                     @endif
                 </div>
 
                 <div class="space-y-6">
                     <h3 class="text-lg font-bold text-center bg-gray-200 py-2 border border-gray-400">AFTER (SESUDAH)</h3>
                     @if(isset($afterImages) && count($afterImages) > 0)
-                        @foreach($afterImages as $img)
-                            <div class="border border-gray-400 p-2 avoid-break">
-                                <img src="{{ asset('storage/' . $img) }}" class="w-full h-48 object-cover block" alt="Foto Sesudah">
-                            </div>
-                        @endforeach
+                    @foreach($afterImages as $img)
+                    <div class="border border-gray-400 p-2 avoid-break">
+                        <img src="{{ asset('storage/' . $img) }}" class="w-full h-48 object-cover block" alt="Foto Sesudah">
+                    </div>
+                    @endforeach
                     @else
-                        <p class="text-center italic text-gray-500 py-10 border border-dashed border-gray-300">Tidak ada dokumentasi.</p>
+                    <p class="text-center italic text-gray-500 py-10 border border-dashed border-gray-300">Tidak ada dokumentasi.</p>
                     @endif
                 </div>
             </div>
@@ -256,4 +237,5 @@
     </script>
 
 </body>
+
 </html>

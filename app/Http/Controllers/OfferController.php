@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class OfferController extends Controller
 {
-    /**
-     * Menampilkan daftar riwayat penawaran
-     */
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -25,32 +22,23 @@ class OfferController extends Controller
         }
 
         $offers = $query->latest()->paginate(15);
-
-        return view('histori.index', [
-            'offers' => $offers,
-            'search' => $search
-        ]);
+        return view('histori.index', compact('offers', 'search'));
     }
 
-    /**
-     * Menyimpan Penawaran Baru (Combined)
-     */
+    public function create_combined()
+    {
+        $offer = new Offer();
+        $products = Product::all();
+        return view('penawaran.create-combine', compact('offer', 'products'));
+    }
+
     public function store_combined(Request $request)
     {
-        // 1. Validasi (Pastikan semua field terdaftar)
         $request->validate([
             'nama_klien' => 'required|string|max:255',
             'client_details' => 'nullable|string',
-            'pisah_kriteria_total' => 'nullable', // Checkbox
-            'hilangkan_grand_total' => 'nullable', // Checkbox
             'produk.*.nama' => 'nullable|string',
-            'produk.*.area' => 'nullable|string',
-            'produk.*.volume' => 'nullable|numeric',
-            'produk.*.harga' => 'nullable|numeric',
             'jasa.*.nama' => 'nullable|string',
-            'jasa.*.volume' => 'nullable|numeric',
-            'jasa.*.harga' => 'nullable|numeric',
-            'jasa.*.satuan' => 'nullable|string',
         ]);
 
         return DB::transaction(function () use ($request) {
@@ -77,12 +65,12 @@ class OfferController extends Controller
 
             // 3. Simpan Offer Utama
             $offer = Offer::create([
-                'nama_klien' => $request->nama_klien,
-                'client_details' => $request->client_details,
-                'total_keseluruhan' => $totalProduk + $totalJasa,
+                'nama_klien'            => $request->nama_klien,
+                'client_details'        => $request->client_details,
+                'total_keseluruhan'     => $totalProduk + $totalJasa,
                 'pisah_kriteria_total'  => $request->has('pisah_kriteria_total') ? 1 : 0,
                 'hilangkan_grand_total' => $request->has('hilangkan_grand_total') ? 1 : 0,
-                'jenis_penawaran' => $offer->jenis_penawaran ?? 'jasa',
+                'jenis_penawaran'       => 'jasa',
             ]);
 
             // 4. Simpan Item Produk
@@ -101,10 +89,17 @@ class OfferController extends Controller
 
             // 5. Simpan Item Jasa
             if ($request->has('jasa')) {
-                foreach ($request->jasa as $j) {
-                    if (!empty($j['nama'])) {
-                        // Pastikan menggunakan index yang benar dari array jasa
-                        $totalJasa += ((float)($j['volume'] ?? 0) * (float)($j['harga'] ?? 0));
+                foreach ($request->jasa as $jData) {
+                    if (!empty($jData['nama'])) {
+                        $vJ = (float) ($jData['volume'] ?? 0);
+                        $hJ = (float) ($jData['harga'] ?? 0);
+                        $offer->jasaItems()->create([
+                            'nama_jasa'    => $jData['nama'],
+                            'volume'       => $vJ,
+                            'satuan'       => $jData['satuan'] ?? 'Ls',
+                            'harga_satuan' => $hJ,
+                            'harga_jasa'   => $vJ * $hJ,
+                        ]);
                     }
                 }
             }
@@ -113,9 +108,6 @@ class OfferController extends Controller
         });
     }
 
-    /**
-     * Memperbarui Penawaran (Update atau Copy)
-     */
     public function update(Request $request, Offer $offer)
     {
         $request->validate([
@@ -129,7 +121,7 @@ class OfferController extends Controller
             $totalProduk = 0;
             $totalJasa = 0;
 
-            // Hitung Total Produk
+            // Hitung Total
             if ($request->has('produk')) {
                 foreach ($request->produk as $p) {
                     if (!empty($p['nama'])) {
@@ -138,7 +130,6 @@ class OfferController extends Controller
                 }
             }
 
-            // Hitung Total Jasa
             if ($request->has('jasa')) {
                 foreach ($request->jasa as $j) {
                     if (!empty($j['nama'])) {
@@ -148,15 +139,14 @@ class OfferController extends Controller
             }
 
             $data = [
-                'nama_klien' => $request->nama_klien,
-                'client_details' => $request->client_details,
-                'total_keseluruhan' => $totalProduk + $totalJasa,
-                'pisah_kriteria_total' => $request->has('pisah_kriteria_total') ? 1 : 0,
+                'nama_klien'            => $request->nama_klien,
+                'client_details'        => $request->client_details,
+                'total_keseluruhan'     => $totalProduk + $totalJasa,
+                'pisah_kriteria_total'  => $request->has('pisah_kriteria_total') ? 1 : 0,
                 'hilangkan_grand_total' => $request->has('hilangkan_grand_total') ? 1 : 0,
-                'jenis_penawaran' => $offer->jenis_penawaran ?? 'jasa',
+                'jenis_penawaran'       => $offer->jenis_penawaran ?? 'jasa',
             ];
 
-            // Tentukan Target (Simpan di ID lama atau ID baru)
             if ($request->input('action') == 'save_and_copy') {
                 if ($data['nama_klien'] === $offer->nama_klien) {
                     $data['nama_klien'] .= ' (Copy)';
@@ -171,21 +161,21 @@ class OfferController extends Controller
                 $message = 'Surat penawaran berhasil diperbarui.';
             }
 
-            // Simpan Item Produk
+            // Simpan Item Produk ke $targetOffer
             if ($request->has('produk')) {
                 foreach ($request->produk as $pData) {
                     if (!empty($pData['nama'])) {
                         $targetOffer->items()->create([
-                            'nama_produk' => $pData['nama'],
+                            'nama_produk'  => $pData['nama'],
                             'area_dinding' => $pData['area'] ?? '',
-                            'volume' => (float)($pData['volume'] ?? 0),
+                            'volume'       => (float)($pData['volume'] ?? 0),
                             'harga_per_m2' => (float)($pData['harga'] ?? 0),
                         ]);
                     }
                 }
             }
 
-            // Simpan Item Jasa
+            // Simpan Item Jasa ke $targetOffer
             if ($request->has('jasa')) {
                 foreach ($request->jasa as $jData) {
                     if (!empty($jData['nama'])) {
@@ -209,9 +199,7 @@ class OfferController extends Controller
         });
     }
 
-    /**
-     * Menampilkan Detail Penawaran
-     */
+    // ... method lainnya (show, edit, destroy, print) tetap sama ...
     public function show($id)
     {
         $offer = Offer::with(['items', 'jasaItems'])->findOrFail($id);
@@ -219,9 +207,6 @@ class OfferController extends Controller
         return view($view, compact('offer'));
     }
 
-    /**
-     * Menampilkan Form Edit
-     */
     public function edit(Offer $offer)
     {
         $offer->load(['items', 'jasaItems']);
@@ -229,18 +214,12 @@ class OfferController extends Controller
         return view('histori.edit', compact('offer', 'all_products'));
     }
 
-    /**
-     * Menghapus Penawaran
-     */
     public function destroy(Offer $offer)
     {
         $offer->delete();
         return redirect()->route('histori.index')->with('success', 'Data penawaran berhasil dihapus!');
     }
 
-    /**
-     * Mencetak Penawaran
-     */
     public function print($id)
     {
         $offer = Offer::with(['items', 'jasaItems'])->findOrFail($id);

@@ -386,50 +386,48 @@
             const isPisah = document.getElementById('pisah_kriteria_total').checked;
             const isSembunyi = document.getElementById('hilangkan_grand_total').checked;
 
-            // Iterasi Baris Produk
+            // Hitung Produk
             document.querySelectorAll('.product-row').forEach(row => {
                 const area = (row.querySelector('.area-input').value || '').toLowerCase();
                 const vol = parseFloat(row.querySelector('.volume-input').value) || 0;
                 const hrg = parseFloat(row.querySelector('.harga-input').value) || 0;
                 const subtotal = vol * hrg;
 
-                const output = row.querySelector('.total-output');
-                if (output) output.value = formatRupiah(subtotal);
-
+                row.querySelector('.total-output').value = formatRupiah(subtotal);
                 grandTotal += subtotal;
 
-                // Logika Pemisahan
-                if (area.includes('interior')) {
-                    interiorTotal += subtotal;
-                } else if (area.includes('exterior') || area.includes('eksterior')) {
-                    exteriorTotal += subtotal;
-                }
+                if (area.includes('interior')) interiorTotal += subtotal;
+                else if (area.includes('exter') || area.includes('ekster')) exteriorTotal += subtotal;
             });
 
-            // Iterasi Baris Jasa
+            // Hitung Jasa
             document.querySelectorAll('.jasa-row').forEach(row => {
                 const vol = parseFloat(row.querySelector('.jasa-volume').value) || 0;
                 const hrg = parseFloat(row.querySelector('.jasa-harga').value) || 0;
                 const subtotal = vol * hrg;
 
-                const output = row.querySelector('.jasa-total');
-                if (output) output.value = formatRupiah(subtotal);
-
+                row.querySelector('.jasa-total').value = formatRupiah(subtotal);
                 grandTotal += subtotal;
             });
 
-            // --- Update Tampilan ---
+            // Manipulasi Tampilan
             if (isSembunyi) {
-                totalKeseluruhanDisplay.textContent = "Rp - (Disembunyikan)";
-            } else if (isPisah) {
-                totalKeseluruhanDisplay.innerHTML = `
-            <div class="text-sm font-normal text-gray-500">
-                Int: ${formatRupiah(interiorTotal)} | Ext: ${formatRupiah(exteriorTotal)}
-            </div>
-            ${formatRupiah(grandTotal)}
-        `;
+                totalKeseluruhanDisplay.innerHTML = '<span class="text-gray-400 text-2xl">Rp (Tersembunyi)</span>';
             } else {
-                totalKeseluruhanDisplay.textContent = formatRupiah(grandTotal);
+                let html = formatRupiah(grandTotal);
+                if (isPisah) {
+                    html = `
+                <div class="flex flex-col items-end">
+                    <div class="text-xs font-normal text-gray-500 space-x-2">
+                        <span>Int: ${formatRupiah(interiorTotal)}</span>
+                        <span>|</span>
+                        <span>Ext: ${formatRupiah(exteriorTotal)}</span>
+                    </div>
+                    <div>${formatRupiah(grandTotal)}</div>
+                </div>
+            `;
+                }
+                totalKeseluruhanDisplay.innerHTML = html;
             }
         }
 

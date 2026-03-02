@@ -7,7 +7,9 @@
         {{-- Navigasi & Toolbar Aksi --}}
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 print:hidden">
             <a href="{{ route('recap.index') }}" class="text-sm font-bold text-slate-400 hover:text-slate-900 flex items-center gap-2 transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
                 KEMBALI KE HISTORI
             </a>
 
@@ -15,13 +17,17 @@
 
                 {{-- Tombol Excel --}}
                 <a href="{{ route('recap.export.excel', $recap->id) }}" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition shadow-sm flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                     EXCEL
                 </a>
 
                 {{-- Tombol Word --}}
                 <a href="{{ route('recap.export.word', $recap->id) }}" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
                     WORD
                 </a>
             </div>
@@ -91,7 +97,14 @@
                             @foreach($recap->items as $item)
                             <tr class="group hover:bg-slate-50/50 transition-colors">
                                 <td class="py-5 text-slate-500 font-medium">
-                                    {{ $item->tanggal_item ? \Carbon\Carbon::parse($item->tanggal_item)->format('d/m/Y') : '-' }}
+                                    {{-- Perbaikan: Pastikan nama kolom 'tanggal_item' sesuai dengan di database --}}
+                                    @if($item->tanggal_item)
+                                    {{ \Carbon\Carbon::parse($item->tanggal_item)->format('d/m/Y') }}
+                                    @elseif($item->created_at)
+                                    {{ $item->created_at->format('d/m/Y') }}
+                                    @else
+                                    <span class="text-slate-300 italic">N/A</span>
+                                    @endif
                                 </td>
                                 <td class="py-5">
                                     <p class="font-black text-slate-800 tracking-tight">{{ $item->material }}</p>
@@ -138,11 +151,25 @@
     }
 
     @media print {
-        body { background: white !important; }
-        .ml-64 { margin-left: 0 !important; }
-        .max-w-5xl { max-width: 100% !important; }
-        .print\:hidden { display: none !important; }
-        .rounded-[2.5rem] { border-radius: 0 !important; }
+        body {
+            background: white !important;
+        }
+
+        .ml-64 {
+            margin-left: 0 !important;
+        }
+
+        .max-w-5xl {
+            max-width: 100% !important;
+        }
+
+        .print\:hidden {
+            display: none !important;
+        }
+
+        .rounded-[2.5rem] {
+            border-radius: 0 !important;
+        }
     }
 </style>
 @endsection

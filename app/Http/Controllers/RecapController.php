@@ -45,6 +45,7 @@ class RecapController extends Controller
     public function exportExcel($id)
     {
         $recap = Recap::with(['items', 'offer'])->findOrFail($id);
+        //dd($recap->items->pluck('tanggal_item'));
 
         header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=Rekap_Biaya_#{$recap->id}.xls");
@@ -82,10 +83,8 @@ class RecapController extends Controller
         $request->validate([
             'offer_id' => 'required',
             'items' => 'required|array',
-            'tanggal_keluar' => 'nullable|date',
         ]);
 
-        // Simpan Data Kepala
         $recap = Recap::create([
             'offer_id' => $request->offer_id,
             'tanggal_keluar' => $request->tanggal_keluar,
@@ -94,22 +93,21 @@ class RecapController extends Controller
             'margin' => $request->total_penawaran_klien - $request->total_pengeluaran,
         ]);
 
-        // Simpan Baris Detail
         foreach ($request->items as $item) {
             if (!empty($item['material'])) {
                 $recap->items()->create([
-                    'material' => $item['material'],
-                    'detail' => $item['detail'],
-                    'harga' => $item['harga'],
-                    'qty' => $item['qty'],
-                    'subtotal' => $item['harga'] * $item['qty'],
+                    'tanggal_item' => $item['tanggal_item'] ?? null, // PERBAIKAN: Pastikan ini ada
+                    'material'     => $item['material'],
+                    'detail'       => $item['detail'],
+                    'harga'        => $item['harga'] ?? 0,
+                    'qty'          => $item['qty'] ?? 0,
+                    'subtotal'     => ($item['harga'] ?? 0) * ($item['qty'] ?? 0),
                 ]);
             }
         }
 
         return redirect()->route('recap.index')->with('success', 'Rekapan Berhasil Disimpan!');
     }
-
     /**
      * Hapus rekapan.
      */

@@ -133,7 +133,9 @@
                         @if($showTotal)
                         <tfoot>
                             <tr class="bg-gray-100 font-bold text-gray-800">
-                                <td colspan="5" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Exterior</td>
+                                <td colspan="3" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Exterior</td>
+                                <td class="py-1 px-1 text-xs text-right align-middle">{{ $exteriorItems->sum('volume') + 0 }}</td>
+                                <td class="py-1 px-1 text-xs align-middle"></td>
                                 <td class="py-1 px-1 text-xs text-right whitespace-nowrap align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($totalExterior, 0, ',', '.') }}</span></div>
                                 </td>
@@ -181,7 +183,9 @@
                         @if($showTotal)
                         <tfoot>
                             <tr class="bg-gray-100 font-bold text-gray-800">
-                                <td colspan="5" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Interior</td>
+                                <td colspan="3" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Interior</td>
+                                <td class="py-1 px-1 text-xs text-right align-middle">{{ $interiorItems->sum('volume') + 0 }}</td>
+                                <td class="py-1 px-1 text-xs align-middle"></td>
                                 <td class="py-1 px-1 text-xs text-right whitespace-nowrap align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($totalInterior, 0, ',', '.') }}</span></div>
                                 </td>
@@ -230,11 +234,8 @@
                 {{-- TABEL JASA (DENGAN TOTAL) --}}
                 @if($offer->jasaItems->isNotEmpty())
                 <div class="mt-4 page-break-inside-avoid">
-                    @if($isSplit)
                     <h4 class="font-bold text-gray-800 mb-2 uppercase border-b-2 border-gray-800 inline-block text-sm">Pengerjaan Tambahan</h4>
-                    @endif
                     <table class="w-full text-left border-collapse">
-                        @if($isSplit)
                         <thead class="bg-gray-800 text-white">
                             <tr>
                                 <th class="py-2 px-1 font-semibold uppercase text-xs w-[50%] align-middle" colspan="3">Deskripsi Pengerjaan</th>
@@ -243,7 +244,6 @@
                                 <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Total</th>
                             </tr>
                         </thead>
-                        @endif
                         <tbody>
                             @foreach($offer->jasaItems as $jasa)
                             <tr class="border-b border-gray-200">

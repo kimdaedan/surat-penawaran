@@ -122,7 +122,7 @@ class ProductController extends Controller
         $totalJasa = 0;
         if ($request->has('jasa')) {
             foreach ($request->jasa as $item) {
-                $totalJasa += $item['harga'] ?? 0;
+                $totalJasa += ((float)($item['volume'] ?? 0) * (float)($item['harga'] ?? 0));
             }
         }
 
@@ -154,9 +154,14 @@ class ProductController extends Controller
             if ($request->has('jasa')) {
                 foreach ($request->jasa as $jasaData) {
                     if (!empty($jasaData['nama'])) {
+                        $vJ = (float) ($jasaData['volume'] ?? 0);
+                        $hJ = (float) ($jasaData['harga'] ?? 0);
                         $offer->jasaItems()->create([
-                            'nama_jasa'  => $jasaData['nama'],
-                            'harga_jasa' => $jasaData['harga'] ?? 0,
+                            'nama_jasa'    => $jasaData['nama'],
+                            'volume'       => $vJ,
+                            'satuan'       => $jasaData['satuan'] ?? 'Ls',
+                            'harga_satuan' => $hJ,
+                            'harga_jasa'   => $vJ * $hJ,
                         ]);
                     }
                 }

@@ -52,7 +52,7 @@
                     <select id="produk-all-select" class="w-full rounded-lg border-blue-300 focus:border-blue-500 focus:ring-blue-500">
                         <option value="">-- Pilih Produk untuk Semua --</option>
                         @foreach ($products as $product)
-                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                        <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}" data-kriteria="{{ $product->kriteria ?? 'Interior' }}">{{ $product->nama_produk }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -147,7 +147,7 @@
             <select class="product-select w-full rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
                 <option value="">-- Pilih --</option>
                 @foreach ($products as $product)
-                <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}">{{ $product->nama_produk }}</option>
+                <option value="{{ $product->nama_produk }}" data-harga="{{ $product->harga }}" data-kriteria="{{ $product->kriteria ?? 'Interior' }}">{{ $product->nama_produk }}</option>
                 @endforeach
             </select>
         </div>
@@ -388,7 +388,12 @@
 
             // Hitung Produk
             document.querySelectorAll('.product-row').forEach(row => {
-                const area = (row.querySelector('.area-input').value || '').toLowerCase();
+                const selectElement = row.querySelector('.product-select');
+                let kriteria = 'Interior';
+                if (selectElement && selectElement.options[selectElement.selectedIndex]) {
+                    kriteria = selectElement.options[selectElement.selectedIndex].getAttribute('data-kriteria') || 'Interior';
+                }
+                
                 const vol = parseFloat(row.querySelector('.volume-input').value) || 0;
                 const hrg = parseFloat(row.querySelector('.harga-input').value) || 0;
                 const subtotal = vol * hrg;
@@ -396,8 +401,11 @@
                 row.querySelector('.total-output').value = formatRupiah(subtotal);
                 grandTotal += subtotal;
 
-                if (area.includes('interior')) interiorTotal += subtotal;
-                else if (area.includes('exter') || area.includes('ekster')) exteriorTotal += subtotal;
+                if (kriteria === 'Exterior' || kriteria === 'Eksterior') {
+                    exteriorTotal += subtotal;
+                } else {
+                    interiorTotal += subtotal;
+                }
             });
 
             // Hitung Jasa

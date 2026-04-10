@@ -37,12 +37,13 @@
             @foreach($recap->items as $item)
             <tr>
                 <td class="text-center">
-                    {{--
-                        MENGGUNAKAN created_at:
-                        Karena created_at adalah instance Carbon bawaan Laravel,
-                        kita bisa langsung menggunakan method format().
-                    --}}
-                    {{ $item->created_at ? $item->created_at->format('d/m/Y') : '-' }}
+                    @if($item->tanggal_item)
+                        {{ \Carbon\Carbon::parse($item->tanggal_item)->format('d/m/Y') }}
+                    @elseif($item->created_at)
+                        {{ $item->created_at->format('d/m/Y') }}
+                    @else
+                        -
+                    @endif
                 </td>
                 <td>
                     <strong>{{ $item->material }}</strong>

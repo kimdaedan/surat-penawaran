@@ -47,7 +47,7 @@
                                     @foreach($recap->items as $index => $item)
                                     <tr class="recap-row group transition-all duration-300">
                                         <td class="py-6 px-8 text-center">
-                                            <input type="date" name="items[{{ $index }}][tanggal_item]" value="{{ $item->tanggal_item }}" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-[10px] font-bold outline-none focus:ring-2 focus:ring-blue-100">
+                                            <input type="date" name="items[{{ $index }}][tanggal_item]" value="{{ $item->tanggal_item ? $item->tanggal_item->format('Y-m-d') : '' }}" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-3 py-2 text-[10px] font-bold outline-none focus:ring-2 focus:ring-blue-100">
                                         </td>
                                         <td class="py-6 px-4">
                                             <input type="text" name="items[{{ $index }}][material]" value="{{ $item->material }}" class="w-full border-none focus:ring-0 p-0 text-sm font-bold text-slate-800 bg-transparent" required>

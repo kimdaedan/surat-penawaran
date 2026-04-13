@@ -103,28 +103,28 @@
                     <table class="w-full text-left border-collapse mb-4">
                         <thead class="bg-gray-800 text-white">
                             <tr>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs w-[25%] align-middle">Area Pekerjaan</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs w-[10%] align-middle">Nama Brand</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs w-[15%] align-middle">Produk</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[10%] align-middle">Volume/M²</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Harga Satuan</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Total</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs w-[28%] whitespace-nowrap align-middle">Area Pekerjaan</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs w-[12%] whitespace-nowrap align-middle">Nama Brand</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs w-[20%] whitespace-nowrap align-middle">Produk</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[10%] whitespace-nowrap align-middle">Volume/M²</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[15%] whitespace-nowrap align-middle">Harga Satuan</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[15%] whitespace-nowrap align-middle">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($exteriorItems as $item)
                             <tr class="border-b border-gray-500">
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->area_dinding }}</td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->area_dinding }}</td>
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
                                     @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
                                     {{ $p->performa ?? '-' }}
                                 </td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->nama_produk }}</td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->nama_produk }}</td>
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($item->harga_per_m2, 0, ',', '.') }}</span></div>
                                 </td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</span></div>
                                 </td>
                             </tr>
@@ -153,28 +153,28 @@
                     <table class="w-full text-left border-collapse mb-4">
                         <thead class="bg-gray-800 text-white">
                             <tr>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs w-[25%] align-middle">Area Pekerjaan</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs w-[10%] align-middle">Nama Brand</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs w-[15%] align-middle">Produk</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[10%] align-middle">Volume/M²</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Harga Satuan</th>
-                                <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Total</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs w-[28%] whitespace-nowrap align-middle">Area Pekerjaan</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs w-[12%] whitespace-nowrap align-middle">Nama Brand</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs w-[20%] whitespace-nowrap align-middle">Produk</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[10%] whitespace-nowrap align-middle">Volume/M²</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[15%] whitespace-nowrap align-middle">Harga Satuan</th>
+                                <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[15%] whitespace-nowrap align-middle">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($interiorItems as $item)
                             <tr class="border-b border-gray-500">
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->area_dinding }}</td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->area_dinding }}</td>
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
                                     @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
                                     {{ $p->performa ?? '-' }}
                                 </td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->nama_produk }}</td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->nama_produk }}</td>
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($item->harga_per_m2, 0, ',', '.') }}</span></div>
                                 </td>
-                                <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
+                                <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
                                     <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</span></div>
                                 </td>
                             </tr>
@@ -201,28 +201,28 @@
                 <table class="w-full text-left border-collapse page-break-inside-avoid">
                     <thead class="bg-gray-800 text-white">
                         <tr>
-                            <th class="py-2 px-1 font-semibold uppercase text-xs w-[25%] align-middle">Area Pekerjaan</th>
-                            <th class="py-2 px-1 font-semibold uppercase text-xs w-[10%] align-middle">Nama Brand</th>
-                            <th class="py-2 px-1 font-semibold uppercase text-xs w-[15%] align-middle">Produk</th>
-                            <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[10%] align-middle">Volume/M²</th>
-                            <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Harga Satuan</th>
-                            <th class="py-2 px-1 font-semibold uppercase text-xs text-right w-[20%] align-middle">Total</th>
+                            <th class="py-2 px-2 font-semibold uppercase text-xs w-[28%] whitespace-nowrap align-middle">Area Pekerjaan</th>
+                            <th class="py-2 px-2 font-semibold uppercase text-xs w-[12%] whitespace-nowrap align-middle">Nama Brand</th>
+                            <th class="py-2 px-2 font-semibold uppercase text-xs w-[20%] whitespace-nowrap align-middle">Produk</th>
+                            <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[10%] whitespace-nowrap align-middle">Volume/M²</th>
+                            <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[15%] whitespace-nowrap align-middle">Harga Satuan</th>
+                            <th class="py-2 px-2 font-semibold uppercase text-xs text-right w-[15%] whitespace-nowrap align-middle">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($offer->items as $item)
                         <tr class="border-b border-gray-500">
-                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->area_dinding }}</td>
-                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">
+                            <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->area_dinding }}</td>
+                            <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
                                 @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
                                 {{ $p->performa ?? '-' }}
                             </td>
-                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none align-middle">{{ $item->nama_produk }}</td>
-                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
-                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
+                            <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->nama_produk }}</td>
+                            <td class="py-1 px-2 text-xs text-gray-700 leading-none text-right whitespace-nowrap align-middle">{{ $item->volume }}</td>
+                            <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap align-middle">
                                 <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($item->harga_per_m2, 0, ',', '.') }}</span></div>
                             </td>
-                            <td class="py-0.5 px-1 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
+                            <td class="py-1 px-2 text-xs text-gray-700 leading-none whitespace-nowrap font-medium align-middle">
                                 <div class="flex justify-end gap-1 w-full"><span>Rp</span><span>{{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</span></div>
                             </td>
                         </tr>

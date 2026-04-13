@@ -73,22 +73,22 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-gray-800 text-white">
                         <tr>
-                            <th class="p-3 font-semibold uppercase">Area Pekerjaan</th>
+                            <th class="p-3 font-semibold uppercase whitespace-nowrap w-[28%]">Area Pekerjaan</th>
                             {{-- KOLOM BARU --}}
-                            <th class="p-3 font-semibold uppercase">Nama Brand</th>
-                            <th class="p-3 font-semibold uppercase">Produk</th>
-                            <th class="p-3 font-semibold uppercase text-right">Volume</th>
-                            <th class="p-3 font-semibold uppercase text-right">Harga Satuan</th>
-                            <th class="p-3 font-semibold uppercase text-right">Total</th>
+                            <th class="p-3 font-semibold uppercase whitespace-nowrap w-[12%]">Nama Brand</th>
+                            <th class="p-3 font-semibold uppercase whitespace-nowrap w-[20%]">Produk</th>
+                            <th class="p-3 font-semibold uppercase text-right whitespace-nowrap w-[10%]">Volume</th>
+                            <th class="p-3 font-semibold uppercase text-right whitespace-nowrap w-[15%]">Harga Satuan</th>
+                            <th class="p-3 font-semibold uppercase text-right whitespace-nowrap w-[15%]">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($offer->items as $item)
                         <tr class="border-b border-gray-500">
-                            <td class="p-3 text-sm text-gray-700">{{ $item->area_dinding }}</td>
+                            <td class="p-3 text-sm text-gray-700 whitespace-nowrap">{{ $item->area_dinding }}</td>
 
                             {{-- DATA KOLOM BARU --}}
-                            <td class="p-3 text-sm text-gray-700">
+                            <td class="p-3 text-sm text-gray-700 whitespace-nowrap">
                                 @php
                                     // Mencari data produk asli untuk mendapatkan brand (performa)
                                     $productData = \App\Models\Product::where('nama_produk', $item->nama_produk)->first();
@@ -96,10 +96,10 @@
                                 {{ $productData->performa ?? '-' }}
                             </td>
 
-                            <td class="p-3 text-sm text-gray-700">{{ $item->nama_produk }}</td>
-                            <td class="p-3 text-sm text-gray-700 text-right">{{ $item->volume }} M²</td>
-                            <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
-                            <td class="p-3 text-sm text-gray-700 text-right">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
+                            <td class="p-3 text-sm text-gray-700 whitespace-nowrap">{{ $item->nama_produk }}</td>
+                            <td class="p-3 text-sm text-gray-700 text-right whitespace-nowrap">{{ $item->volume }} M²</td>
+                            <td class="p-3 text-sm text-gray-700 text-right whitespace-nowrap">Rp {{ number_format($item->harga_per_m2, 0, ',', '.') }}</td>
+                            <td class="p-3 text-sm text-gray-700 text-right whitespace-nowrap">Rp {{ number_format($item->volume * $item->harga_per_m2, 0, ',', '.') }}</td>
                         </tr>
                         @endforeach
 

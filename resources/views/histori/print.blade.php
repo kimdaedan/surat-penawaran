@@ -21,7 +21,7 @@
                 background-color: white !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                font-family: 'Times New Roman', Times, serif !important;
+                font-family: 'Calibri', Arial, Helvetica, sans-serif !important;
                 font-size: 11pt;
             }
 
@@ -399,6 +399,10 @@
                 <li>Pengecatan warna dua lapis.</li>
                 <li>Finish.</li>
             </ul>
+        </section>
+
+        <section class="text-md font-bold text-gray-800">
+            <p>NB : Surat Ini Berlaku Sampai dengan Tanggal {{ $offer->created_at->copy()->addDays(30)->format('d F Y') }}.</p>
         </section>
 
         <section class="mt-6 text-sm text-gray-700 sans page-break-inside-avoid">

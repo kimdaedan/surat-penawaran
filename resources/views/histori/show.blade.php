@@ -303,6 +303,11 @@
             </ul>
         </section>
 
+
+        <section class="text-md font-bold text-gray-800">
+            <p>NB : Surat Ini Berlaku Sampai dengan Tanggal {{ $offer->created_at->copy()->addDays(30)->format('d F Y') }}.</p>
+        </section>
+
         <section class="mt-6 text-sm text-gray-700">
             <p>Demikianlah surat penawaran ini kami sampaikan, semoga dapat disetujui.</p>
         </section>

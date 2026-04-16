@@ -26,7 +26,7 @@
                     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200/60 overflow-hidden">
                         <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
                             <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">Daftar Pengeluaran</h3>
-                            <button type="button" id="add-row-btn" class="bg-slate-900 text-black px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-600 transition-all">
+                            <button type="button" id="add-row-btn" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-600 transition-all">
                                 + Tambah Item Baru
                             </button>
                         </div>
@@ -86,7 +86,7 @@
                                 <p id="display-margin" class="text-3xl font-black text-slate-900 tracking-tighter">0</p>
                                 <span id="margin-status" class="inline-block mt-3 text-[8px] font-black uppercase py-1 px-2.5 rounded-lg"></span>
                             </div>
-                            <button type="submit" class="w-full bg-slate-900 hover:bg-blue-600 text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-200 transition-all">
+                            <button type="submit" class="w-full bg-slate-900 hover:bg-blue-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-200 transition-all">
                                 Perbarui Rekapan
                             </button>
                         </div>

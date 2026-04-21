@@ -26,8 +26,9 @@
                     <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200/60 overflow-hidden">
                         <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
                             <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">Daftar Pengeluaran</h3>
-                            <button type="button" id="add-row-btn" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-600 transition-all">
-                                + Tambah Item Baru
+                            <button type="button" id="add-row-btn" class="text-xs font-bold px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition shadow-md shadow-indigo-100 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="2.5" stroke-linecap="round"/></svg>
+                                Tambah Baris
                             </button>
                         </div>
 

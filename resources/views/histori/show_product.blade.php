@@ -71,11 +71,11 @@
                     <tr>
                         <th class="py-1 px-1 border border-gray-600 text-center w-[5%]">No</th>
                         <th class="py-1 px-1 border border-gray-600 w-[20%]">Nama Produk</th>
-                        <th class="py-1 px-1 border border-gray-600 w-[15%]">Warna/Ket</th>
+                        <th class="py-1 px-1 border border-gray-600 w-[15%]">Warna</th>
+                        <th class="py-1 px-1 border border-gray-600 w-[15%]">Keterangan</th>
                         <th class="py-1 px-1 border border-gray-600 w-[10%] text-center">Ukuran</th>
-                        <th class="py-1 px-1 border border-gray-600 w-[15%] text-right">Harga Satuan</th>
+                        <th class="py-1 px-1 border border-gray-600 w-[12%] text-right">Harga Satuan</th>
                         <th class="py-1 px-1 border border-gray-600 w-[5%] text-center">Qty</th>
-                        <th class="py-1 px-1 border border-gray-600 w-[12%] text-right">Diskon</th>
                         <th class="py-1 px-1 border border-gray-600 w-[18%] text-right">Total</th>
                     </tr>
                 </thead>
@@ -88,13 +88,24 @@
                             $qty = $item->volume;
                             $totalBaris = $harga * $qty;
                             $diskonNominal = 0;
-                            $keterangan = $item->deskripsi_tambahan;
+                            
+                            $warnaBaris = $item->warna ?? '';
+                            $keteranganBaris = $item->keterangan ?? '';
 
-                            if (preg_match('/Potongan: Rp ([0-9,.]+)/', $item->deskripsi_tambahan, $matches)) {
-                                $diskonNominal = (int) str_replace(['.', ','], '', $matches[1]);
-                                $totalBaris -= $diskonNominal;
-                                $keterangan = preg_replace('/ \| Potongan: Rp [0-9,.]+/', '', $keterangan);
-                                $keterangan = preg_replace('/Potongan: Rp [0-9,.]+/', '', $keterangan);
+                            // Fallback backward compatibility
+                            if (empty($warnaBaris) && !empty($item->deskripsi_tambahan)) {
+                                $keterangan = $item->deskripsi_tambahan;
+                                if (preg_match('/Potongan: Rp ([0-9,.]+)/', $keterangan, $matches)) {
+                                    $diskonNominal = (int) str_replace(['.', ','], '', $matches[1]);
+                                    $totalBaris -= $diskonNominal;
+                                    $keterangan = preg_replace('/ \| Potongan: Rp [0-9,.]+/', '', $keterangan);
+                                    $keterangan = preg_replace('/Potongan: Rp [0-9,.]+/', '', $keterangan);
+                                }
+                                if (preg_match('/Warna:\s*(.*)/i', $keterangan, $m)) {
+                                    $warnaBaris = trim($m[1]);
+                                } else {
+                                    $warnaBaris = $keterangan;
+                                }
                             }
 
                             $subtotalSemua += $totalBaris;
@@ -105,7 +116,10 @@
                                 {{ $item->nama_produk }}
                             </td>
                             <td class="py-0.5 px-1 border-x border-gray-300 text-[10px] align-middle leading-tight">
-                                {!! nl2br(e($keterangan ?: '-')) !!}
+                                {!! nl2br(e($warnaBaris ?: '-')) !!}
+                            </td>
+                            <td class="py-0.5 px-1 border-x border-gray-300 text-[10px] align-middle leading-tight">
+                                {!! nl2br(e($keteranganBaris ?: '-')) !!}
                             </td>
                             <td class="py-0.5 px-1 border-x border-gray-300 text-center align-middle">
                                 {{ $item->area_dinding == '-' ? '' : $item->area_dinding }}
@@ -115,9 +129,6 @@
                             </td>
                             <td class="py-0.5 px-1 border-x border-gray-300 text-center align-middle">
                                 {{ $qty }}
-                            </td>
-                            <td class="py-0.5 px-1 border-x border-gray-300 text-right text-red-600 text-[10px] whitespace-nowrap align-middle">
-                                {{ $diskonNominal > 0 ? '- Rp ' . number_format($diskonNominal, 0, ',', '.') : '-' }}
                             </td>
                             <td class="py-0.5 px-1 border-x border-gray-300 text-right font-bold whitespace-nowrap align-middle">
                                 Rp {{ number_format($totalBaris, 0, ',', '.') }}

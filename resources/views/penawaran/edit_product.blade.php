@@ -106,9 +106,13 @@
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Nama Produk</label>
             <input type="text" class="nama-produk-input w-full rounded-md border-gray-300 text-sm" list="list-produk-db" placeholder="Ketik..." autocomplete="off">
         </div>
-        <div class="md:col-span-2">
+        <div class="md:col-span-1">
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kode Warna</label>
             <input type="text" class="kode-warna-input w-full rounded-md border-gray-300 text-sm" placeholder="Warna">
+        </div>
+        <div class="md:col-span-1">
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Keterangan</label>
+            <input type="text" class="keterangan-input w-full rounded-md border-gray-300 text-sm" placeholder="Ket">
         </div>
         <div class="md:col-span-1">
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Ukuran</label>
@@ -121,10 +125,6 @@
         <div class="md:col-span-1">
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">QTY</label>
             <input type="number" class="qty-input w-full rounded-md border-gray-300 text-sm text-center font-bold" value="1">
-        </div>
-        <div class="md:col-span-1">
-            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 text-red-500">Diskon</label>
-            <input type="number" class="diskon-input w-full rounded-md border-red-200 text-sm text-right text-red-600" placeholder="0">
         </div>
         <div class="md:col-span-2">
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Total</label>
@@ -164,10 +164,10 @@
             // Setup Names
             newRow.querySelector('.nama-produk-input').name = `items[${rowIndex}][nama_produk]`;
             newRow.querySelector('.kode-warna-input').name = `items[${rowIndex}][kode_warna]`;
+            newRow.querySelector('.keterangan-input').name = `items[${rowIndex}][keterangan]`;
             newRow.querySelector('.ukuran-input').name = `items[${rowIndex}][ukuran]`;
             newRow.querySelector('.harga-input').name = `items[${rowIndex}][harga_satuan]`;
             newRow.querySelector('.qty-input').name = `items[${rowIndex}][qty]`;
-            newRow.querySelector('.diskon-input').name = `items[${rowIndex}][diskon]`;
 
             // --- ISI DATA LAMA JIKA ADA ---
             if(data) {
@@ -176,25 +176,19 @@
                 newRow.querySelector('.harga-input').value = data.harga_per_m2;
                 newRow.querySelector('.qty-input').value = data.volume;
 
-                // Parsing Warna & Diskon dari string deskripsi "Warna: ABC | Potongan: Rp 123"
-                // 1. Ambil Warna
-                let warna = '';
-                if(data.deskripsi_tambahan && data.deskripsi_tambahan.includes('Warna:')) {
-                    // Ambil teks setelah "Warna: " sampai ketemu "|" atau habis
-                    let match = data.deskripsi_tambahan.match(/Warna:\s*([^|]+)/);
-                    if(match) warna = match[1].trim();
-                }
-                newRow.querySelector('.kode-warna-input').value = warna;
-
-                // 2. Ambil Diskon Item
-                let diskon = 0;
-                if(data.deskripsi_tambahan && data.deskripsi_tambahan.includes('Potongan: Rp')) {
-                    let match = data.deskripsi_tambahan.match(/Potongan: Rp ([0-9,.]+)/);
-                    if(match) {
-                        diskon = parseInt(match[1].replace(/[.,]/g, '')); // Hapus titik koma
+                // Parsing Warna
+                let warna = data.warna ?? '';
+                let keterangan = data.keterangan ?? '';
+                if(!warna && data.deskripsi_tambahan) {
+                    if(data.deskripsi_tambahan.includes('Warna:')) {
+                        let match = data.deskripsi_tambahan.match(/Warna:\s*([^|]+)/);
+                        if(match) warna = match[1].trim();
+                    } else {
+                        warna = data.deskripsi_tambahan;
                     }
                 }
-                if(diskon > 0) newRow.querySelector('.diskon-input').value = diskon;
+                newRow.querySelector('.kode-warna-input').value = warna;
+                newRow.querySelector('.keterangan-input').value = keterangan;
             }
 
             container.appendChild(newRow);
@@ -238,9 +232,8 @@
             document.querySelectorAll('.item-row').forEach(row => {
                 const harga = parseFloat(row.querySelector('.harga-input').value) || 0;
                 const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
-                const diskonItem = parseFloat(row.querySelector('.diskon-input').value) || 0;
 
-                let subtotalBaris = (harga * qty) - diskonItem;
+                let subtotalBaris = (harga * qty);
                 if(subtotalBaris < 0) subtotalBaris = 0;
 
                 row.querySelector('.subtotal-input').value = formatRupiah(subtotalBaris);

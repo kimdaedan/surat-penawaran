@@ -64,19 +64,14 @@ class ProductOfferController extends Controller
 
                 $hargaSatuan = $itemData['harga_satuan'];
                 $qty         = $itemData['qty'];
-                $diskonItem  = $itemData['diskon'] ?? 0;
                 $kodeWarna   = $itemData['kode_warna'] ?? '-';
+                $keterangan  = $itemData['keterangan'] ?? '-';
                 $ukuran      = $itemData['ukuran'] ?? '-';
 
-                $subtotalBaris = ($hargaSatuan * $qty) - $diskonItem;
+                $subtotalBaris = ($hargaSatuan * $qty);
                 if ($subtotalBaris < 0) $subtotalBaris = 0;
 
                 $grandTotal += $subtotalBaris;
-
-                $deskripsi = "Warna: " . $kodeWarna;
-                if ($diskonItem > 0) {
-                    $deskripsi .= " | Potongan: Rp " . number_format($diskonItem, 0, ',', '.');
-                }
 
                 OfferItem::create([
                     'offer_id'           => $offer->id,
@@ -84,7 +79,8 @@ class ProductOfferController extends Controller
                     'harga_per_m2'       => $hargaSatuan,
                     'volume'             => $qty,
                     'area_dinding'       => $ukuran,
-                    'deskripsi_tambahan' => $deskripsi,
+                    'warna'              => $kodeWarna,
+                    'keterangan'         => $keterangan,
                 ]);
             }
 
@@ -148,19 +144,14 @@ class ProductOfferController extends Controller
                 $namaProduk  = $itemData['nama_produk'];
                 $hargaSatuan = $itemData['harga_satuan'];
                 $qty         = $itemData['qty'];
-                $diskonItem  = $itemData['diskon'] ?? 0;
                 $kodeWarna   = $itemData['kode_warna'] ?? '-';
+                $keterangan  = $itemData['keterangan'] ?? '-';
                 $ukuran      = $itemData['ukuran'] ?? '-';
 
-                $subtotalBaris = ($hargaSatuan * $qty) - $diskonItem;
+                $subtotalBaris = ($hargaSatuan * $qty);
                 if ($subtotalBaris < 0) $subtotalBaris = 0;
 
                 $grandTotal += $subtotalBaris;
-
-                $deskripsi = "Warna: " . $kodeWarna;
-                if ($diskonItem > 0) {
-                    $deskripsi .= " | Potongan: Rp " . number_format($diskonItem, 0, ',', '.');
-                }
 
                 OfferItem::create([
                     'offer_id'           => $offer->id,
@@ -168,7 +159,8 @@ class ProductOfferController extends Controller
                     'harga_per_m2'       => $hargaSatuan,
                     'volume'             => $qty,
                     'area_dinding'       => $ukuran,
-                    'deskripsi_tambahan' => $deskripsi,
+                    'warna'              => $kodeWarna,
+                    'keterangan'         => $keterangan,
                 ]);
             }
 

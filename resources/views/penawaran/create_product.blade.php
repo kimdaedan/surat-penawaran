@@ -130,9 +130,14 @@
                    autocomplete="off">
         </div>
 
-        <div class="md:col-span-2">
+        <div class="md:col-span-1">
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Kode Warna</label>
             <input type="text" class="kode-warna-input w-full rounded-md border-gray-300 text-sm" placeholder="Contoh: 9918">
+        </div>
+
+        <div class="md:col-span-1">
+            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Keterangan</label>
+            <input type="text" class="keterangan-input w-full rounded-md border-gray-300 text-sm" placeholder="Ket">
         </div>
 
         <div class="md:col-span-1">
@@ -148,11 +153,6 @@
         <div class="md:col-span-1">
             <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">QTY</label>
             <input type="number" class="qty-input w-full rounded-md border-gray-300 text-sm text-center font-bold" value="1" min="1">
-        </div>
-
-        <div class="md:col-span-1">
-            <label class="block text-xs font-semibold text-gray-500 uppercase mb-1 text-red-500">Diskon</label>
-            <input type="number" class="diskon-input w-full rounded-md border-red-200 text-sm text-right text-red-600 placeholder-red-200" placeholder="0">
         </div>
 
         <div class="md:col-span-2">
@@ -192,10 +192,10 @@
             // Kita ganti 'product_id' menjadi 'nama_produk' (string) karena input bebas
             newRow.querySelector('.nama-produk-input').name = `items[${rowIndex}][nama_produk]`;
             newRow.querySelector('.kode-warna-input').name = `items[${rowIndex}][kode_warna]`;
+            newRow.querySelector('.keterangan-input').name = `items[${rowIndex}][keterangan]`;
             newRow.querySelector('.ukuran-input').name = `items[${rowIndex}][ukuran]`;
             newRow.querySelector('.harga-input').name = `items[${rowIndex}][harga_satuan]`;
             newRow.querySelector('.qty-input').name = `items[${rowIndex}][qty]`;
-            newRow.querySelector('.diskon-input').name = `items[${rowIndex}][diskon]`;
 
             container.appendChild(newRow);
             initRowEvents(newRow);
@@ -248,9 +248,8 @@
             document.querySelectorAll('.item-row').forEach(row => {
                 const harga = parseFloat(row.querySelector('.harga-input').value) || 0;
                 const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
-                const diskonItem = parseFloat(row.querySelector('.diskon-input').value) || 0;
 
-                let subtotalBaris = (harga * qty) - diskonItem;
+                let subtotalBaris = (harga * qty);
                 if(subtotalBaris < 0) subtotalBaris = 0;
 
                 row.querySelector('.subtotal-input').value = formatRupiah(subtotalBaris);

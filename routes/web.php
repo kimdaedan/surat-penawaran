@@ -25,7 +25,6 @@ Route::get('/', function () {
     return view('front.landing'); // Pastikan file resources/views/landing.blade.php sudah ada
 })->name('front.landing');
 
-
 /*
 |--------------------------------------------------------------------------
 | 2. AUTH ROUTES (Login & Logout)

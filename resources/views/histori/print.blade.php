@@ -394,7 +394,6 @@
                 <li>Semua peralatan pekerjaan akan disiapkan oleh pihak PT. Tasniem Gerai Inspirasi</li>
                 <li>Meliputi : Cat, rol, kuas, dempul, plamir, scaffolding dll.</li>
                 <li>Air dan Listrik serta gudang penyimpanan disediakan oleh pemberi kerja yaitu pihak {{ $offer->nama_klien }}</li>
-                <li>Pengukuran final luas area akan dihitung bersama dan dijadikan patokan untuk nilai pekerjaan yang disepakati nantinya.</li>
                 <li>Aplikasi Sealer ( cat dasar ) dilakukan pada area dinding yang akan di Cat.</li>
                 <li>Pengecatan warna dua lapis.</li>
                 <li>Finish.</li>

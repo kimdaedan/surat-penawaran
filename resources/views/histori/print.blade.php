@@ -150,19 +150,21 @@
             <p class="text-gray-700 mt-4">Dengan Hormat,</p>
         </section>
 
-        <section class="mt-4 space-y-4 text-sm leading-relaxed text-justify sans">
-            <p>Kami <strong>PT. TASNIEM GERAI INSPIRASI</strong> adalah dealer resmi PT. JOTUN INDONESIA. Dengan ini kami sampaikan penawaran Upah Jasa pengecatan sebagai berikut:</p>
+        <section class="mt-4 space-y-4 text-sm text-gray-700 leading-relaxed">
+            <p>Kami PT. TASNIEM GERAI INSPIRASI adalah dealer resmi PT. JOTUN INDONESIA dan toko pertama Jotun Flagship terbesar di Kota Batam yang merupakan reatil Supply Cat Jotun Dekoratif, Selain sebagai Supply kami juga bergerak di bidang Sipil lainnya antara lain sebagai berikut:</a>.</p>
             <div>
                 <p>Kami PT Tasniem Gerai Inspirasi begerak di bidang Painting Dan Pekerjaan Sipil lainnya :</p>
                 <ol class="list-decimal list-inside ml-4">
-                    <li>Pekerjaan pengecatan dan perawatan gedung</li>
-                    <li>Pemasangan partisi dan plafon Finising gypsum dan plafon sunda Plafon</li>
-                    <li>Pekerjaan Pengecatan Lantai epoxy</li>
+                    <li>Jasa Apply dan Supply pengecatan Property</li>
+                    <li>Jasa Apply dan Supply Pengecatan lantai Epoxy</li>
+                    <li>Jasa Pemasangan Partisi, Plafon Gypsum dan Sudah plafon</li>
+                    <li>Supply Cat jotun Marine</li>
+                    <li>Supply Cat jotun Protective</li>
+                    <li>Desain dan Pabrikasi Interior</li>
                 </ol>
             </div>
             <p>Dengan ini kami sampaikan penawaran Upah Jasa pengecatan :</p>
         </section>
-
         {{-- PHP LOGIC --}}
         @php
         $isSplit = $offer->pisah_kriteria_total;
@@ -187,6 +189,7 @@
         });
         $totalInterior = $interiorItems->sum(function($item) { return $item->volume * $item->harga_per_m2; });
         }
+        $globalIndex = 0;
         @endphp
 
         <section class="mt-8 sans text-sm">
@@ -202,6 +205,9 @@
                     <table class="w-full text-left border-collapse mb-4">
                         <thead class="bg-gray-200 text-black">
                             <tr>
+                                @if($offer->opsi_paket)
+                                <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Opsi Paket</th>
+                                @endif
                                 <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Area Pekerjaan</th>
                                 <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Nama Brand</th>
                                 <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Produk</th>
@@ -213,6 +219,10 @@
                         <tbody>
                             @foreach($exteriorItems as $item)
                             <tr class="border-b border-gray-500">
+                                @if($offer->opsi_paket)
+                                <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">Paket {{ chr(65 + $globalIndex) }}</td>
+                                @php $globalIndex++; @endphp
+                                @endif
                                 <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->area_dinding }}</td>
                                 <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">
                                     @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
@@ -232,7 +242,7 @@
                         @if($showTotal)
                         <tfoot>
                             <tr class="bg-gray-100 font-bold text-gray-800">
-                                <td colspan="3" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Exterior</td>
+                                <td colspan="{{ $offer->opsi_paket ? 4 : 3 }}" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Exterior</td>
                                 <td class="py-1 px-1 text-xs text-right align-middle">{{ $exteriorItems->sum('volume') + 0 }}</td>
                                 <td class="py-1 px-1 text-xs align-middle"></td>
                                 <td class="py-1 px-1 text-xs text-right whitespace-nowrap align-middle">
@@ -252,6 +262,9 @@
                     <table class="w-full text-left border-collapse mb-4">
                         <thead class="bg-gray-200 text-black">
                             <tr>
+                                @if($offer->opsi_paket)
+                                <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Opsi Paket</th>
+                                @endif
                                 <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Area Pekerjaan</th>
                                 <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Nama Brand</th>
                                 <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Produk</th>
@@ -263,6 +276,10 @@
                         <tbody>
                             @foreach($interiorItems as $item)
                             <tr class="border-b border-gray-500">
+                                @if($offer->opsi_paket)
+                                <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">Paket {{ chr(65 + $globalIndex) }}</td>
+                                @php $globalIndex++; @endphp
+                                @endif
                                 <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->area_dinding }}</td>
                                 <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">
                                     @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
@@ -282,7 +299,7 @@
                         @if($showTotal)
                         <tfoot>
                             <tr class="bg-gray-100 font-bold text-gray-800">
-                                <td colspan="3" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Interior</td>
+                                <td colspan="{{ $offer->opsi_paket ? 4 : 3 }}" class="py-1 px-1 text-xs text-right uppercase align-middle">Total Interior</td>
                                 <td class="py-1 px-1 text-xs text-right align-middle">{{ $interiorItems->sum('volume') + 0 }}</td>
                                 <td class="py-1 px-1 text-xs align-middle"></td>
                                 <td class="py-1 px-1 text-xs text-right whitespace-nowrap align-middle">
@@ -300,6 +317,9 @@
                 <table class="w-full text-left border-collapse page-break-inside-avoid mb-6">
                     <thead class="bg-gray-200 text-black">
                         <tr>
+                            @if($offer->opsi_paket)
+                            <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Opsi Paket</th>
+                            @endif
                             <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Area Pekerjaan</th>
                             <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Nama Brand</th>
                             <th class="py-2 px-1 font-semibold uppercase text-[10px] whitespace-nowrap align-middle">Produk</th>
@@ -309,8 +329,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($offer->items as $item)
+                        @foreach($offer->items as $index => $item)
                         <tr class="border-b border-gray-500">
+                            @if($offer->opsi_paket)
+                            <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">Paket {{ chr(65 + $index) }}</td>
+                            @endif
                             <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">{{ $item->area_dinding }}</td>
                             <td class="py-1 px-1 text-[10px] text-gray-700 leading-none whitespace-nowrap align-middle">
                                 @php $p = \App\Models\Product::where('nama_produk', $item->nama_produk)->first(); @endphp
@@ -388,15 +411,26 @@
         </section>
         @endif
 
-        <section class="mt-8 text-sm text-gray-700 leading-relaxed sans page-break-inside-avoid">
+         <section class="mt-8 text-sm text-gray-700 leading-relaxed">
             <h4 class="font-semibold text-gray-800">Teknis pengerjaan:</h4>
             <ul class="list-disc list-inside ml-4 mt-2">
                 <li>Semua peralatan pekerjaan akan disiapkan oleh pihak PT. Tasniem Gerai Inspirasi</li>
-                <li>Meliputi : Cat, rol, kuas, dempul, plamir, scaffolding dll.</li>
                 <li>Air dan Listrik serta gudang penyimpanan disediakan oleh pemberi kerja yaitu pihak {{ $offer->nama_klien }}</li>
-                <li>Aplikasi Sealer ( cat dasar ) dilakukan pada area dinding yang akan di Cat.</li>
-                <li>Pengecatan warna dua lapis.</li>
+                <li>Cleaning area sebelum melakukan pekerjaan</li>
+                <li>Pengaplikasikan Cat Dasar (Sealer)</li>
+                <li>Pengaplikasikan Topcoat minimal 2 kali lapis</li>
                 <li>Finish.</li>
+            </ul>
+        </section>
+
+        <section class="mt-8 text-sm text-gray-700 leading-relaxed">
+            <h4 class="font-semibold text-gray-800">Beberapa Hal yang perlu kami sampaikan sebelum pengerjaan :</h4>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>Untuk menunjang kelancaran pekerjaan dimohonkan kerjasama untuk Air, Listrik dan Gudang peyimpanan alat-alat kerja di siapkan oleh Pemberi Kerja</li>
+                <li>Down Payment minimal 30% dibayarkan sebelum pekerjaan di mulai</li>
+                <li>Payment kedua sebesar 30 %dibayarkan pada saat pengerjaan berlangsung</li>
+                <li>Pelunasan sebesar 40% di bayarkan setelah Pengerjaan selesai dan telah di lakukan pengecekan Bersama</li>
+                <li>Harga penawaran diatas berlaku 30 hari sejak tanggal surat penawaran di tebitkan</li>
             </ul>
         </section>
 

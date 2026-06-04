@@ -25,6 +25,7 @@ class Offer extends Model
         'diskon_global',
         'pisah_kriteria_total',
         'hilangkan_grand_total',
+        'opsi_paket',
         'jenis_penawaran',
         'total_keseluruhan',
     ];

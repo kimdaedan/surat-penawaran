@@ -206,6 +206,12 @@
                             Sembunyikan Grand Total
                         </label>
                     </div>
+                    <div class="flex items-center">
+                        <input id="opsi_paket" name="opsi_paket" type="checkbox" value="1" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer" {{ $offer->opsi_paket ? 'checked' : '' }}>
+                        <label for="opsi_paket" class="ml-2 block text-sm text-gray-700 cursor-pointer">
+                            Buat Opsi Paket
+                        </label>
+                    </div>
                 </div>
 
                 <div class="w-full md:w-1/2 text-right">

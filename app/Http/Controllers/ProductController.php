@@ -130,10 +130,13 @@ class ProductController extends Controller
         try {
             // 1. Simpan Offer Utama
             $offer = Offer::create([
-                'nama_klien'        => $request->nama_klien,
-                'client_details'    => $request->client_details,
-                'total_keseluruhan' => $totalProduk + $totalJasa,
-                'jenis_penawaran'   => 'proyek', // Tambahkan penanda jenis jika perlu
+                'nama_klien'            => $request->nama_klien,
+                'client_details'        => $request->client_details,
+                'total_keseluruhan'     => $totalProduk + $totalJasa,
+                'pisah_kriteria_total'  => $request->has('pisah_kriteria_total') ? 1 : 0,
+                'hilangkan_grand_total' => $request->has('hilangkan_grand_total') ? 1 : 0,
+                'opsi_paket'            => $request->has('opsi_paket') ? 1 : 0,
+                'jenis_penawaran'       => 'proyek', // Tambahkan penanda jenis jika perlu
             ]);
 
             // 2. Simpan Item Produk

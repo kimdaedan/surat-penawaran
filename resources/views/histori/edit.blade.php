@@ -33,6 +33,10 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Detail Proyek (Opsional)</label>
                         <input type="text" name="client_details" value="{{ old('client_details', $offer->client_details) }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Perihal</label>
+                        <input type="text" name="perihal" value="{{ old('perihal', $offer->perihal ?? 'Penawaran Jasa Apply dan Supply Pengecatan') }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
                 </div>
             </div>
 

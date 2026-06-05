@@ -131,14 +131,20 @@
         </header>
 
         {{-- KONTEN PENAWARAN --}}
-        <section class="mb-6 text-sm sans">
+        <section class="mb-6 text-sm sans flex justify-between items-start">
             @php
             $bulanRomawi = [1=>'I', 2=>'II', 3=>'III', 4=>'IV', 5=>'V', 6=>'VI', 7=>'VII', 8=>'VIII', 9=>'IX', 10=>'X', 11=>'XI', 12=>'XII'];
             $romawi = $bulanRomawi[$offer->created_at->format('n')];
             $tahun = $offer->created_at->format('Y');
             @endphp
-            <p>Nomor : 00{{ $offer->id }}/SP/TGI-1/{{ $romawi }}/{{ $tahun }}</p>
-            <p>Batam, {{ $offer->created_at->format('d F Y') }}</p>
+            <div>
+                <p>Perihal : {{ $offer->perihal ?? 'Penawaran Jasa Apply dan Supply Pengecatan' }}</p>
+                <p>Nomor : 00{{ $offer->id }}/SP/TGI-1/{{ $romawi }}/{{ $tahun }}</p>
+            </div>
+            <div class="text-right">
+
+                <p>Batam, {{ $offer->created_at->format('d F Y') }}</p>
+            </div>
         </section>
 
         <section class="mt-8 text-sm sans">
@@ -163,7 +169,7 @@
                     <li>Desain dan Pabrikasi Interior</li>
                 </ol>
             </div>
-            <p>Dengan ini kami sampaikan penawaran Upah Jasa pengecatan :</p>
+            <p>Dengan ini kami sampaikan penawaran Jasa Apply dan Supply pengecatan Sebagai berikut:</p>
         </section>
         {{-- PHP LOGIC --}}
         @php
@@ -415,7 +421,7 @@
             <h4 class="font-semibold text-gray-800">Teknis pengerjaan:</h4>
             <ul class="list-disc list-inside ml-4 mt-2">
                 <li>Semua peralatan pekerjaan akan disiapkan oleh pihak PT. Tasniem Gerai Inspirasi</li>
-                <li>Air dan Listrik serta gudang penyimpanan disediakan oleh pemberi kerja yaitu pihak {{ $offer->nama_klien }}</li>
+                <li>Perbaikan dan Dempul retakan tembok area pengerjaan</li>
                 <li>Cleaning area sebelum melakukan pekerjaan</li>
                 <li>Pengaplikasikan Cat Dasar (Sealer)</li>
                 <li>Pengaplikasikan Topcoat minimal 2 kali lapis</li>
@@ -426,7 +432,7 @@
         <section class="mt-8 text-sm text-gray-700 leading-relaxed">
             <h4 class="font-semibold text-gray-800">Beberapa Hal yang perlu kami sampaikan sebelum pengerjaan :</h4>
             <ul class="list-disc list-inside ml-4 mt-2">
-                <li>Untuk menunjang kelancaran pekerjaan dimohonkan kerjasama untuk Air, Listrik dan Gudang peyimpanan alat-alat kerja di siapkan oleh Pemberi Kerja</li>
+                <li>Permohonan untuk Air, Listrik dan Gudang peyimpanan alat-alat kerja di siapkan oleh Pemberi Kerja</li>
                 <li>Down Payment minimal 30% dibayarkan sebelum pekerjaan di mulai</li>
                 <li>Payment kedua sebesar 30 %dibayarkan pada saat pengerjaan berlangsung</li>
                 <li>Pelunasan sebesar 40% di bayarkan setelah Pengerjaan selesai dan telah di lakukan pengecekan Bersama</li>

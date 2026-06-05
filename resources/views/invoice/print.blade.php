@@ -156,7 +156,7 @@
 
         <section class="mt-8 text-sm">
             <p class="mb-2">Bersama ini kami sampaikan tagihan untuk:</p>
-            <p><span class="font-medium w-20 inline-block">Project</span>: Pengecatan dan Supply Cat Jotun Paints</p>
+            <p><span class="font-medium w-20 inline-block">Project</span>: {{ optional($invoice->offer)->perihal ?? 'Pengecatan dan Supply Cat Jotun Paints' }}</p>
             @if($invoice->offer && $invoice->offer->client_details)
             <p><span class="font-medium w-20 inline-block">Alamat</span>: {{ $invoice->offer->client_details }}</p>
             @endif

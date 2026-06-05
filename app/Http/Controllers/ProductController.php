@@ -109,6 +109,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'nama_klien' => 'required|string|max:255',
+            'perihal'    => 'nullable|string|max:255',
         ]);
 
         // Hitung total di backend
@@ -132,6 +133,7 @@ class ProductController extends Controller
             $offer = Offer::create([
                 'nama_klien'            => $request->nama_klien,
                 'client_details'        => $request->client_details,
+                'perihal'               => $request->perihal ?? 'Penawaran Jasa Apply dan Supply Pengecatan',
                 'total_keseluruhan'     => $totalProduk + $totalJasa,
                 'pisah_kriteria_total'  => $request->has('pisah_kriteria_total') ? 1 : 0,
                 'hilangkan_grand_total' => $request->has('hilangkan_grand_total') ? 1 : 0,

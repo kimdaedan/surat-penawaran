@@ -28,6 +28,10 @@
                         <label for="tanggal" class="block text-sm font-medium text-gray-600">Tanggal Penawaran</label>
                         <input type="date" name="tanggal" id="tanggal" value="{{ date('Y-m-d') }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                     </div>
+                    <div>
+                        <label for="perihal" class="block text-sm font-medium text-gray-600">Perihal</label>
+                        <input type="text" name="perihal" id="perihal" value="Penawaran supply produk cat Jotun" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                    </div>
                 </div>
             </fieldset>
 

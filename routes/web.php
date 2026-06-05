@@ -131,3 +131,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/print', [SkpController::class, 'print'])->name('print');
     });
 });
+
+

@@ -34,6 +34,11 @@
                         <input type="text" name="client_details" value="{{ old('client_details') }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Renovasi Ruko Lantai 2">
                         @error('client_details') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Perihal</label>
+                        <input type="text" name="perihal" value="{{ old('perihal', 'Penawaran Jasa Apply dan Supply Pengecatan') }}" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Contoh: Penawaran Jasa Apply dan Supply Pengecatan">
+                        @error('perihal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
 

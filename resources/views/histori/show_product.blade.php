@@ -43,11 +43,14 @@
         </header>
 
         <section class="text-sm">
-
-            <div class="space-y-1 mb-6">
-                <p class="text-gray-700">Batam, {{ $offer->created_at->format('d F Y') }}</p>
-                <p class="text-gray-700 font-bold">Nomor : {{ $nomorSurat }}</p>
-                <p class="text-gray-700">Perihal : Penawaran Harga Produk</p>
+            <div class="flex justify-between items-start mb-6 text-gray-700 text-sm">
+                <div>
+                    <p>Perihal : {{ $offer->perihal ?? 'Penawaran supply produk cat Jotun' }}</p>
+                </div>
+                <div class="text-right font-sans">
+                    <p class="font-bold">Nomor : {{ $nomorSurat }}</p>
+                    <p>Batam, {{ $offer->created_at->format('d F Y') }}</p>
+                </div>
             </div>
 
             <div class="mb-6">

@@ -28,6 +28,10 @@
                         <label class="block text-sm font-medium text-gray-600">Tanggal Penawaran</label>
                         <input type="date" name="tanggal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="{{ $offer->created_at->format('Y-m-d') }}">
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Perihal</label>
+                        <input type="text" name="perihal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="{{ old('perihal', $offer->perihal ?? 'Penawaran supply produk cat Jotun') }}">
+                    </div>
                 </div>
             </fieldset>
 

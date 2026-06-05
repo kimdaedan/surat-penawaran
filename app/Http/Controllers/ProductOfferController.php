@@ -29,6 +29,7 @@ class ProductOfferController extends Controller
         // 1. Validasi
         $request->validate([
             'nama_klien'            => 'required|string|max:255',
+            'perihal'               => 'nullable|string|max:255',
             'items'                 => 'required|array|min:1',
 
             // PERUBAHAN: nama_produk sekarang string biasa, bukan ID
@@ -46,6 +47,7 @@ class ProductOfferController extends Controller
             $offer = Offer::create([
                 'nama_klien'            => $request->nama_klien,
                 'client_details'        => $request->client_details,
+                'perihal'               => $request->perihal ?? 'Penawaran supply produk cat Jotun',
                 'created_at'            => $request->tanggal,
                 'jenis_penawaran'       => 'produk',
                 'pisah_kriteria_total'  => $request->has('pisah_kriteria_total'),
@@ -111,6 +113,7 @@ class ProductOfferController extends Controller
         // 1. Validasi (Sama seperti store)
         $request->validate([
             'nama_klien'            => 'required|string|max:255',
+            'perihal'               => 'nullable|string|max:255',
             'items'                 => 'required|array|min:1',
             'items.*.nama_produk'   => 'required|string|max:255',
             'items.*.qty'           => 'required|numeric|min:1',
@@ -127,6 +130,7 @@ class ProductOfferController extends Controller
             $offer->update([
                 'nama_klien'            => $request->nama_klien,
                 'client_details'        => $request->client_details,
+                'perihal'               => $request->perihal ?? 'Penawaran supply produk cat Jotun',
                 'created_at'            => $request->tanggal, // Bisa update tanggal juga
                 'pisah_kriteria_total'  => $request->has('pisah_kriteria_total'),
                 'hilangkan_grand_total' => $request->has('hilangkan_grand_total'),

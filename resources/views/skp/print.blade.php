@@ -9,16 +9,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Styling Khusus Print */
+        /* 1. RESET STANDAR UNTUK PRINT */
         @media print {
             @page {
                 size: A4;
-                margin: 2.5cm;
-                /* Margin standar surat resmi */
+                margin: 0;
+                /* Margin nol agar kita kontrol penuh lewat CSS */
             }
 
             body {
-                background-color: white;
+                margin: 0;
+                padding: 0;
+                background-color: white !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -26,6 +28,42 @@
             .no-print {
                 display: none !important;
             }
+
+            /* KONTROL PRESISI A4 */
+            #main-container {
+                width: 210mm;
+                margin: 0 auto !important;
+                padding: 25mm 25mm 20mm 25mm !important; /* Margin standar surat resmi */
+                box-shadow: none !important;
+                border: none !important;
+                float: none !important;
+            }
+
+            /* LOGIKA PRINT TANPA KOP */
+            .hide-header-on-print .invoice-header {
+                display: none !important;
+            }
+
+            .hide-header-on-print #main-container {
+                padding-top: 60mm !important;
+                /* Menambahkan ruang kosong setinggi kop surat fisik */
+            }
+        }
+
+        /* 2. TAMPILAN LAYAR (PREVIEW) */
+        body {
+            background-color: #f3f4f6;
+            /* Abu-abu netral */
+        }
+
+        #main-container {
+            background-color: white;
+            width: 210mm;
+            min-height: 297mm;
+            /* Simulasi kertas A4 di layar */
+            margin: 40px auto;
+            padding: 25mm;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         /* Font Resmi */
@@ -38,22 +76,34 @@
         .sans {
             font-family: Arial, Helvetica, sans-serif;
         }
+
+        .nav-floating {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 
-<body class="bg-white text-black text-sm">
+<body class="bg-gray-100 text-black text-sm">
 
-    {{-- Tombol Navigasi (Hanya tampil di layar, hilang saat diprint) --}}
-    <div class="no-print fixed top-5 right-5 flex gap-2">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg flex items-center gap-2 transition">
-            <span>🖨️</span> Cetak Dokumen
+    {{-- Tombol Navigasi Terapung (Hanya Muncul di Layar) --}}
+    <div class="nav-floating no-print">
+        <button onclick="printWithHeader()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg flex items-center gap-2 transition">
+            <span>🖨️</span> Cetak Normal
         </button>
-        <a href="javascript:window.close();" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded shadow-lg transition">
+        <button onclick="printWithoutHeader()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow-lg flex items-center gap-2 transition">
+            <span>📄</span> Tanpa Kop Surat
+        </button>
+        <button onclick="window.close()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded shadow-lg transition">
             Tutup
-        </a>
+        </button>
     </div>
 
-    <div class="max-w-[21cm] mx-auto">
+    <div id="main-container">
         {{-- HEADER KOP SURAT --}}
         <header class="w-full mb-6 invoice-header"> {{-- Tambahkan class invoice-header di sini --}}
             <div class="w-full">
@@ -243,6 +293,19 @@
 
     </div>
 
+    <script>
+        // Fungsi Cetak Normal
+        function printWithHeader() {
+            document.body.classList.remove('hide-header-on-print');
+            window.print();
+        }
+
+        // Fungsi Cetak Tanpa Kop
+        function printWithoutHeader() {
+            document.body.classList.add('hide-header-on-print');
+            window.print();
+        }
+    </script>
 </body>
 
 </html>
